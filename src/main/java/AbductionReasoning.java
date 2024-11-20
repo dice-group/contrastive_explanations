@@ -16,9 +16,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class AbductionReasoning {
-
-    private static final String DEFAULT_OUTPUT_DIR = "output/"; // Customize the directory as needed
-
     public static void main(String[] args) throws OWLOntologyCreationException, IOException, OWLException {
         // Record the start time
         long startTime = System.currentTimeMillis();
@@ -74,13 +71,13 @@ public class AbductionReasoning {
         Set<OWLNamedIndividual> individuals = instances.getFlattened();
         // Process the individuals
         for (OWLNamedIndividual selectedIndividual : individuals) {
-            if(selectedIndividual.equals(owlIndividualWithExplan)) {
+            if (selectedIndividual.equals(owlIndividualWithExplan)) {
 
                 // Explain the classification of the selected individual
                 Set<Set<OWLAxiom>> explanations = expGen.getInstanceExplanations(selectedIndividual, query, 10);
                 Set<Set<OWLAxiom>> allCommonAxiomsSet = findCommonAxioms(explanations, ontology);
-                System.out.println("allCommonAxiomsSet : "+allCommonAxiomsSet);
-                System.out.println("allCommonAxiomsSet size: "+allCommonAxiomsSet.size());
+                System.out.println("allCommonAxiomsSet : " + allCommonAxiomsSet);
+                System.out.println("allCommonAxiomsSet size: " + allCommonAxiomsSet.size());
                 // Iterate over each element in commonAxioms
                 for (Set<OWLAxiom> commonAxiomSet : allCommonAxiomsSet) {
                     // Apply abduction reasoning for each common axiom set
@@ -98,12 +95,12 @@ public class AbductionReasoning {
         for (Set<OWLAxiom> explanationAxioms : explanationsSet) {
             Set<OWLAxiom> commonAxioms = new HashSet<>();
 
-            for(OWLAxiom explanationAxiom : explanationAxioms){
-            {
-                if (aBoxAxioms.contains(explanationAxiom)) {
-                    commonAxioms.add(explanationAxiom);
+            for (OWLAxiom explanationAxiom : explanationAxioms) {
+                {
+                    if (aBoxAxioms.contains(explanationAxiom)) {
+                        commonAxioms.add(explanationAxiom);
+                    }
                 }
-            }
             }
             commonAxiomsSet.add(commonAxioms);
         }
@@ -114,13 +111,10 @@ public class AbductionReasoning {
 
     public void applyAbductionForIndividuals(OWLOntology ontology, Set<Set<OWLAxiom>> explanations, OWLNamedIndividual individualWithExplan, OWLNamedIndividual individualWithoutExplan, Set<OWLAxiom> commonAxioms) {
 
-        OWLOntology ontology1= ontology;
+        OWLOntology ontology1 = ontology;
 
         // Modify axioms for the first individual
         Set<OWLAxiom> axiomsForFirstIndividual = new HashSet<>();
-       /* for (OWLAxiom axiom : commonAxioms) {
-            replaceIndividualInAxiom(axiom, firstIndividual, secondIndividual, axiomsForFirstIndividual);
-        }*/
         replaceIndividualInAxiom(commonAxioms, individualWithExplan, individualWithoutExplan, axiomsForFirstIndividual);
 
         // Check for missing axioms
@@ -135,7 +129,6 @@ public class AbductionReasoning {
 
         // Add missing axioms to the ontology
         OWLOntologyManager manager = ontology1.getOWLOntologyManager();
-       //manager.addAxioms(ontology1, missingAxioms);
 
         System.out.println("Missing axioms for " + individualWithoutExplan + ": " + missingAxioms);
     }
@@ -196,17 +189,9 @@ public class AbductionReasoning {
                 }
 
 
-
             });
         }
     }
-
-
-
-  /*  public OWLClassExpression parseQueryString(String ns, String queryStr) {
-        String str = ns + queryStr;
-        return OWL.Class(str);
-    }*/
 
     private OWLClassExpression parseQueryString(String ns, String queryStr) {
         // Remove outer parentheses if present
@@ -306,7 +291,7 @@ public class AbductionReasoning {
                 i += delimiter.length() - 1; // skip the delimiter
             }
         }
-        result.add(input.substring (lastIndex).trim());
+        result.add(input.substring(lastIndex).trim());
         return result;
     }
 
