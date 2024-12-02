@@ -1,6 +1,6 @@
 # README: contrastive_explanations with Pellet Reasoner
 ## Overview
-This program uses abduction reasoning with OWL ontologies to explain why an individual satisfies a query and identifies missing axioms needed for another individual to satisfy the same query. The process leverages the **Pellet reasoner** for ontology reasoning and explanation generation.
+This program uses contrastive reasoning with OWL ontologies. Its aim is to explain why an individual belongs to a class and another does not. The goal is achieved by identifying missing axioms needed for the latter individual to satisfy the same query. The process leverages the Pellet reasoner for ontology reasoning and explanation generation.
 
 ## Features
 1. **Ontology Loading:** Reads an OWL ontology file for reasoning.
