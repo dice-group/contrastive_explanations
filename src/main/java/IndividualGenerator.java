@@ -1,13 +1,47 @@
-import javafx.util.Pair;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import tools.Pair;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class IndividualGenerator {
 
+    // map pair to fresh individual
+    private Map<Pair<OWLNamedIndividual, OWLNamedIndividual>, OWLNamedIndividual> pair2ind = new HashMap<>();
+    private Map<OWLNamedIndividual, Pair<OWLNamedIndividual, OWLNamedIndividual>> ind2pair = new HashMap<>();
+
+    private int counter = 0;
+
+    private OWLDataFactory factory;
+
+    public OWLNamedIndividual getIndividualForPair(OWLNamedIndividual ind1, OWLNamedIndividual ind2) {
+            Pair<OWLNamedIndividual,OWLNamedIndividual> pair = new Pair(ind1,ind2);
+            if(pair2ind.containsKey(pair))
+                return pair2ind.get(pair);
+            else {
+                IRI name = IRI.create("_X"+counter);
+                counter++;
+                OWLNamedIndividual newInd = factory.getOWLNamedIndividual(name);
+                pair2ind.put(pair,newInd);
+                ind2pair.put(newInd,pair);
+                return newInd;
+            }
+    }
+
+    public Pair<OWLNamedIndividual,OWLNamedIndividual> getPairForIndividual(OWLNamedIndividual ind) {
+        if(!ind2pair.containsKey(ind))
+            throw new IllegalArgumentException("Individual not known!");
+        else
+            return ind2pair.get(ind);
+    }
+
+    /**
+     * Create set of all pairs over individuals
+     * @param individuals
+     * @return
+     */
     public Set<Pair<OWLNamedIndividual, OWLNamedIndividual>> generatePairs(Set<OWLNamedIndividual> individuals) {
         Set<Pair<OWLNamedIndividual, OWLNamedIndividual>> pairs = new HashSet<>();
         for (OWLNamedIndividual individual1 : individuals) {

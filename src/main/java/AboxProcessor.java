@@ -1,12 +1,20 @@
-import javafx.util.Pair;
+import tools.Pair;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.*;
 
 public class AboxProcessor {
 
+    /*
+        ABox 1: the original ABox
+        ABox 2: for every axiom A(a)/r(a,b) in ABox 1, and all individuals x1,x2, we add A([a,x1])/r([a,x1],[b,x2])
+        ABox 3: contains all axioms A([a,x])/r([a,x1],[a,x2]) from ABox 2 for which A(x)/r(x1,x2) is in ABox 2
+     */
+
+
     // Process the ABox and generate new ABox entries based on the axiom type
-    public Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> generateNewAbox2(Set<OWLAxiom> abox, Set<OWLNamedIndividual> individuals) {
+    public Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> generateNewAbox2(
+            Set<OWLAxiom> abox, Set<OWLNamedIndividual> individuals) {
         // Set to store either OWLClass or OWLObjectProperty with two lists of OWLNamedIndividual
         Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> newAbox = new HashSet<>();
 
@@ -77,5 +85,9 @@ public class AboxProcessor {
             }
         }
         return newAbox;
+    }
+
+    public Set<OWLAxiom> transform2ABox(Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox2) {
+        throw new AssertionError("not implemented yet!");
     }
 }
