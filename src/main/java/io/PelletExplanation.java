@@ -106,7 +106,7 @@ public class PelletExplanation {
     	return getEntailmentExplanations( classAssertion );
     }
     
-    public Set<Set<OWLAxiom>> getInstanceExplanations(OWLIndividual ind, OWLClassExpression cls, int maxExplanations) {
+    public Set<Set<OWLAxiom>>  getInstanceExplanations(OWLIndividual ind, OWLClassExpression cls, int maxExplanations) {
     	OWLClassAssertionAxiom classAssertion = factory.getOWLClassAssertionAxiom( cls, ind );
     	return getEntailmentExplanations( classAssertion, maxExplanations );
     }
