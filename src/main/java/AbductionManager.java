@@ -1,15 +1,15 @@
 import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
 import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
 import io.PelletExplanation;
-import tools.Pair;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
-
+import tools.Pair;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 public class AbductionManager {
     private OntologyLoader ontologyLoader;
@@ -71,25 +71,24 @@ public class AbductionManager {
 
         // Get all individuals from the ontology
         Set<OWLNamedIndividual> allIndividuals = ontologyLoader.getAllIndividual(ontology);
-        System.out.println("All individual avilable in the ontology: "+ allIndividuals);
+        System.out.println("All individual avilable in the ontology: " + allIndividuals);
 
         Set<Pair<OWLNamedIndividual, OWLNamedIndividual>> individualPairs = individualPairGenerator.generatePairs(allIndividuals);
         System.out.println("Individual pairs: " + individualPairs);
 
-       // Set<Pair<OWLNamedIndividual, OWLNamedIndividual>> formattedPairs = individualPairGenerator.formatPairs(individualPairs);
-        //System.out.println("Individual format pairs: " + formattedPairs);
-
         Set<OWLAxiom> originalAbox = ontology.getABoxAxioms(Imports.INCLUDED);
         System.out.println("All originalAbox contents of ontology: " + originalAbox);
-
 
         Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox2 = aboxProcessor.generateNewAbox2(originalAbox, allIndividuals);
         System.out.println("New ABox abox2  contents size: " + abox2.size());
         System.out.println("New ABox abox2  contents: " + abox2);
 
-
         Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox3 = aboxProcessor.generateNewAbox3(originalAbox, abox2, ontology.getOWLOntologyManager().getOWLDataFactory());
         System.out.println("New ABox3  contents size: " + abox3.size());
         System.out.println("New ABox3  contents: " + abox3);
+
+        Set<OWLAxiom> owlAxiomSet = aboxProcessor.transform2ABox(abox3, ontology.getOWLOntologyManager().getOWLDataFactory());
+        System.out.println("New owlAxiomSet  contents size: " + owlAxiomSet.size());
+        System.out.println("New owlAxiomSet  contents: " + owlAxiomSet);
     }
 }

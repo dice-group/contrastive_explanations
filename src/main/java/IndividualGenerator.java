@@ -1,7 +1,7 @@
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import tools.Pair;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import tools.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,21 +17,21 @@ public class IndividualGenerator {
     private OWLDataFactory factory;
 
     public OWLNamedIndividual getIndividualForPair(OWLNamedIndividual ind1, OWLNamedIndividual ind2) {
-            Pair<OWLNamedIndividual,OWLNamedIndividual> pair = new Pair(ind1,ind2);
-            if(pair2ind.containsKey(pair))
-                return pair2ind.get(pair);
-            else {
-                IRI name = IRI.create("_X"+counter);
-                counter++;
-                OWLNamedIndividual newInd = factory.getOWLNamedIndividual(name);
-                pair2ind.put(pair,newInd);
-                ind2pair.put(newInd,pair);
-                return newInd;
-            }
+        Pair<OWLNamedIndividual, OWLNamedIndividual> pair = new Pair(ind1, ind2);
+        if (pair2ind.containsKey(pair))
+            return pair2ind.get(pair);
+        else {
+            IRI name = IRI.create("_X" + counter);
+            counter++;
+            OWLNamedIndividual newInd = factory.getOWLNamedIndividual(name);
+            pair2ind.put(pair, newInd);
+            ind2pair.put(newInd, pair);
+            return newInd;
+        }
     }
 
-    public Pair<OWLNamedIndividual,OWLNamedIndividual> getPairForIndividual(OWLNamedIndividual ind) {
-        if(!ind2pair.containsKey(ind))
+    public Pair<OWLNamedIndividual, OWLNamedIndividual> getPairForIndividual(OWLNamedIndividual ind) {
+        if (!ind2pair.containsKey(ind))
             throw new IllegalArgumentException("Individual not known!");
         else
             return ind2pair.get(ind);
@@ -39,6 +39,7 @@ public class IndividualGenerator {
 
     /**
      * Create set of all pairs over individuals
+     *
      * @param individuals
      * @return
      */

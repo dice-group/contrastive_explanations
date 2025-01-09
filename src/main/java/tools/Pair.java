@@ -38,4 +38,16 @@ public class Pair<V,H> {
     public void setValue(H value) {
         this.value = value;
     }
+    /**
+     * <p><code>String</code> representation of this
+     * <code>Pair</code>.</p>
+     *
+     * <p>The default name/value delimiter '=' is always used.</p>
+     *
+     *  @return <code>String</code> representation of this <code>Pair</code>
+     */
+    @Override
+    public String toString() {
+        return key + "=" + value;
+    }
 }
