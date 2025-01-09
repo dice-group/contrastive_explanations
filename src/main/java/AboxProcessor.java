@@ -78,7 +78,7 @@ public class AboxProcessor {
         return newAbox;
     }
 
-    //Return  Set<OWLAxiom> as A(a)/r(a,x1),r(b,x2)all axioms A([a,x])/r([a,x1],[b,x2])
+    //Return  Set<OWLAxiom> as A(a)/r(a,x1),r(b,x2) for all existing axioms A([a,x])/r([a,x1],[b,x2])
     public Set<OWLAxiom> transform2ABox(Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox, OWLDataFactory dataFactory) {
         Set<OWLAxiom> axioms = new HashSet<>();
         for (Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>> element : abox) {
