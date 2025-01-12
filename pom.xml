@@ -38,6 +38,12 @@
         </dependency>
 
 
+	<dependency>
+	  <groupId>com.github.galigator.openllet</groupId>
+	  <artifactId>openllet-explanation</artifactId>
+	  <version>2.6.4</version>
+	</dependency>
+
 
         <!--<dependency>
         <groupId>net.sourceforge.owlapi</groupId>
