@@ -14,7 +14,7 @@ public class ContrastiveExplanationProblem {
         this.owlClassExpression = owlClassExpression;
         this.fact = fact;
         this.foil = foil;
-    }
+     }
 
     public OWLOntology getOntology() {
         return ontology;
