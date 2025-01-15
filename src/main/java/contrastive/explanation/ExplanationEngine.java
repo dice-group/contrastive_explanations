@@ -1,4 +1,4 @@
-package openllet.owlapi.explanation;
+package contrastive.explanation;
 
 import helper.ExplanationHelper;
 import org.semanticweb.owlapi.model.*;

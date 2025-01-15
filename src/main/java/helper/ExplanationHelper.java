@@ -1,6 +1,6 @@
 package helper;
 
-import openllet.owlapi.explanation.ContrastiveExplanationProblem;
+import contrastive.explanation.ContrastiveExplanationProblem;
 import org.semanticweb.owlapi.model.*;
 import java.util.Set;
 
