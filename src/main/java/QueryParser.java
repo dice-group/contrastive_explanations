@@ -1,4 +1,4 @@
-import com.clarkparsia.owlapiv3.OWL;
+import openllet.owlapi.OWL;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.List;

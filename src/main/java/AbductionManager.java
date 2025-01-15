@@ -1,6 +1,6 @@
-import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
-import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
-import io.PelletExplanation;
+import openllet.owlapi.OpenlletReasoner;
+import openllet.owlapi.OpenlletReasonerFactory;
+import openllet.owlapi.explanation.PelletExplanation;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import tools.Pair;
@@ -66,8 +66,15 @@ public class AbductionManager {
         // Load ontology and parse the query
         OWLOntology ontology = ontologyLoader.loadOntology(localOntologyPath);
         OWLClassExpression query = queryParser.parseQueryString(ns, queryStr);
-        PelletReasoner reasoner = PelletReasonerFactory.getInstance().createReasoner(ontology);
-        PelletExplanation expGen = new PelletExplanation(reasoner);
+        // Create the reasoner and load the ontology
+        final OpenlletReasoner reasoner = OpenlletReasonerFactory.getInstance().createReasoner(ontology);
+        // Create an clashExplanation generator
+        final PelletExplanation expGen = new PelletExplanation(reasoner);
+
+     /*   PelletReasoner reasoner = PelletReasonerFactory.getInstance().createReasoner(ontology);
+
+        PelletExplanation expGen = new PelletExplanation(reasoner);*/
+
 
         // Get all individuals from the ontology
         Set<OWLNamedIndividual> allIndividuals = ontologyLoader.getAllIndividual(ontology);

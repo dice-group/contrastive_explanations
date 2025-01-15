@@ -1,4 +1,4 @@
-import com.clarkparsia.pellet.owlapiv3.PelletReasoner;
+import openllet.owlapi.OpenlletReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.reasoner.NodeSet;
@@ -18,7 +18,7 @@ public class OntologyLoader {
 
 
 
-    public Set<OWLNamedIndividual> getIndividualsForQuery(PelletReasoner reasoner, OWLClassExpression query) {
+    public Set<OWLNamedIndividual> getIndividualsForQuery(OpenlletReasoner reasoner, OWLClassExpression query) {
         NodeSet<OWLNamedIndividual> instances = reasoner.getInstances(query, false);
         Set<OWLNamedIndividual> individuals = instances.getFlattened();
 

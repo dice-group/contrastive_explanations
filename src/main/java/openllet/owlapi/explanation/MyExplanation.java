@@ -7,8 +7,10 @@ import com.clarkparsia.owlapi.explanation.TransactionAwareSingleExpGen;
 
 import java.util.Collections;
 import java.util.Set;
+
 import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;
+import openllet.owlapi.PelletReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -35,6 +37,7 @@ public class MyExplanation
 
     private final OWLDataFactory _factory;
 
+
     private final MyHSTExplanationGenerator _expGen;
 
     private final SatisfiabilityConverter _converter;
@@ -53,7 +56,7 @@ public class MyExplanation
 	     useGlassBox, Collections.unmodifiableSet(relevantAxioms));
     }
 
-    public MyExplanation(final OpenlletReasoner reasoner,
+    public MyExplanation(final OpenlletReasoner  reasoner,
                          final Set<OWLLogicalAxiom> relevantAxioms)
     {
 	this(reasoner, true, relevantAxioms);
@@ -67,7 +70,7 @@ public class MyExplanation
 
     private static TransactionAwareSingleExpGen getSingleExp(final boolean useGlassBox, OpenlletReasoner reasoner) {
         return  useGlassBox
-                ? new GlassBoxExplanation(reasoner)
+                ? new GlassBoxExplanation((PelletReasoner) reasoner)
                 : new MyBlackBoxExplanation(reasoner.getRootOntology(), new OpenlletReasonerFactory(), reasoner);
     }
 
