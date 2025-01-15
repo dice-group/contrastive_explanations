@@ -43,6 +43,9 @@ public class ExplanationEngine {
     private Set<OWLAxiom> computeExplanation(OWLOntology ontology, OWLAxiom axiom,
                                              Set<OWLAxiom> fixedSet, Set<OWLAxiom> additionalSet) {
         // TODO: Implement explanation logic using reasoning APIs
+
+        // here would use the MyExplanation class
+
         return new HashSet<>();
     }
 }
