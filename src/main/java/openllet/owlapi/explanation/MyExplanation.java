@@ -43,28 +43,28 @@ public class MyExplanation
     private final SatisfiabilityConverter _converter;
 
     public MyExplanation(final OWLOntology ontology,
-                         final Set<OWLLogicalAxiom> relevantAxioms)
+                         final Set<OWLAxiom> relevantAxioms)
     {
 	this(ontology, true, relevantAxioms);
     }
 
     public MyExplanation(final OWLOntology ontology,
                          final boolean useGlassBox,
-                         final Set<OWLLogicalAxiom> relevantAxioms)
+                         final Set<OWLAxiom> relevantAxioms)
     {
 	this(new OpenlletReasonerFactory().createReasoner(ontology),
 	     useGlassBox, Collections.unmodifiableSet(relevantAxioms));
     }
 
     public MyExplanation(final OpenlletReasoner  reasoner,
-                         final Set<OWLLogicalAxiom> relevantAxioms)
+                         final Set<OWLAxiom> relevantAxioms)
     {
 	this(reasoner, true, relevantAxioms);
     }
 
     private MyExplanation(final OpenlletReasoner reasoner,
                           final boolean useGlassBox,
-                          final Set<OWLLogicalAxiom> relevantAxioms) {
+                          final Set<OWLAxiom> relevantAxioms) {
         this(getSingleExp(useGlassBox,reasoner), reasoner.getFactory(), relevantAxioms);
     }
 
@@ -78,7 +78,7 @@ public class MyExplanation
     public static  MyExplanation getBlackBoxExplanation(
             final OWLReasonerFactory factory,
             final OWLReasoner reasoner,
-            final Set<OWLLogicalAxiom> relevantAxioms){
+            final Set<OWLAxiom> relevantAxioms){
         OWLOntology ontology = reasoner.getRootOntology();
         OWLDataFactory dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
         TransactionAwareSingleExpGen singleExp = new MyBlackBoxExplanation(reasoner.getRootOntology(), factory, reasoner);
@@ -90,7 +90,7 @@ public class MyExplanation
     }
 
     private MyExplanation(final TransactionAwareSingleExpGen singleExp, OWLDataFactory factory,
-                          final Set<OWLLogicalAxiom> relevantAxioms) {
+                          final Set<OWLAxiom> relevantAxioms) {
 	// Get the _factory object
 	_factory = factory;
 

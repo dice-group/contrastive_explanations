@@ -1,3 +1,5 @@
+package nl.vu.kai.contrastive.helper;
+
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
@@ -8,20 +10,26 @@ import java.util.stream.Collectors;
 
 public class IndividualGenerator {
 
+    private static boolean DEBUG = true;
+
     // map pair to fresh individual
     private Map<Pair<OWLNamedIndividual, OWLNamedIndividual>, OWLNamedIndividual> pair2ind = new HashMap<>();
     private Map<OWLNamedIndividual, Pair<OWLNamedIndividual, OWLNamedIndividual>> ind2pair = new HashMap<>();
 
     private int counter = 0;
 
-    private OWLDataFactory factory;
+    private final OWLDataFactory factory;
+
+    public IndividualGenerator(OWLDataFactory factory) {
+        this.factory=factory;
+    }
 
     public OWLNamedIndividual getIndividualForPair(OWLNamedIndividual ind1, OWLNamedIndividual ind2) {
         Pair<OWLNamedIndividual, OWLNamedIndividual> pair = new Pair(ind1, ind2);
         if (pair2ind.containsKey(pair))
             return pair2ind.get(pair);
         else {
-            IRI name = IRI.create("_X" + counter);
+            IRI name = DEBUG ? IRI.create(ind1.getIRI().getFragment()+"_"+ind2.getIRI().getFragment()) : IRI.create("_X" + counter);
             counter++;
             OWLNamedIndividual newInd = factory.getOWLNamedIndividual(name);
             pair2ind.put(pair, newInd);

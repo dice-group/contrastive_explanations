@@ -33,14 +33,14 @@ public class MyHSTExplanationGenerator implements MultipleExplanationGenerator {
     private final TransactionAwareSingleExpGen singleExplanationGenerator;
     private ExplanationProgressMonitor progressMonitor = new SilentExplanationProgressMonitor();
 
-    private final Set<OWLLogicalAxiom> relevantAxioms;
+    private final Set<OWLAxiom> relevantAxioms;
 	
     /**
      * Instantiates a new hST explanation generator.
      *
      * @param singleExplanationGenerator explanation generator to use
      */
-    public MyHSTExplanationGenerator(Set<OWLLogicalAxiom> relevantAxioms,
+    public MyHSTExplanationGenerator(Set<OWLAxiom> relevantAxioms,
 				     TransactionAwareSingleExpGen singleExplanationGenerator) {
 	this.relevantAxioms = relevantAxioms;
 	

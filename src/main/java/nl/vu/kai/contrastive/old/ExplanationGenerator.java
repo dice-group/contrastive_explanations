@@ -1,3 +1,4 @@
+package nl.vu.kai.contrastive.old;
 
 import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;
@@ -5,7 +6,6 @@ import openllet.owlapi.PelletReasoner;
 import openllet.owlapi.PelletReasonerFactory;
 import openllet.owlapi.explanation.PelletExplanation;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
 
 import java.util.Set;
 

@@ -1,10 +1,11 @@
+package nl.vu.kai.contrastive.old;
+
 import openllet.owlapi.OpenlletReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 

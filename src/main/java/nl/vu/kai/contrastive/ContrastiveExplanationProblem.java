@@ -1,4 +1,4 @@
-package contrastive.explanation;
+package nl.vu.kai.contrastive;
 
 import org.semanticweb.owlapi.model.*;
 

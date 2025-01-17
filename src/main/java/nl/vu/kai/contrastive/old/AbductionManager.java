@@ -1,6 +1,12 @@
+package nl.vu.kai.contrastive.old;
+
+
+import nl.vu.kai.contrastive.ABoxProcessor;
+import nl.vu.kai.contrastive.helper.IndividualGenerator;
 import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;
 import openllet.owlapi.explanation.PelletExplanation;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import tools.Pair;
@@ -16,14 +22,15 @@ public class AbductionManager {
     private QueryParser queryParser;
     private ExplanationGenerator explanationGenerator;
     private IndividualGenerator individualPairGenerator;
-    private AboxProcessor aboxProcessor;
+    private ABoxProcessor aboxProcessor;
 
     public AbductionManager() {
         ontologyLoader = new OntologyLoader();
         queryParser = new QueryParser();
         explanationGenerator = new ExplanationGenerator();
-        individualPairGenerator = new IndividualGenerator();
-        aboxProcessor = new AboxProcessor();
+        OWLDataFactory fact = OWLManager.getOWLDataFactory();
+        individualPairGenerator = new IndividualGenerator(fact);
+        aboxProcessor = new ABoxProcessor(individualPairGenerator, fact);
     }
 
     // Main entry point of the application
@@ -50,7 +57,7 @@ public class AbductionManager {
         String individualWithExplan = lines[3].split("=")[1].trim();
         String individualWithoutExplan = lines[4].split("=")[1].trim();
 
-        // Create an instance of the AbductionManager class and run the explanation generation
+        // Create an instance of the nl.vu.kai.contrastive.old.AbductionManager class and run the explanation generation
         AbductionManager app = new AbductionManager();
         app.run(ns, localOntologyPath, queryStr, individualWithExplan, individualWithoutExplan);
 
@@ -85,8 +92,8 @@ public class AbductionManager {
 
         Set<OWLAxiom> originalAbox = ontology.getABoxAxioms(Imports.INCLUDED);
         System.out.println("All originalAbox contents of ontology: " + originalAbox);
-
-        Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox2 = aboxProcessor.generateNewAbox2(originalAbox, allIndividuals);
+/*
+        Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox2 = aboxProcessor.innerGenerateNewAbox2(originalAbox, allIndividuals);
         System.out.println("New ABox abox2  contents size: " + abox2.size());
         System.out.println("New ABox abox2  contents: " + abox2);
 
@@ -96,6 +103,6 @@ public class AbductionManager {
 
         Set<OWLAxiom> owlAxiomSet = aboxProcessor.transform2ABox(abox3, ontology.getOWLOntologyManager().getOWLDataFactory());
         System.out.println("New owlAxiomSet  contents size: " + owlAxiomSet.size());
-        System.out.println("New owlAxiomSet  contents: " + owlAxiomSet);
+        System.out.println("New owlAxiomSet  contents: " + owlAxiomSet);*/
     }
 }

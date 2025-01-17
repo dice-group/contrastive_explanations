@@ -1,6 +1,6 @@
-package helper;
+package nl.vu.kai.contrastive.helper;
 
-import contrastive.explanation.ContrastiveExplanationProblem;
+import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
 import org.semanticweb.owlapi.model.*;
 import java.util.Set;
 

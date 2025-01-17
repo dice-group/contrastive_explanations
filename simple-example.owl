@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#"
+     xml:base="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:untitled-ontology-247="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#child -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#child"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#owns -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#owns"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Female -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Female"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#GrandMother -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#GrandMother">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Female"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#child"/>
+                        <owl:someValuesFrom>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#child"/>
+                                <owl:someValuesFrom rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+                            </owl:Restriction>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#House -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#House"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Interesting -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Interesting">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#GrandMother"/>
+                    <rdf:Description rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Rich"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Male -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Male"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Rich -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Rich"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a">
+        <rdf:type rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Female"/>
+        <child rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a1"/>
+        <owns rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#h"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a1">
+        <child rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a2"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a2"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b">
+        <child rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b1"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b2"/>
+    
+
+
+    <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#h -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#h">
+        <rdf:type rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#House"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Restriction>
+        <owl:onProperty rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#owns"/>
+        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#House"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Rich"/>
+    </owl:Restriction>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

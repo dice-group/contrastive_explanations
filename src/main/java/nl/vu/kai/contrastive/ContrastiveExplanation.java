@@ -1,4 +1,4 @@
-package contrastive.explanation;
+package nl.vu.kai.contrastive;
 
 import org.semanticweb.owlapi.model.*;
 import java.util.*;
@@ -39,6 +39,13 @@ public class ContrastiveExplanation {
 
     public Set<OWLAxiom> getConflict() {
         return conflict;
+    }
+
+    public String toString(){
+        return "Common: "+common+"\n"+
+                "Different: "+different+"\n"+
+                "Fact mapping: "+factMapping+"\n"+
+                "Foil mapping: "+foilMapping;
     }
 }
 
