@@ -2,7 +2,7 @@ package nl.vu.kai.contrastive.test;
 
 import nl.vu.kai.contrastive.ContrastiveExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
-import nl.vu.kai.contrastive.ExplanationEngine;
+import nl.vu.kai.contrastive.ContrastiveExplanationGenerator;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 
@@ -27,7 +27,7 @@ public class Test {
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a")),
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b")));
 
-            ExplanationEngine explainer = new ExplanationEngine(factory);
+            ContrastiveExplanationGenerator explainer = new ContrastiveExplanationGenerator(factory);
 
             ContrastiveExplanation expl = explainer.computeExplanation(problem);
 
@@ -44,7 +44,7 @@ public class Test {
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a")),
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b")));
 
-            ExplanationEngine explainer = new ExplanationEngine(factory);
+            ContrastiveExplanationGenerator explainer = new ContrastiveExplanationGenerator(factory);
 
             ContrastiveExplanation expl = explainer.computeExplanation(problem);
 

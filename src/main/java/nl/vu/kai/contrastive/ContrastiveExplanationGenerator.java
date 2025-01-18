@@ -1,18 +1,16 @@
 package nl.vu.kai.contrastive;
 
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
+import nl.vu.kai.contrastive.helper.ABoxProcessor;
 import nl.vu.kai.contrastive.helper.ExplanationHelper;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
-import openllet.owlapi.OpenlletReasonerFactory;
-import openllet.owlapi.explanation.MyExplanation;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.model.*;
-import tools.Pair;
 
 import java.util.*;
 
 
-public class ExplanationEngine {
+public class ContrastiveExplanationGenerator {
 
     private final IndividualGenerator individualGenerator;
 
@@ -20,7 +18,7 @@ public class ExplanationEngine {
 
     private final OWLDataFactory factory;
 
-    public ExplanationEngine(OWLDataFactory factory) {
+    public ContrastiveExplanationGenerator(OWLDataFactory factory) {
         this.factory=factory;
         individualGenerator =new IndividualGenerator(factory);
         aboxProcessor=new ABoxProcessor(individualGenerator, factory);
@@ -29,7 +27,7 @@ public class ExplanationEngine {
     public ContrastiveExplanation computeExplanation(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
         // Step 1: Use ExplanationHelper to get relevant axioms and individuals
         Set<OWLAxiom> relevantAxioms = ExplanationHelper.getRelevantAxioms(problem);
-        Set<OWLNamedIndividual> relevantIndividuals = ExplanationHelper.getRelevantIndividuals(problem);
+        Set<OWLNamedIndividual> relevantIndividuals = ExplanationHelper.getRelevantIndividuals(problem, relevantAxioms);
 
         // Step 2: Compute ABox2 and ABox3 (stubbed for now)
         Set<OWLAxiom> abox2 = aboxProcessor.generateAbox2(relevantAxioms,relevantIndividuals);

@@ -1,6 +1,5 @@
-package nl.vu.kai.contrastive;
+package nl.vu.kai.contrastive.helper;
 
-import nl.vu.kai.contrastive.helper.IndividualGenerator;
 import org.semanticweb.owlapi.model.*;
 import tools.Pair;
 import java.util.*;

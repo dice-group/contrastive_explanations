@@ -1,7 +1,7 @@
 package nl.vu.kai.contrastive.old;
 
 
-import nl.vu.kai.contrastive.ABoxProcessor;
+import nl.vu.kai.contrastive.helper.ABoxProcessor;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
 import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;
@@ -13,7 +13,6 @@ import tools.Pair;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
