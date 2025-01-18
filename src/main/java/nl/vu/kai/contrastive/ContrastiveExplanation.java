@@ -1,7 +1,9 @@
 package nl.vu.kai.contrastive;
 
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ContrastiveExplanation {
     private final Set<OWLAxiom> common;
@@ -46,6 +48,19 @@ public class ContrastiveExplanation {
                 "Different: "+different+"\n"+
                 "Fact mapping: "+factMapping+"\n"+
                 "Foil mapping: "+foilMapping;
+    }
+
+    public String toString(ManchesterOWLSyntaxOWLObjectRendererImpl renderer) {
+        return "Common: "+common.stream().map(renderer::render).collect(Collectors.joining(", "))+"\n"+
+                "Different: "+different.stream().map(renderer::render).collect(Collectors.joining(", "))+"\n"+
+                "Fact mapping: "+factMapping.entrySet()
+                        .stream()
+                        .map(x -> renderer.render(x.getKey())+"->"+renderer.render(x.getValue()))
+                        .collect(Collectors.joining(", "))+"\n"+
+                "Foil mapping: "+foilMapping.entrySet()
+                        .stream()
+                        .map(x -> renderer.render(x.getKey())+"->"+renderer.render(x.getValue()))
+                        .collect(Collectors.joining(", "))+"\n";
     }
 }
 

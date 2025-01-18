@@ -1,5 +1,6 @@
 package nl.vu.kai.contrastive;
 
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
 
 public class ContrastiveExplanationProblem {
@@ -30,5 +31,14 @@ public class ContrastiveExplanationProblem {
 
     public OWLNamedIndividual getFoil() {
         return foil;
+    }
+
+    public String toString() {
+        return "ClassExpression: "+owlClassExpression+",   Fact: "+fact+",   Foil: "+foil;
+    }
+
+    public String toString(ManchesterOWLSyntaxOWLObjectRendererImpl renderer) {
+
+        return "ClassExpression: "+renderer.render(owlClassExpression)+",   Fact: "+renderer.render(fact)+",   Foil: "+renderer.render(foil);
     }
 }

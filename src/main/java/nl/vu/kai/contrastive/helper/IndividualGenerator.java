@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class IndividualGenerator {
 
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
 
     // map pair to fresh individual
     private Map<Pair<OWLNamedIndividual, OWLNamedIndividual>, OWLNamedIndividual> pair2ind = new HashMap<>();

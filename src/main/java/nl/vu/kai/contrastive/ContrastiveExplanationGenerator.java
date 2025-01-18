@@ -27,7 +27,7 @@ public class ContrastiveExplanationGenerator {
     public ContrastiveExplanation computeExplanation(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
         // Step 1: Use ExplanationHelper to get relevant axioms and individuals
         Set<OWLAxiom> relevantAxioms = ExplanationHelper.getRelevantAxioms(problem);
-        Set<OWLNamedIndividual> relevantIndividuals = ExplanationHelper.getRelevantIndividuals(problem, relevantAxioms);
+        Set<OWLNamedIndividual> relevantIndividuals = ExplanationHelper.getRelevantIndividuals(problem, relevantAxioms, factory);
 
         // Step 2: Compute ABox2 and ABox3 (stubbed for now)
         Set<OWLAxiom> abox2 = aboxProcessor.generateAbox2(relevantAxioms,relevantIndividuals);

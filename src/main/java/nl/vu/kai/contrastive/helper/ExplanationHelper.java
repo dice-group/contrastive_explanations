@@ -29,7 +29,7 @@ public class ExplanationHelper {
     }
 
     public static Set<OWLNamedIndividual> getRelevantIndividuals(
-            ContrastiveExplanationProblem problem, Set<OWLAxiom> axioms) {
+            ContrastiveExplanationProblem problem, Set<OWLAxiom> axioms, OWLDataFactory factory) {
 
         int distance = getMaxDistance(problem.getFact(), axioms);
 
@@ -39,6 +39,13 @@ public class ExplanationHelper {
                 .collect(Collectors.toSet());
 
         Set<OWLNamedIndividual> result = withinDistance(problem.getOntology(), problem.getFoil(), distance, signature);
+
+        long numIndividuals = signature.stream().filter(x -> x instanceof OWLNamedIndividual).count();
+
+        for(int i = 0; i< numIndividuals; i++){
+            OWLNamedIndividual fresh = factory.getOWLNamedIndividual(IRI.create("__C"+i));
+            result.add(fresh);
+        }
 
         return result;
     }
@@ -50,6 +57,7 @@ public class ExplanationHelper {
             Set<OWLEntity> signature) {
 
         Set<OWLNamedIndividual> collected = new HashSet<>();
+        collected.add(foil);
 
         Set<OWLAxiom> axioms = ontology.aboxAxioms(Imports.INCLUDED)
                 .filter(x -> x
