@@ -40,7 +40,8 @@ public class IndividualGenerator {
 
     public Pair<OWLNamedIndividual, OWLNamedIndividual> getPairForIndividual(OWLNamedIndividual ind) {
         if (!ind2pair.containsKey(ind))
-            throw new IllegalArgumentException("Individual not known!");
+            return new Pair<>(ind,ind);
+            //throw new IllegalArgumentException("Individual not known!");
         else
             return ind2pair.get(ind);
     }

@@ -145,6 +145,7 @@
     <!-- http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b">
+        <rdf:type rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#Female"/>
         <child rdf:resource="http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b1"/>
     </owl:NamedIndividual>
     

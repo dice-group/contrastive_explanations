@@ -88,7 +88,7 @@ public class ABoxProcessor {
                 OWLClassAssertionAxiom classAssertion = factory.getOWLClassAssertionAxiom(classExpression, ind2);
                 // Check if the original Abox contains the axiom and add the element to newAbox if true
                 if (originalABox.contains(classAssertion)) {
-                    abox3.add(classAssertion);
+                    abox3.add(ca);
                 }
             } else if (axiom instanceof OWLObjectPropertyAssertionAxiom){//firstElement instanceof OWLObjectProperty) {
                 OWLObjectPropertyAssertionAxiom pa = (OWLObjectPropertyAssertionAxiom) axiom;
@@ -104,7 +104,7 @@ public class ABoxProcessor {
                 OWLObjectPropertyAssertionAxiom propertyAssertion = factory.getOWLObjectPropertyAssertionAxiom(objectProperty, subject, object);
 
                 if (originalABox.contains(propertyAssertion)) {
-                   abox3.add(propertyAssertion);
+                   abox3.add(pa);
                 }
 
             }

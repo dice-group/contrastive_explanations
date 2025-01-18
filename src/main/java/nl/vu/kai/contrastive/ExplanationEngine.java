@@ -35,6 +35,10 @@ public class ExplanationEngine {
         Set<OWLAxiom> abox2 = aboxProcessor.generateAbox2(relevantAxioms,relevantIndividuals);
         Set<OWLAxiom> abox3 = aboxProcessor.generateABox3(relevantAxioms,abox2);
 
+        /*System.out.println("ABox 3:");
+        abox3.forEach(System.out::println);
+        System.out.println();*/
+
         OWLNamedIndividual combinedIndividual = individualGenerator.getIndividualForPair(problem.getFact(),problem.getFoil());
 
         // Step 3: Create "specialAxiom"
@@ -46,9 +50,9 @@ public class ExplanationEngine {
         manager.addAxioms(overApproximationOntology, problem.getOntology().getAxioms());
         manager.addAxioms(overApproximationOntology, abox2);
 
-        System.out.println("Overapproximation: ");
+        /*System.out.println("Overapproximation: ");
         overApproximationOntology.axioms().forEach(System.out::println);
-        System.out.println();
+        System.out.println();*/
 
         Set<OWLAxiom> flexibleSet = new HashSet<>();
         flexibleSet.addAll(abox2);
@@ -58,14 +62,14 @@ public class ExplanationEngine {
         Set<OWLAxiom> different = computeExplanation(overApproximationOntology, specialAxiom, flexibleSet);
 
         // Step 6: Update overApproximationOntology
-        manager.removeAxioms(overApproximationOntology, abox2);
+        manager.removeAxioms(overApproximationOntology, flexibleSet);
         manager.addAxioms(overApproximationOntology, abox3);
         manager.addAxioms(overApproximationOntology, different);
 
         flexibleSet = abox3;
 
         // Step 7: Compute second explanation
-        Set<OWLAxiom> common = computeExplanation(overApproximationOntology, specialAxiom, abox3);
+        Set<OWLAxiom> common = computeExplanation(overApproximationOntology, specialAxiom, flexibleSet);
 
         ContrastiveExplanation result = extractMappings(common,different);
 
@@ -104,6 +108,7 @@ public class ExplanationEngine {
         MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
         expl.setStaticPart(fixedSet);
         Set<OWLAxiom> result = expl.getExplanation(asUnsat(axiom));
+
 
         result.removeAll(fixedSet);
         return result;
