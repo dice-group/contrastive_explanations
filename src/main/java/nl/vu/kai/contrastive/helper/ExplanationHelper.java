@@ -25,6 +25,24 @@ public class ExplanationHelper {
 
         Set<OWLAxiom> result = moduleExtractor.extract(signature);
 
+        System.out.println("Selected "+result.size()+" relevant axioms.");
+
+        return result;
+    }
+
+    public static Set<OWLAxiom> getModule(ContrastiveExplanationProblem problem, Set<OWLNamedIndividual> individuals){
+        OWLOntology ontology = problem.getOntology();
+        Set<OWLEntity> signature = problem.getOwlClassExpression().signature().collect(Collectors.toSet());
+        signature.add(problem.getFact());
+        signature.addAll(individuals);
+
+        OntologySegmenter moduleExtractor =
+                new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+
+        Set<OWLAxiom> result = moduleExtractor.extract(signature);
+
+        System.out.println("Chose module of size "+result.size()+".");
+
         return result;
     }
 
@@ -46,6 +64,8 @@ public class ExplanationHelper {
             OWLNamedIndividual fresh = factory.getOWLNamedIndividual(IRI.create("__C"+i));
             result.add(fresh);
         }
+
+        System.out.println("Selected "+result.size()+" relevant individuals.");
 
         return result;
     }

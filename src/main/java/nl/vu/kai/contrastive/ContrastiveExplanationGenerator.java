@@ -1,11 +1,16 @@
 package nl.vu.kai.contrastive;
 
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
+import nl.vu.kai.contrastive.experiments.Experimenter;
 import nl.vu.kai.contrastive.helper.ABoxProcessor;
 import nl.vu.kai.contrastive.helper.ExplanationHelper;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
+//import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.HermiT.ReasonerFactory;
+//import org.semanticweb.elk.owlapi.ElkReasonerFactory;
+import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.util.*;
 
@@ -28,6 +33,7 @@ public class ContrastiveExplanationGenerator {
         // Step 1: Use ExplanationHelper to get relevant axioms and individuals
         Set<OWLAxiom> relevantAxioms = ExplanationHelper.getRelevantAxioms(problem);
         Set<OWLNamedIndividual> relevantIndividuals = ExplanationHelper.getRelevantIndividuals(problem, relevantAxioms, factory);
+        Set<OWLAxiom> module = ExplanationHelper.getModule(problem, relevantIndividuals);
 
         // Step 2: Compute ABox2 and ABox3 (stubbed for now)
         Set<OWLAxiom> abox2 = aboxProcessor.generateAbox2(relevantAxioms,relevantIndividuals);
@@ -36,6 +42,7 @@ public class ContrastiveExplanationGenerator {
         /*System.out.println("ABox 3:");
         abox3.forEach(System.out::println);
         System.out.println();*/
+        System.out.println("Generated ABoxes");
 
         OWLNamedIndividual combinedIndividual = individualGenerator.getIndividualForPair(problem.getFact(),problem.getFoil());
 
@@ -45,7 +52,7 @@ public class ContrastiveExplanationGenerator {
         // Step 4: Construct overApproximationOntology
         OWLOntologyManager manager = problem.getOntology().getOWLOntologyManager();
         OWLOntology overApproximationOntology = manager.createOntology();
-        manager.addAxioms(overApproximationOntology, problem.getOntology().getAxioms());
+        manager.addAxioms(overApproximationOntology, module);//problem.getOntology().getAxioms());
         manager.addAxioms(overApproximationOntology, abox2);
 
         /*System.out.println("Overapproximation: ");
@@ -59,6 +66,8 @@ public class ContrastiveExplanationGenerator {
         // Step 5: Compute first explanation
         Set<OWLAxiom> different = computeExplanation(overApproximationOntology, specialAxiom, flexibleSet);
 
+        System.out.println("Computed first justification");
+
         // Step 6: Update overApproximationOntology
         manager.removeAxioms(overApproximationOntology, flexibleSet);
         manager.addAxioms(overApproximationOntology, abox3);
@@ -68,6 +77,8 @@ public class ContrastiveExplanationGenerator {
 
         // Step 7: Compute second explanation
         Set<OWLAxiom> common = computeExplanation(overApproximationOntology, specialAxiom, flexibleSet);
+
+        System.out.println("Computed second justification");
 
         ContrastiveExplanation result = extractMappings(common,different);
 
@@ -101,7 +112,10 @@ public class ContrastiveExplanationGenerator {
         //MyExplanation expl = new MyExplanation(ontology,fixedSet);
         //Set<OWLAxiom> result = expl.getEntailmentExplanation(axiom);
 
-        ReasonerFactory reasonerFactory = new ReasonerFactory();
+        //ElkReasonerFactory reasonerFactory = new ElkReasonerFactory();
+        OWLReasonerFactory reasonerFactory = Experimenter.reasoner== Experimenter.ReasonerChoice.ELK ?
+                new ElkReasonerFactory() :
+                new ReasonerFactory();
 
         MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
         expl.setStaticPart(fixedSet);
