@@ -1,8 +1,9 @@
 package nl.vu.kai.contrastive;
 
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
+import nl.vu.kai.contrastive.conflicts.ConflictHandler;
 import nl.vu.kai.contrastive.experiments.ExperimenterWithClasses;
-import nl.vu.kai.contrastive.helper.ExplanationHelper;
+import nl.vu.kai.contrastive.helper.RelevantScopeFinder;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
 //import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.HermiT.ReasonerFactory;
@@ -29,10 +30,15 @@ public class ContrastiveExplanationGenerator {
     }
 
     public ContrastiveExplanation computeExplanation(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
+
+        // Step 0: make TBox "conflict-save"
+        ConflictHandler conflictHandler = new ConflictHandler(problem.getOntology(), factory);
+        conflictHandler.makeTBoxConflictSave();
+
         // Step 1: Use ExplanationHelper to get relevant axioms and individuals
-        Set<OWLAxiom> relevantAxioms = ExplanationHelper.getRelevantAxioms(problem);
-        Set<OWLNamedIndividual> relevantIndividuals = ExplanationHelper.getRelevantIndividuals(problem, relevantAxioms, factory);
-        Set<OWLAxiom> module = ExplanationHelper.getModule(problem, relevantIndividuals);
+        Set<OWLAxiom> relevantAxioms = RelevantScopeFinder.getRelevantAxioms(problem);
+        Set<OWLNamedIndividual> relevantIndividuals = RelevantScopeFinder.getRelevantIndividuals(problem, relevantAxioms, factory);
+        Set<OWLAxiom> module = RelevantScopeFinder.getModule(problem, relevantIndividuals);
 
         // Step 2: Compute ABox2 and ABox3 (stubbed for now)
         Set<OWLAxiom> abox2 = aboxProcessor.generateAbox2(relevantAxioms,relevantIndividuals);
@@ -89,7 +95,11 @@ public class ContrastiveExplanationGenerator {
 
         System.out.println("Computed second justification");
 
+        // Step 8: extract mappings and conflict
+
         ContrastiveExplanation result = extractMappings(common,different);
+        result = conflictHandler.addConflict(result);
+        conflictHandler.restoreOntology();
 
         // Step 8: Return ContrastiveExplanation
         return result;

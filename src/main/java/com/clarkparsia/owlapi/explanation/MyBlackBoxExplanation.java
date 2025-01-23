@@ -24,11 +24,13 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
 import org.semanticweb.HermiT.Configuration;
 import org.semanticweb.HermiT.ReasonerFactory;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.OWLAnnotationAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -41,6 +43,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLRuntimeException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.reasoner.InconsistentOntologyException;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
@@ -131,6 +134,14 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
         man = ontology.getOWLOntologyManager();
     }
 
+    private boolean isSatisfiableSimple(OWLClassExpression exp, OWLReasoner reasoner) {
+        try {
+            return reasoner.isSatisfiable(exp);
+        } catch(InconsistentOntologyException ex){
+            return false;
+        }
+    }
+
     /**
      * A utility method. Adds axioms from one set to another set upto a specified limit. Annotation
      * axioms are stripped out
@@ -181,7 +192,7 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
         try {
             //System.out.println("I am here!");
             satTestCount++;
-            if (isFirstExplanation() && getReasoner().isSatisfiable(unsatClass)) {
+            if (isFirstExplanation() && isSatisfiableSimple(unsatClass, getReasoner())) { //getReasoner().isSatisfiable(unsatClass)) {
                 //System.out.println("first explanation and satisfiable");
                 return staticPart; //Collections.emptySet();
             }
@@ -389,7 +400,7 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
                 return true;
             }
             satTestCount++;
-            boolean sat = reasoner.isSatisfiable(unsatClass);
+            boolean sat = isSatisfiableSimple(unsatClass,reasoner);//reasoner.isSatisfiable(unsatClass);
             reasoner.dispose();
             return sat;
         } catch (IllegalArgumentException e) {
@@ -415,6 +426,8 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
         // Perform the initial expansion - this will cause
         // the debugging axioms set to be expanded to the
         // defining axioms for the class being debugged
+
+
         resetSatisfiabilityTestCounter();
         debuggingAxioms.addAll(staticPart); // ensure the static part is always in
         if (unsatClass.isAnonymous()) {
@@ -429,6 +442,9 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
             //System.out.println("Expand with defining");
             expandWithDefiningAxioms((OWLClass) unsatClass, expansionLimit);
         }
+
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+
         //System.out.println("now we have: "+debuggingAxioms);
         LOGGER.info("Initial axiom count: {}", Integer.valueOf(debuggingAxioms.size()));
         int totalAdded = 0;
@@ -437,7 +453,7 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
             LOGGER.info("Expanding axioms (expansion {})", Integer.valueOf(expansionCount));
             expansionCount++;
             int numberAdded = expandAxioms();
-            //System.out.println("after expandAxioms: "+debuggingAxioms);
+            //System.out.println("after expandAxioms: "+debuggingAxioms.stream().map(renderer::render).collect(Collectors.joining("\n  ")));
             totalAdded += numberAdded;
             LOGGER.info("    ... expanded by {}", Integer.valueOf(numberAdded));
             if (numberAdded == 0) {

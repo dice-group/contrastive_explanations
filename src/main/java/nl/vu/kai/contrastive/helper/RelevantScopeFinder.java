@@ -3,7 +3,6 @@ package nl.vu.kai.contrastive.helper;
 import de.tu_dresden.inf.lat.evee.proofs.data.exceptions.ProofGenerationFailedException;
 import de.tu_dresden.inf.lat.evee.proofs.interfaces.IInference;
 import de.tu_dresden.inf.lat.evee.proofs.interfaces.IProof;
-import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.modularity.OntologySegmenter;
@@ -19,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import de.tu_dresden.inf.lat.evee.proofGenerators.ELKProofGenerator;
 
-public class ExplanationHelper {
+public class RelevantScopeFinder {
 
     private static final boolean USE_EL=true;
 
