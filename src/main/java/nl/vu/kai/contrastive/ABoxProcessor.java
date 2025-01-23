@@ -1,5 +1,6 @@
-package nl.vu.kai.contrastive.helper;
+package nl.vu.kai.contrastive;
 
+import nl.vu.kai.contrastive.helper.IndividualGenerator;
 import org.semanticweb.owlapi.model.*;
 import tools.Pair;
 import java.util.*;
@@ -85,8 +86,10 @@ public class ABoxProcessor {
                         .getPairForIndividual((OWLNamedIndividual) ca.getIndividual())
                         .getValue();
                 OWLClassAssertionAxiom classAssertion = factory.getOWLClassAssertionAxiom(classExpression, ind2);
+                //System.out.println("Candidate for ABox3: "+classAssertion);
                 // Check if the original Abox contains the axiom and add the element to newAbox if true
                 if (originalABox.contains(classAssertion)) {
+                    //System.out.println(" -- adding that fucker");
                     abox3.add(ca);
                 }
             } else if (axiom instanceof OWLObjectPropertyAssertionAxiom){//firstElement instanceof OWLObjectProperty) {

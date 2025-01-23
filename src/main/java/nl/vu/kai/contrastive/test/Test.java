@@ -4,11 +4,13 @@ import nl.vu.kai.contrastive.ContrastiveExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
 import nl.vu.kai.contrastive.ContrastiveExplanationGenerator;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.stream.Collectors;
 
 public class Test {
     public static void main(String[] args) throws FileNotFoundException, OWLOntologyCreationException {
@@ -16,7 +18,16 @@ public class Test {
 
         OWLDataFactory factory = man.getOWLDataFactory();
 
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+
         OWLOntology ontology = man.loadOntologyFromOntologyDocument(new FileInputStream(new File("./simple-example.owl")));
+
+        System.out.println("This is the ontology: ");
+        System.out.println("-------");
+        System.out.println(ontology.axioms()
+                .map(renderer::render)
+                .collect(Collectors.joining("\n")));
+        System.out.println("-------");
 
         {
             System.out.println("Explaining why 'a' is interesting but 'b' is not ");
@@ -31,7 +42,7 @@ public class Test {
 
             ContrastiveExplanation expl = explainer.computeExplanation(problem);
 
-            System.out.println(expl);
+            System.out.println(expl.toString(renderer));
         }
         System.out.println();
 
@@ -48,7 +59,7 @@ public class Test {
 
             ContrastiveExplanation expl = explainer.computeExplanation(problem);
 
-            System.out.println(expl);
+            System.out.println(expl.toString(renderer));
         }
         System.out.println();
     }

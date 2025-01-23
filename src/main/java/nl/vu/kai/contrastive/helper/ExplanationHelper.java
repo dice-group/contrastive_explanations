@@ -1,5 +1,10 @@
 package nl.vu.kai.contrastive.helper;
 
+import de.tu_dresden.inf.lat.evee.proofs.data.exceptions.ProofGenerationFailedException;
+import de.tu_dresden.inf.lat.evee.proofs.interfaces.IInference;
+import de.tu_dresden.inf.lat.evee.proofs.interfaces.IProof;
+import org.semanticweb.elk.owlapi.ElkReasonerFactory;
+import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.modularity.OntologySegmenter;
 import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
@@ -12,22 +17,60 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import de.tu_dresden.inf.lat.evee.proofGenerators.ELKProofGenerator;
 
 public class ExplanationHelper {
 
+    private static final boolean USE_EL=true;
+
+    private static final boolean PRINT_DETAILS=false;
+
     public static Set<OWLAxiom> getRelevantAxioms(ContrastiveExplanationProblem problem) {
-        OWLOntology ontology = problem.getOntology();
-        Set<OWLEntity> signature = problem.getOwlClassExpression().signature().collect(Collectors.toSet());
-        signature.add(problem.getFact());
+        if(USE_EL){
+            ELKProofGenerator proofGenerator = new ELKProofGenerator();
+            proofGenerator.setOntology(problem.getOntology());
+            OWLDataFactory factory = problem.getOntology()
+                    .getOWLOntologyManager()
+                    .getOWLDataFactory();
+            OWLAxiom entailment = factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFact());
+            try {
+                IProof<OWLAxiom> derivationStructure = proofGenerator.getProof(entailment);
 
-        OntologySegmenter moduleExtractor =
-                new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+                Set<OWLAxiom> result= derivationStructure.getInferences()
+                        .stream()
+                        .filter(x -> x.getPremises().isEmpty())
+                        .map(IInference::getConclusion)
+                        .filter(x -> x.isOfType(AxiomType.ABoxAxiomTypes))
+                        .filter(problem.getOntology()::containsAxiom)
+                        .collect(Collectors.toSet());
 
-        Set<OWLAxiom> result = moduleExtractor.extract(signature);
+                System.out.println("Selected " + result.size() + " relevant axioms.");
+                if(PRINT_DETAILS) {
+                    ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+                    System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
+                }
+                return result;
+            } catch (ProofGenerationFailedException e) {
+                throw new RuntimeException("Proof generation failed: "+e);
+            }
+        } else {
+            OWLOntology ontology = problem.getOntology();
+            Set<OWLEntity> signature = problem.getOwlClassExpression().signature().collect(Collectors.toSet());
+            signature.add(problem.getFact());
 
-        System.out.println("Selected "+result.size()+" relevant axioms.");
+            OntologySegmenter moduleExtractor =
+                    new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
 
-        return result;
+            Set<OWLAxiom> result = moduleExtractor.extract(signature);
+
+            System.out.println("Selected " + result.size() + " relevant axioms.");
+            if(PRINT_DETAILS) {
+                ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+                System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
+            }
+
+            return result;
+        }
     }
 
     public static Set<OWLAxiom> getModule(ContrastiveExplanationProblem problem, Set<OWLNamedIndividual> individuals){
@@ -42,6 +85,14 @@ public class ExplanationHelper {
         Set<OWLAxiom> result = moduleExtractor.extract(signature);
 
         System.out.println("Chose module of size "+result.size()+".");
+        if(PRINT_DETAILS){
+            System.out.println("The module contains: ");
+            ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+            result.stream()
+                    .map(renderer::render)
+                    .map(x -> " - "+x)
+                    .forEach(System.out::println);
+        }
 
         return result;
     }
@@ -66,6 +117,10 @@ public class ExplanationHelper {
         }
 
         System.out.println("Selected "+result.size()+" relevant individuals.");
+        if(PRINT_DETAILS) {
+            ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+            System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
+        }
 
         return result;
     }
@@ -82,6 +137,7 @@ public class ExplanationHelper {
         Set<OWLAxiom> axioms = ontology.aboxAxioms(Imports.INCLUDED)
                 .filter(x -> x
                         .signature()
+                        .filter(y -> !y.isIndividual())
                         .allMatch(signature::contains))
                 .collect(Collectors.toSet());
         Map<OWLIndividual, Integer> distances = new HashMap<>();
@@ -98,9 +154,10 @@ public class ExplanationHelper {
                             collected.add(pa.getObject().asOWLNamedIndividual());
                         int dist = distances.get(pa.getSubject())+1;
                         if(!distances.containsKey(pa.getObject()) || distances.get(pa.getObject())>dist) {
-                            change = true;
-                            if (pa.getObject().isNamed())
+                            if (pa.getObject().isNamed()) {
                                 distances.put(pa.getObject(), dist);
+                                change = true;
+                            }
                         }
                     }
                     if(distances.containsKey(pa.getObject()) && distances.get(pa.getObject())<maxDistance){
@@ -108,9 +165,11 @@ public class ExplanationHelper {
                             collected.add(pa.getSubject().asOWLNamedIndividual());
                         int dist = distances.get(pa.getObject())+1;
                         if(!distances.containsKey(pa.getSubject()) || distances.get(pa.getSubject())>dist) {
-                            change = true;
-                            if (pa.getSubject().isNamed())
+                            if (pa.getSubject().isNamed()) {
                                 distances.put(pa.getSubject(), dist);
+
+                                change = true;
+                            }
                         }
                     }
                 }

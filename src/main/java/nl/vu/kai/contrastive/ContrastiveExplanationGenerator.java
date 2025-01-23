@@ -1,8 +1,7 @@
 package nl.vu.kai.contrastive;
 
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
-import nl.vu.kai.contrastive.experiments.Experimenter;
-import nl.vu.kai.contrastive.helper.ABoxProcessor;
+import nl.vu.kai.contrastive.experiments.ExperimenterWithClasses;
 import nl.vu.kai.contrastive.helper.ExplanationHelper;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
 //import org.semanticweb.HermiT.ReasonerFactory;
@@ -37,7 +36,10 @@ public class ContrastiveExplanationGenerator {
 
         // Step 2: Compute ABox2 and ABox3 (stubbed for now)
         Set<OWLAxiom> abox2 = aboxProcessor.generateAbox2(relevantAxioms,relevantIndividuals);
-        Set<OWLAxiom> abox3 = aboxProcessor.generateABox3(relevantAxioms,abox2);
+        Set<OWLAxiom> abox3 = aboxProcessor.generateABox3(module,abox2);
+
+        System.out.println("Size ABox2: "+abox2.size());
+        System.out.println("Size ABox3: "+abox3.size());
 
         /*System.out.println("ABox 3:");
         abox3.forEach(System.out::println);
@@ -63,6 +65,9 @@ public class ContrastiveExplanationGenerator {
         flexibleSet.addAll(abox2);
         flexibleSet.removeAll(abox3);
 
+        System.out.println("OverApproximated ontology size: "+overApproximationOntology.getAxiomCount());
+        System.out.println("Flexible: "+flexibleSet.size());
+
         // Step 5: Compute first explanation
         Set<OWLAxiom> different = computeExplanation(overApproximationOntology, specialAxiom, flexibleSet);
 
@@ -74,6 +79,10 @@ public class ContrastiveExplanationGenerator {
         manager.addAxioms(overApproximationOntology, different);
 
         flexibleSet = abox3;
+
+
+        System.out.println("OverApproximated ontology size: "+overApproximationOntology.getAxiomCount());
+        System.out.println("Flexible: "+flexibleSet.size());
 
         // Step 7: Compute second explanation
         Set<OWLAxiom> common = computeExplanation(overApproximationOntology, specialAxiom, flexibleSet);
@@ -113,7 +122,7 @@ public class ContrastiveExplanationGenerator {
         //Set<OWLAxiom> result = expl.getEntailmentExplanation(axiom);
 
         //ElkReasonerFactory reasonerFactory = new ElkReasonerFactory();
-        OWLReasonerFactory reasonerFactory = Experimenter.reasoner== Experimenter.ReasonerChoice.ELK ?
+        OWLReasonerFactory reasonerFactory = ExperimenterWithClasses.reasoner== ExperimenterWithClasses.ReasonerChoice.ELK ?
                 new ElkReasonerFactory() :
                 new ReasonerFactory();
 

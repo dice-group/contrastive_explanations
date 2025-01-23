@@ -1,7 +1,7 @@
 package nl.vu.kai.contrastive.old;
 
 
-import nl.vu.kai.contrastive.helper.ABoxProcessor;
+import nl.vu.kai.contrastive.ABoxProcessor;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
 import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;

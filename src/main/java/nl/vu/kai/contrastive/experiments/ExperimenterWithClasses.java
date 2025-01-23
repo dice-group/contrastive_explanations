@@ -4,22 +4,23 @@ import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanationGenerator;
 import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
+import nl.vu.kai.contrastive.experiments.helpers.FoilCandidateFinder;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
-import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxObjectRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import tools.Util;
 
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Experimenter {
+public class ExperimenterWithClasses {
 
     public static int MAX_ONT_SIZE=10000;
 
@@ -30,7 +31,7 @@ public class Experimenter {
     public static void main(String[] args) throws OWLOntologyCreationException {
         if(args.length!=2){
             System.out.println("Usage: ");
-            System.out.println(Experimenter.class+ " ONTOLOGY NUMBER_OF_REPITITIONS");
+            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY NUMBER_OF_REPITITIONS");
             System.exit(0);
         }
 
@@ -68,7 +69,6 @@ public class Experimenter {
         OWLReasoner reasoner = reasonerFactory.createReasoner(ont);
         reasoner.precomputeInferences(InferenceType.CLASS_ASSERTIONS);
 
-        System.out.println("Finding contrastive explanation problems...");
         System.out.println("Finding contrastive explanation problems...");
 
         Set<OWLAxiom> notABox = new HashSet<>(ont.getAxioms(Imports.INCLUDED));
@@ -129,12 +129,19 @@ public class Experimenter {
 
         System.out.println("STATS: common-size difference-size num-fresh-individuals computation-time");
 
+        FoilCandidateFinder foilCandidateFinder =
+                new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
+
         for(int i = 0; i<maxIterations; i++){
             OWLClass cl = candidates.get(random.nextInt(candidates.size()));
             List<OWLNamedIndividual> factC = facts.get(cl);
             List<OWLNamedIndividual> foilC = foils.get(cl);
             OWLNamedIndividual fact = factC.get(random.nextInt(factC.size()));
-            OWLNamedIndividual foil = foilC.get(random.nextInt(foilC.size()));
+            OWLNamedIndividual foil = Util.randomItem(
+                    foilCandidateFinder.foilCandidates(fact)
+                            .filter(foilC::contains),
+                    random);
+                    //foilC.get(random.nextInt(foilC.size()));
             ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont,cl,fact,foil);
             System.out.println("CEP: "+cep.toString(renderer));
             long startTime = System.currentTimeMillis();
