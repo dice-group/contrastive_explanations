@@ -110,17 +110,17 @@ public class ExperimenterWithClassExpressions {
             long duration = System.currentTimeMillis()-startTime;
             int commonSize = ce.getCommon().size();
             int differenceSize = ce.getDifferent().size();
+            int conflictSize = ce.getConflict().size();
             long freshIndividuals = ce.getFoilMapping()
                     .values()
                     .stream()
                     .filter(x -> !allIndividuals.contains(x))
                     .count();
-            System.out.println("STATS: "+commonSize+" "+differenceSize+" "+freshIndividuals+" "+duration);
+            System.out.println("STATS: "+commonSize+" "+differenceSize+" "+conflictSize+" "+freshIndividuals+" "+duration);
         }
 
 
     }
-
 
     private static OWLClassExpression asUnsat(OWLAxiom axiom, OWLDataFactory factory) {
         if(axiom instanceof OWLClassAssertionAxiom) {

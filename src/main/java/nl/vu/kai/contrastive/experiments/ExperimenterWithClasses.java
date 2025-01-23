@@ -127,7 +127,7 @@ public class ExperimenterWithClasses {
             System.exit(0);
         }
 
-        System.out.println("STATS: common-size difference-size num-fresh-individuals computation-time");
+        System.out.println("STATS: common-size difference-size conflict-size num-fresh-individuals computation-time");
 
         FoilCandidateFinder foilCandidateFinder =
                 new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
@@ -151,12 +151,13 @@ public class ExperimenterWithClasses {
             long duration = System.currentTimeMillis()-startTime;
             int commonSize = ce.getCommon().size();
             int differenceSize = ce.getDifferent().size();
+            int conflictSize = ce.getConflict().size();
             long freshIndividuals = ce.getFoilMapping()
                     .values()
                     .stream()
                     .filter(x -> !allIndividuals.contains(x))
                     .count();
-            System.out.println("STATS: "+commonSize+" "+differenceSize+" "+freshIndividuals+" "+duration);
+            System.out.println("STATS: "+commonSize+" "+differenceSize+" "+" "+conflictSize+" "+freshIndividuals+" "+duration);
         }
 
 

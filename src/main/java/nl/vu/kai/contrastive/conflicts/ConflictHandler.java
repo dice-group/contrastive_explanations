@@ -47,11 +47,11 @@ public class ConflictHandler {
         ontology.removeAxioms(removedAxioms);
 
         System.out.println("Removed "+removedAxioms.size()+" TBox axioms to avoid conflicts");
-        //System.out.println("Those are: ");
+        /*System.out.println("Those are: ");
         removedAxioms.stream()
                 .map(OWLAxiom::toString)
                 .forEach(System.out::println);
-        System.out.println();
+        System.out.println();*/
     }
 
     public void restoreOntology(){
