@@ -47,23 +47,12 @@ public class AbductionManager {
 
     public void run(String ns, String localOntologyPath, String queryStr, String individualWithExplan, String individualWithoutExplan) throws OWLOntologyCreationException, OWLException, IOException {
         PelletExplanation.setup();
-        /*OWLOntologyManager owlmanager = OWLManager.createOWLOntologyManager();
-        File file = new File(localOntologyPath);
-        OWLOntology ontology = owlmanager.loadOntologyFromOntologyDocument(file);
-        PelletReasoner reasoner = PelletReasonerFactory.getInstance().createReasoner(ontology);
-        PelletExplanation expGen = new PelletExplanation(reasoner);*/
-
         OntologyLoader ontologyLoader = new OntologyLoader();
         QueryParser queryParser = new QueryParser();
         AbductionReasoning abductionReasoning = new AbductionReasoning();
         OWLOntology ontology = ontologyLoader.loadOntology(localOntologyPath);
         PelletReasoner reasoner = ontologyLoader.getReasoner(ontology);
         PelletExplanation expGen = new PelletExplanation(reasoner);
-
-        /*// Retrieve individuals from ontology
-        OWLNamedIndividual owlIndividualWithExplan = getIndividualByName(ontology, individualWithExplan);
-        OWLNamedIndividual owlIndividualWithoutExplan = getIndividualByName(ontology, individualWithoutExplan);
-        OWLClassExpression query = parseQueryString(ns, queryStr);*/
 
         // Retrieve individuals from ontology
         OWLNamedIndividual owlIndividualWithExplan = ontologyLoader.getIndividualByName(ontology, individualWithExplan);
