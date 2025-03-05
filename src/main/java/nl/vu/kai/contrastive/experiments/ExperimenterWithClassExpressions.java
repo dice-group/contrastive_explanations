@@ -78,7 +78,7 @@ public class ExperimenterWithClassExpressions {
 
         System.out.println("Finding contrastive explanation problems...");
 
-        Random random = new Random();
+        Random random = new Random(0);
 
         FoilCandidateFinder foilCandidateFinder = new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
         foilCandidateFinder.setReasoner(reasoner);
