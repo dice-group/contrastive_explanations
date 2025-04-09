@@ -72,6 +72,25 @@ public class RelevantScopeFinder {
         }
     }
 
+    public static Set<OWLAxiom> getModule(OWLOntology ontology, Set<OWLEntity> signature){
+
+        OntologySegmenter moduleExtractor =
+                new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+
+        Set<OWLAxiom> result = moduleExtractor.extract(signature);
+
+        System.out.println("Chose module of size "+result.size()+".");
+        if(PRINT_DETAILS){
+            System.out.println("The module contains: ");
+            ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+            result.stream()
+                    .map(renderer::render)
+                    .map(x -> " - "+x)
+                    .forEach(System.out::println);
+        }
+
+        return result;
+    }
     public static Set<OWLAxiom> getModule(ContrastiveExplanationProblem problem, Set<OWLNamedIndividual> individuals){
         OWLOntology ontology = problem.getOntology();
         Set<OWLEntity> signature = problem.getOwlClassExpression().signature().collect(Collectors.toSet());
