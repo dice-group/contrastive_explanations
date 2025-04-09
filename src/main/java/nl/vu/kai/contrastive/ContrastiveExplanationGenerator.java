@@ -35,6 +35,10 @@ public class ContrastiveExplanationGenerator {
         aboxProcessor=new ABoxProcessor(individualGenerator, factory);
     }
 
+    public void useConflictMinimality(boolean conflictMinimal) {
+        this.conflictOptimization=conflictMinimal;
+    }
+
     private class Ontologies {
         Set<OWLAxiom> module,abox2,abox3;
         OWLOntology overApproximationOntology;
@@ -68,13 +72,13 @@ public class ContrastiveExplanationGenerator {
             OWLOntology foilVersion = instantiateFoils(ontologies.abox2, manager);
             foilVersion.addAxioms(ontologies.module);
 
-            ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+            /*ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
             System.out.println("This is the foil ontology: ");
             System.out.println("-------");
             System.out.println(foilVersion.axioms()
                     .map(renderer::render)
                     .collect(Collectors.joining("\n")));
-            System.out.println("-------");
+            System.out.println("-------");*/
 
             //System.out.println(reasonerFactory.createReasoner(foilVersion).isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil())));
 
@@ -140,14 +144,14 @@ public class ContrastiveExplanationGenerator {
         OWLReasoner reasoner = reasonerFactory.createReasoner(foilOntology);
         if(reasoner.isConsistent()){
             if(!reasoner.isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil()))) {
-                System.out.println("Lost entailment! Backtracking...");
+                //System.out.println("Lost entailment! Backtracking...");
                 return false; // need to backtrack
             } else
                 return true;
         } else {
             MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
             Set<OWLAxiom> exp = expl.getExplanation(factory.getOWLThing());
-            System.out.println("Explanatin: "+exp.stream().map(Object::toString).collect(Collectors.joining(", ")));
+            //System.out.println("Explanation: "+exp.stream().map(Object::toString).collect(Collectors.joining(", ")));
             Set<OWLAxiom> fromOnt = new HashSet<>(exp);
             fromOnt.retainAll(ontologies.module);
             Set<OWLAxiom> fresh = new HashSet<>(exp);
@@ -155,11 +159,11 @@ public class ContrastiveExplanationGenerator {
 
             // try to remove fresh ones first
             for(OWLAxiom axiom:fresh){
-                System.out.println("Try removing fresh "+axiom);
+                //System.out.println("Try removing fresh "+axiom);
                 foilOntology.removeAxiom(axiom);
                 boolean success = minimizeConflict(ontologies,problem,foilOntology,reasonerFactory);
                 if(!success){
-                    System.out.println("Failed with "+axiom);
+                    //System.out.println("Failed with "+axiom);
                     foilOntology.addAxiom(axiom);
                 } else
                     return true;
@@ -169,8 +173,8 @@ public class ContrastiveExplanationGenerator {
             for(OWLAxiom axiom:fromOnt){
                 if(axiom.isOfType(AxiomType.ABoxAxiomTypes)) {
                     foilOntology.removeAxiom(axiom);
-                    System.out.println("Try removing actual " + axiom);
-                    System.out.println("Failed with " + axiom);
+                    //System.out.println("Try removing actual " + axiom);
+                    //System.out.println("Failed with " + axiom);
                     boolean success = minimizeConflict(ontologies, problem, foilOntology, reasonerFactory);
                     if (!success) {
                         foilOntology.addAxiom(axiom);

@@ -36,10 +36,25 @@ public class ExperimenterWithClassExpressions {
     public static ExperimenterWithClasses.ReasonerChoice reasoner = ExperimenterWithClasses.ReasonerChoice.ELK;
 
     public static void main(String[] args) throws OWLOntologyCreationException {
-        if(args.length!=3){
+
+        boolean conflictMinimal=false;
+
+        if(args.length<3){
             System.out.println("Usage: ");
-            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY CLASS_EXPRESSION_SIZE NUMBER_OF_REPITITIONS");
+            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY CLASS_EXPRESSION_SIZE NUMBER_OF_REPITITIONS [ELK|HERMIT] [conflict-minimal]");
             System.exit(0);
+        }
+        if(args.length>=4){
+            if(args[3]=="HERMIT")
+                reasoner = ExperimenterWithClasses.ReasonerChoice.HERMIT;
+            else if(args[3]!="ELK")
+                throw new IllegalArgumentException("Unexpected reasoner choice: "+args[3]);
+        }
+        if(args.length==5){
+            if(args[4]!="conflict-minimal")
+                throw new IllegalArgumentException("Expected 'conflict-minimal' as 5th argument, got "+args[4]);
+            conflictMinimal=true;
+
         }
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -116,6 +131,7 @@ public class ExperimenterWithClassExpressions {
             System.out.println("CEP: "+cep.toString(renderer));
             long startTime = System.currentTimeMillis();
             ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager.getOWLDataFactory());
+            gen.useConflictMinimality(conflictMinimal);
             ContrastiveExplanation ce = gen.computeExplanation(cep);
             System.out.println("CE: "+ce.toString(renderer));
             long duration = System.currentTimeMillis()-startTime;
