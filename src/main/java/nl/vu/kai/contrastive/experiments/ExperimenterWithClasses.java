@@ -1,5 +1,8 @@
 package nl.vu.kai.contrastive.experiments;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanationGenerator;
@@ -14,6 +17,7 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.LoggerFactory;
 import tools.Util;
 
 import java.io.File;
@@ -29,11 +33,31 @@ public class ExperimenterWithClasses {
     public static ReasonerChoice reasoner = ReasonerChoice.ELK;
 
     public static void main(String[] args) throws OWLOntologyCreationException {
-        if(args.length!=2){
+        boolean conflictMinimal=false;
+        if(args.length<2){
             System.out.println("Usage: ");
-            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY NUMBER_OF_REPITITIONS");
+            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY NUMBER_OF_REPITITIONS [ELK|HERMIT] [conflict-minimal]");
             System.exit(0);
         }
+        if(args.length>=3){
+            if(args[2]=="HERMIT")
+                reasoner = ReasonerChoice.HERMIT;
+            else if(args[2]!="ELK")
+                throw new IllegalArgumentException("Unexpected reasoner choice: "+args[2]);
+        }
+        if(args.length==4){
+            if(args[3]!="conflict-minimal")
+                throw new IllegalArgumentException("Expected 'conflict-minimal' as 5th argument, got "+args[3]);
+            conflictMinimal=true;
+
+        }
+
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger logger = loggerContext.getLogger("org.semanticweb.owlapi");
+        logger.setLevel(Level.OFF);
+        loggerContext.getLogger("org.semanticweb.elk").setLevel(Level.OFF);
+        loggerContext.getLogger("com.clarkparsia.owlapi").setLevel(Level.OFF);
+        loggerContext.getLogger("uk.ac.manchester.cs.owlapi").setLevel(Level.OFF);
 
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 
@@ -131,33 +155,41 @@ public class ExperimenterWithClasses {
 
         FoilCandidateFinder foilCandidateFinder =
                 new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
+        foilCandidateFinder.setReasoner(reasoner);
 
         for(int i = 0; i<maxIterations; i++){
             OWLClass cl = candidates.get(random.nextInt(candidates.size()));
             List<OWLNamedIndividual> factC = facts.get(cl);
             List<OWLNamedIndividual> foilC = foils.get(cl);
             OWLNamedIndividual fact = factC.get(random.nextInt(factC.size()));
-            OWLNamedIndividual foil = Util.randomItem(
-                    foilCandidateFinder.foilCandidates(fact)
-                            .filter(foilC::contains),
-                    random);
-                    //foilC.get(random.nextInt(foilC.size()));
-            ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont,cl,fact,foil);
-            System.out.println("CEP: "+cep.toString(renderer));
-            long startTime = System.currentTimeMillis();
-            ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager.getOWLDataFactory());
-            ContrastiveExplanation ce = gen.computeExplanation(cep);
-            System.out.println("CE: "+ce.toString(renderer));
-            long duration = System.currentTimeMillis()-startTime;
-            int commonSize = ce.getCommon().size();
-            int differenceSize = ce.getDifferent().size();
-            int conflictSize = ce.getConflict().size();
-            long freshIndividuals = ce.getFoilMapping()
-                    .values()
-                    .stream()
-                    .filter(x -> !allIndividuals.contains(x))
-                    .count();
-            System.out.println("STATS: "+commonSize+" "+differenceSize+" "+" "+conflictSize+" "+freshIndividuals+" "+duration);
+            foilC.retainAll(foilCandidateFinder.foilCandidates(fact).collect(Collectors.toSet()));
+
+            if(!foilC.isEmpty()) {
+                OWLNamedIndividual foil = Util.randomItem(
+                        foilCandidateFinder.foilCandidates(fact)
+                                .filter(foilC::contains),
+                        random);
+                //foilC.get(random.nextInt(foilC.size()));
+                ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont, cl, fact, foil);
+                System.out.println("CEP: " + cep.toString(renderer));
+                long startTime = System.currentTimeMillis();
+                ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager.getOWLDataFactory());
+                gen.useConflictMinimality(conflictMinimal);
+                ContrastiveExplanation ce = gen.computeExplanation(cep);
+                System.out.println("CE: " + ce.toString(renderer));
+                long duration = System.currentTimeMillis() - startTime;
+                int commonSize = ce.getCommon().size();
+                int differenceSize = ce.getDifferent().size();
+                int conflictSize = ce.getConflict().size();
+                long freshIndividuals = ce.getFoilMapping()
+                        .values()
+                        .stream()
+                        .filter(x -> !allIndividuals.contains(x))
+                        .count();
+                System.out.println("STATS: " + commonSize + " " + differenceSize + " " + " " + conflictSize + " " + freshIndividuals + " " + duration);
+            } else {
+                System.out.println("Skipped -- no foil candidate: "+cl+" "+fact);
+            }
         }
 
 

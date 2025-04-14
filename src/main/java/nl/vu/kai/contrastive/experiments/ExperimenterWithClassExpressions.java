@@ -1,5 +1,8 @@
 package nl.vu.kai.contrastive.experiments;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanationGenerator;
@@ -16,6 +19,7 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.LoggerFactory;
 import tools.Util;
 
 import java.io.File;
@@ -32,11 +36,33 @@ public class ExperimenterWithClassExpressions {
     public static ExperimenterWithClasses.ReasonerChoice reasoner = ExperimenterWithClasses.ReasonerChoice.ELK;
 
     public static void main(String[] args) throws OWLOntologyCreationException {
-        if(args.length!=3){
+
+        boolean conflictMinimal=false;
+
+        if(args.length<3){
             System.out.println("Usage: ");
-            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY CLASS_EXPRESSION_SIZE NUMBER_OF_REPITITIONS");
+            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY CLASS_EXPRESSION_SIZE NUMBER_OF_REPITITIONS [ELK|HERMIT] [conflict-minimal]");
             System.exit(0);
         }
+        if(args.length>=4){
+            if(args[3]=="HERMIT")
+                reasoner = ExperimenterWithClasses.ReasonerChoice.HERMIT;
+            else if(args[3]!="ELK")
+                throw new IllegalArgumentException("Unexpected reasoner choice: "+args[3]);
+        }
+        if(args.length==5){
+            if(args[4]!="conflict-minimal")
+                throw new IllegalArgumentException("Expected 'conflict-minimal' as 5th argument, got "+args[4]);
+            conflictMinimal=true;
+
+        }
+
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger logger = loggerContext.getLogger("org.semanticweb.owlapi");
+        logger.setLevel(Level.OFF);
+        loggerContext.getLogger("org.semanticweb.elk").setLevel(Level.OFF);
+        loggerContext.getLogger("com.clarkparsia.owlapi").setLevel(Level.OFF);
+        loggerContext.getLogger("uk.ac.manchester.cs.owlapi").setLevel(Level.OFF);
 
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 
@@ -78,7 +104,7 @@ public class ExperimenterWithClassExpressions {
 
         System.out.println("Finding contrastive explanation problems...");
 
-        Random random = new Random();
+        Random random = new Random(0);
 
         FoilCandidateFinder foilCandidateFinder = new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
         foilCandidateFinder.setReasoner(reasoner);
@@ -105,6 +131,7 @@ public class ExperimenterWithClassExpressions {
             System.out.println("CEP: "+cep.toString(renderer));
             long startTime = System.currentTimeMillis();
             ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager.getOWLDataFactory());
+            gen.useConflictMinimality(conflictMinimal);
             ContrastiveExplanation ce = gen.computeExplanation(cep);
             System.out.println("CE: "+ce.toString(renderer));
             long duration = System.currentTimeMillis()-startTime;
