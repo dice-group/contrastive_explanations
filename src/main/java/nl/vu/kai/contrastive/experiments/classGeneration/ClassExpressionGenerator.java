@@ -4,7 +4,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import tools.Util;
+import nl.vu.kai.tools.Util;
 
 import java.util.*;
 import java.util.stream.Collectors;

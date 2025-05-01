@@ -1,4 +1,4 @@
-package tools;
+package nl.vu.kai.tools;
 
 import java.util.Objects;
 

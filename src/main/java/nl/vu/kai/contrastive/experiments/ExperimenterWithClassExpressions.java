@@ -3,7 +3,6 @@ package nl.vu.kai.contrastive.experiments;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanation;
 import nl.vu.kai.contrastive.ContrastiveExplanationGenerator;
 import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
@@ -15,17 +14,14 @@ import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.model.parameters.Imports;
-import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.LoggerFactory;
-import tools.Util;
+import nl.vu.kai.tools.Util;
 
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ExperimenterWithClassExpressions {
 
@@ -45,13 +41,13 @@ public class ExperimenterWithClassExpressions {
             System.exit(0);
         }
         if(args.length>=4){
-            if(args[3]=="HERMIT")
+            if(args[3].equals("HERMIT"))
                 reasoner = ExperimenterWithClasses.ReasonerChoice.HERMIT;
-            else if(args[3]!="ELK")
+            else if(!args[3].equals("ELK"))
                 throw new IllegalArgumentException("Unexpected reasoner choice: "+args[3]);
         }
         if(args.length==5){
-            if(args[4]!="conflict-minimal")
+            if(!args[4].equals("conflict-minimal"))
                 throw new IllegalArgumentException("Expected 'conflict-minimal' as 5th argument, got "+args[4]);
             conflictMinimal=true;
 

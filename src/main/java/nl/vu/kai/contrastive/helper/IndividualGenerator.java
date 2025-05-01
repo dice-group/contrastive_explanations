@@ -3,7 +3,7 @@ package nl.vu.kai.contrastive.helper;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
-import tools.Pair;
+import nl.vu.kai.tools.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;

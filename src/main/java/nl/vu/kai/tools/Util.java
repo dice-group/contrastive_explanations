@@ -1,4 +1,4 @@
-package tools;
+package nl.vu.kai.tools;
 
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectPropertyAssertionAxiom;
