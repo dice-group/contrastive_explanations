@@ -51,7 +51,7 @@ public class RedundancyEliminator {
             if(!reasoner.isEntailed(ass))
                 ont.add(ass);
             else {
-                System.out.println("Redundant: " + renderer.render(ass));
+                //System.out.println("Redundant: " + renderer.render(ass));
                 redundant++;
             }
         }
