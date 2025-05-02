@@ -1,11 +1,10 @@
-package nl.vu.kai.contrastive.experiments;
+package nl.vu.kai.contrastive.experiments.helpers;
 
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.File;
 import java.util.HashSet;
