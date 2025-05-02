@@ -2,7 +2,7 @@ package nl.vu.kai.contrastive;
 
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
 import org.semanticweb.owlapi.model.*;
-import tools.Pair;
+import nl.vu.kai.tools.Pair;
 import java.util.*;
 
 public class ABoxProcessor {

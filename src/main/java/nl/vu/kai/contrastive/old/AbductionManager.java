@@ -9,7 +9,7 @@ import openllet.owlapi.explanation.PelletExplanation;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.Imports;
-import tools.Pair;
+import nl.vu.kai.tools.Pair;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

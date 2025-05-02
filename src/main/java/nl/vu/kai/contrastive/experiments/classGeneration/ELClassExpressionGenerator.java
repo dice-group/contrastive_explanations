@@ -3,12 +3,10 @@ package nl.vu.kai.contrastive.experiments.classGeneration;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import tools.Util;
+import nl.vu.kai.tools.Util;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ELClassExpressionGenerator extends ClassExpressionGenerator {
 

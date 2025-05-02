@@ -18,7 +18,7 @@ import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.LoggerFactory;
-import tools.Util;
+import nl.vu.kai.tools.Util;
 
 import java.io.File;
 import java.util.*;
