@@ -24,6 +24,10 @@ public class IndividualGenerator {
         this.factory=factory;
     }
 
+    public Set<Pair<OWLNamedIndividual,OWLNamedIndividual>> getMappedPairs(){
+        return pair2ind.keySet();
+    }
+
     public OWLNamedIndividual getIndividualForPair(OWLNamedIndividual ind1, OWLNamedIndividual ind2) {
         Pair<OWLNamedIndividual, OWLNamedIndividual> pair = new Pair(ind1, ind2);
         if (pair2ind.containsKey(pair))

@@ -173,7 +173,7 @@ public class ExperimenterWithClasses {
                 ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont, cl, fact, foil);
                 System.out.println("CEP: " + cep.toString(renderer));
                 long startTime = System.currentTimeMillis();
-                ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager.getOWLDataFactory());
+                ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager);
                 gen.useConflictMinimality(conflictMinimal);
                 ContrastiveExplanation ce = gen.computeExplanation(cep);
                 System.out.println("CE: " + ce.toString(renderer));

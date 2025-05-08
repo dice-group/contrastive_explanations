@@ -50,7 +50,7 @@ public class Test {
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a")),
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b")));
 
-            ContrastiveExplanationGenerator explainer = new ContrastiveExplanationGenerator(factory);
+            ContrastiveExplanationGenerator explainer = new ContrastiveExplanationGenerator(man);
 
             ContrastiveExplanation expl = explainer.computeExplanation(problem);
 
@@ -67,7 +67,7 @@ public class Test {
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#a")),
                             factory.getOWLNamedIndividual(IRI.create("http://www.semanticweb.org/patrickk/ontologies/2025/0/untitled-ontology-247#b")));
 
-            ContrastiveExplanationGenerator explainer = new ContrastiveExplanationGenerator(factory);
+            ContrastiveExplanationGenerator explainer = new ContrastiveExplanationGenerator(man);
 
             ContrastiveExplanation expl = explainer.computeExplanation(problem);
 

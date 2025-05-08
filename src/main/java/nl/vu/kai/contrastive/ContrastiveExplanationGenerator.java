@@ -6,11 +6,14 @@ import nl.vu.kai.contrastive.experiments.ExperimenterWithClasses;
 import nl.vu.kai.contrastive.helper.RelevantScopeFinder;
 import nl.vu.kai.contrastive.helper.IndividualGenerator;
 //import org.semanticweb.HermiT.ReasonerFactory;
+import nl.vu.kai.tools.MultiMap;
+import nl.vu.kai.tools.Pair;
 import org.semanticweb.HermiT.ReasonerFactory;
 //import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
@@ -28,9 +31,12 @@ public class ContrastiveExplanationGenerator {
 
     private final OWLDataFactory factory;
 
+    private final OWLOntologyManager manager;
 
-    public ContrastiveExplanationGenerator(OWLDataFactory factory) {
-        this.factory=factory;
+
+    public ContrastiveExplanationGenerator(OWLOntologyManager manager) {
+        this.manager=manager;
+        this.factory=manager.getOWLDataFactory();
         individualGenerator =new IndividualGenerator(factory);
         aboxProcessor=new ABoxProcessor(individualGenerator, factory);
     }
@@ -49,15 +55,21 @@ public class ContrastiveExplanationGenerator {
 
         if(!conflictOptimization) {
             // Step 0: make TBox "conflict-save"
-            ConflictHandler conflictHandler = new ConflictHandler(problem.getOntology(), factory);
-            conflictHandler.makeTBoxConflictSave();
+            //ConflictHandler conflictHandler = new ConflictHandler(problem.getOntology(), factory);
+            //conflictHandler.makeTBoxConflictSave();
 
             Ontologies ontologies = computeOntologies(problem);
 
+            OWLReasonerFactory reasonerFactory = ExperimenterWithClasses.reasoner== ExperimenterWithClasses.ReasonerChoice.ELK ?
+                    new ElkReasonerFactory() :
+                    new ReasonerFactory();
+
+            makeABoxConsistent(problem, ontologies, reasonerFactory);
+
             ContrastiveExplanation result = minimizeToExplanation(problem, ontologies);
 
-            result = conflictHandler.addConflict(result);
-            conflictHandler.restoreOntology();
+            //result = conflictHandler.addConflict(result);
+            //conflictHandler.restoreOntology();
 
             // Step 8: Return ContrastiveExplanation
             return result;
@@ -135,6 +147,109 @@ public class ContrastiveExplanationGenerator {
         return ontologies;
     }
 
+
+    private void makeABoxConsistent(ContrastiveExplanationProblem problem, Ontologies ontologies, OWLReasonerFactory reasonerFactory) throws OWLOntologyCreationException {
+
+        Set<OWLAxiom> tbox = problem.getOntology().getTBoxAxioms(Imports.INCLUDED);
+
+        OWLOntology ontology = manager.createOntology();
+        ontology.addAxioms(ontologies.abox3);
+        ontology.addAxioms(tbox);
+
+        OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
+
+        if(reasoner.isConsistent())
+            return;
+
+        MultiMap<OWLNamedIndividual, OWLNamedIndividual> partners = new MultiMap<>();
+        MultiMap<OWLNamedIndividual, OWLNamedIndividual> partnersInverse = new MultiMap<>();
+        Set<OWLNamedIndividual> rangeIgnore = new HashSet<>();
+        Set<OWLNamedIndividual> pairsSaveToRemove = new HashSet<>();
+
+        individualGenerator.getMappedPairs().forEach(pair -> {
+           partners.add(pair.getKey(),pair.getValue());
+           partnersInverse.add(pair.getValue(), pair.getKey());
+        });
+
+        int differenceInRange = partnersInverse.keys().size() - partners.keys().size();
+
+        if(differenceInRange<0)
+            throw new AssertionError("Less individuals in target!");
+
+        while(!reasoner.isConsistent()) {
+
+            MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
+            Set<OWLAxiom> exp = expl.getExplanation(factory.getOWLThing());
+
+            exp.removeAll(tbox);
+
+            OWLAxiom remove = null;
+
+            if (differenceInRange > 0) {
+                remove = exp.stream().findAny().get();
+                for(OWLNamedIndividual ind:remove.getIndividualsInSignature()) {
+                    Pair<OWLNamedIndividual,OWLNamedIndividual> pair = individualGenerator.getPairForIndividual(ind);
+                    if(!rangeIgnore.contains(pair.getValue())){
+                        differenceInRange--;
+                        rangeIgnore.add(pair.getValue());
+                        pairsSaveToRemove.add(ind);
+
+                        if(differenceInRange<0){
+                            partners.remove(pair.getKey(), pair.getValue());
+                            partnersInverse.remove(pair.getValue(),pair.getKey());
+                        }
+                    }
+                }
+            } else {
+                OWLAxiom axiom = exp.stream().filter(ax -> {
+                            List<OWLNamedIndividual> individuals = ax.individualsInSignature().collect(Collectors.toList());
+                            individuals.removeAll(pairsSaveToRemove);
+                            boolean result = true;
+                            if(individuals.size()>0) {
+                                OWLNamedIndividual key = individualGenerator.getPairForIndividual(individuals.get(0)).getKey();
+                                OWLNamedIndividual value = individualGenerator.getPairForIndividual(individuals.get(0)).getValue();
+                                if (!(rangeIgnore.contains(value) || (partners.get(key).size() > 1 && partnersInverse.get(value).size() > 1)))
+                                    result = false;
+                                else if (result && individuals.size() > 1) {
+                                    OWLNamedIndividual key2 = individualGenerator.getPairForIndividual(individuals.get(1)).getKey();
+                                    OWLNamedIndividual value2 = individualGenerator.getPairForIndividual(individuals.get(1)).getValue();
+                                    if (!(rangeIgnore.contains(value) || (
+                                            partners.get(key).size() <= 2 &&
+                                                    partnersInverse.get(value).size() <= 2) &&
+                                            (key.equals(key2) || value.equals(value2)))) {
+                                        Set<OWLNamedIndividual> s1 = new HashSet<>(partners.get(key));
+                                        if(key.equals(key2))
+                                            s1.remove(value);
+                                        Set<OWLNamedIndividual> s2 = new HashSet<>(partnersInverse.get(value));
+                                        if(value.equals(value2))
+                                            s2.remove(key);
+                                        if(s1.size()<2 || s2.size()<2)
+                                            result=false;
+                                    }
+                                }
+                            }
+                            return result;
+                        }).findAny().get();
+                remove = axiom;
+                for(OWLNamedIndividual individual:remove.getIndividualsInSignature()){
+                    Pair<OWLNamedIndividual,OWLNamedIndividual> pair = individualGenerator.getPairForIndividual(individual);
+                    partners.remove(pair.getKey(),pair.getValue());
+                    partnersInverse.remove(pair.getValue(),pair.getKey());
+                }
+            }
+
+            ontology.remove(remove);
+            ontologies.abox3.remove(remove);
+            reasoner.flush();
+        }
+
+
+        if (!reasoner.isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil()))) {
+            //System.out.println("Lost entailment! Backtracking...");
+            throw new AssertionError("Fixing problem destroyed entailment!");
+        } else
+            return;
+    }
 
     private boolean minimizeConflict(Ontologies ontologies,
                                         ContrastiveExplanationProblem problem,
