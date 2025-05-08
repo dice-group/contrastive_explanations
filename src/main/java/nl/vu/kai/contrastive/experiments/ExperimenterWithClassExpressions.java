@@ -53,6 +53,8 @@ public class ExperimenterWithClassExpressions {
 
         }
 
+        ExperimenterWithClasses.reasoner=reasoner;
+
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Logger logger = loggerContext.getLogger("org.semanticweb.owlapi");
         logger.setLevel(Level.OFF);

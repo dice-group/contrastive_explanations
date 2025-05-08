@@ -5,8 +5,10 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import nl.vu.kai.tools.Util;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class ELClassExpressionGenerator extends ClassExpressionGenerator {
 
@@ -23,16 +25,18 @@ public class ELClassExpressionGenerator extends ClassExpressionGenerator {
 
     @Override
     public OWLClassExpression generateClassExpression(OWLNamedIndividual individual, int size) {
-        List<OWLClassExpression> atoms = new LinkedList<>();
+        Set<OWLClassExpression> atoms = new HashSet<>();
         int remainingSize = size;
         while(remainingSize>0) {
             OWLClassExpression nextAtom = generateAtom(individual, remainingSize);
             atoms.add(nextAtom);
             remainingSize-=size(nextAtom);
         }
+        if(atoms.size()==0)
+            throw new AssertionError("!");
         assert atoms.size()>0;
         if(atoms.size()==1)
-            return atoms.get(0);
+            return atoms.iterator().next();
         else
             return factory.getOWLObjectIntersectionOf(atoms);
 
