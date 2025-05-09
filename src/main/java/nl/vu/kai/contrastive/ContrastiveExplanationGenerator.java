@@ -1,6 +1,7 @@
 package nl.vu.kai.contrastive;
 
 import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
+import de.tu_dresden.inf.lat.prettyPrinting.datatypes.Axiom;
 import nl.vu.kai.contrastive.conflicts.ConflictHandler;
 import nl.vu.kai.contrastive.experiments.ExperimenterWithClasses;
 import nl.vu.kai.contrastive.helper.RelevantScopeFinder;
@@ -177,13 +178,37 @@ public class ContrastiveExplanationGenerator {
         Set<OWLNamedIndividual> usedFirst = new HashSet<>();
         usedFirst.add(problem.getFact());
 
+        Map<OWLNamedIndividual,OWLNamedIndividual> assocPartner = new HashMap<>();
+        assocPartner.put(problem.getFact(),problem.getFoil());
+
         individualGenerator.getMappedPairs().forEach(pair -> {
            partners.add(pair.getKey(),pair.getValue());
            partnersInverse.add(pair.getValue(), pair.getKey());
-           if(!usedFirst.contains(pair.getKey()) && !assocPartnerInv.containsKey(pair.getValue())){
+           if(!assocPartner.containsKey(pair.getKey()) && !assocPartnerInv.containsKey(pair.getValue())){
+               assocPartner.put(pair.getKey(),pair.getValue());
                assocPartnerInv.put(pair.getValue(),pair.getKey());
            }
         });
+
+        Set<OWLAxiom> lowerBound =
+        ontologies.module
+                .stream()
+                .filter(x -> x.isOfType(AxiomType.CLASS_ASSERTION, AxiomType.OBJECT_PROPERTY_ASSERTION))
+                .filter(x -> x.individualsInSignature().allMatch(assocPartner::containsKey))
+                .map( x-> {
+                    if(x instanceof OWLClassAssertionAxiom) {
+                        OWLClassAssertionAxiom ax = (OWLClassAssertionAxiom) x;
+                        return factory.getOWLClassAssertionAxiom(ax.getClassExpression(),assocPartner.get(ax.getIndividual()));
+                    } else {//if(x instanceof OWLObjectPropertyAssertionAxiom){
+                        OWLObjectPropertyAssertionAxiom ax = (OWLObjectPropertyAssertionAxiom) x;
+                        return factory.getOWLObjectPropertyAssertionAxiom(ax.getProperty(),assocPartner.get(ax.getSubject()), assocPartner.get(ax.getObject()));
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        System.out.println("* Lower bound:");
+        lowerBound.forEach(System.out::println);
+        System.out.println();
 
         int differenceInRange = partnersInverse.keys().size() - partners.keys().size();
 
@@ -192,20 +217,26 @@ public class ContrastiveExplanationGenerator {
 
         //ontology.axioms().forEach(System.out::println);
 
+        Set<OWLAxiom> staticAxioms = new HashSet<>();
+        staticAxioms.addAll(tbox);
+        staticAxioms.addAll(lowerBound);
+
         while(!reasoner.isConsistent()) {
 
             MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
+            expl.setStaticPart(staticAxioms);
             Set<OWLAxiom> exp = expl.getExplanation(factory.getOWLThing());
 
             exp.removeAll(tbox);
 
             //System.out.println("Explanation:");
             //exp.forEach(System.out::println);
+            exp.removeAll(lowerBound);
 
-            OWLAxiom remove = null;
+            OWLAxiom remove = exp.iterator().next();
 
             //remove=exp.stream().filter(x -> x.individualsInSignature().noneMatch(problem.getFoil()::equals)).findAny().get();
-            remove=exp.stream().filter(x -> {
+            /*remove=exp.stream().filter(x -> {
                 if(x instanceof OWLClassAssertionAxiom) {
                     OWLClassAssertionAxiom ax = (OWLClassAssertionAxiom) x;
                     return !problem.getOntology().containsAxiom(factory.getOWLClassAssertionAxiom(ax.getClassExpression(),assocPartnerInv.get(ax.getIndividual())));
@@ -215,12 +246,13 @@ public class ContrastiveExplanationGenerator {
                 }
                     return true;
             }).findAny().get();
+             */
             if(remove instanceof OWLClassAssertionAxiom){
                 OWLClassAssertionAxiom ax = (OWLClassAssertionAxiom) remove;
                 OWLNamedIndividual i2 = (OWLNamedIndividual) ax.getIndividual();
                 partnersInverse.get(i2).forEach(i1 -> {
                     OWLClassAssertionAxiom cl = factory.getOWLClassAssertionAxiom(ax.getClassExpression(), individualGenerator.getIndividualForPair(i1,i2));
-                    ontologies.abox3.remove(cl);
+                    ontologies.abox2.remove(cl);
                 });
             } else if(remove instanceof OWLObjectPropertyAssertionAxiom){
                 OWLObjectPropertyAssertionAxiom ax = (OWLObjectPropertyAssertionAxiom) remove;
@@ -233,7 +265,7 @@ public class ContrastiveExplanationGenerator {
                                         ax.getProperty(),
                                         individualGenerator.getIndividualForPair(a1,a2),
                                         individualGenerator.getIndividualForPair(b1,b2));
-                        ontologies.abox3.remove(p);
+                        ontologies.abox2.remove(p);
                     });
 
                 });
@@ -292,12 +324,16 @@ public class ContrastiveExplanationGenerator {
                 }
             }
             */
-            //System.out.println("Removing "+remove);
+            System.out.println("Removing "+remove);
             ontology.remove(remove);
-            ontologies.abox2.remove(remove);
+            //ontologies.abox2.remove(remove);
             reasoner.flush();
         }
 
+
+        System.out.println("* After cleanup:");
+        ontology.axioms().filter(x -> x.isOfType(AxiomType.ABoxAxiomTypes)).forEach(System.out::println);
+        System.out.println();
 
         if (!reasoner.isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil()))) {
             //System.out.println("Lost entailment! Backtracking...");
