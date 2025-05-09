@@ -3,11 +3,15 @@ package nl.vu.kai.contrastive.helper;
 import de.tu_dresden.inf.lat.evee.proofs.data.exceptions.ProofGenerationFailedException;
 import de.tu_dresden.inf.lat.evee.proofs.interfaces.IInference;
 import de.tu_dresden.inf.lat.evee.proofs.interfaces.IProof;
+import justifications.AllJustificationGenerator;
+import nl.vu.kai.contrastive.experiments.ExperimenterWithClasses;
+import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.modularity.OntologySegmenter;
 import nl.vu.kai.contrastive.ContrastiveExplanationProblem;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
@@ -20,12 +24,12 @@ import de.tu_dresden.inf.lat.evee.proofGenerators.ELKProofGenerator;
 
 public class RelevantScopeFinder {
 
-    private static final boolean USE_EL=true;
+    public static final boolean USE_EL=true;
 
     private static final boolean PRINT_DETAILS=false;
 
-    public static Set<OWLAxiom> getRelevantAxioms(ContrastiveExplanationProblem problem) {
-        if(USE_EL){
+    public static Set<OWLAxiom> getRelevantAxioms(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
+        if(ExperimenterWithClasses.reasoner.equals(ExperimenterWithClasses.ReasonerChoice.ELK)){
             ELKProofGenerator proofGenerator = new ELKProofGenerator();
             proofGenerator.setOntology(problem.getOntology());
             OWLDataFactory factory = problem.getOntology()
@@ -61,6 +65,20 @@ public class RelevantScopeFinder {
                     new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
 
             Set<OWLAxiom> result = moduleExtractor.extract(signature);
+
+            OWLOntology module = problem.getOntology().getOWLOntologyManager().createOntology(result);
+
+            System.out.println("Module size: "+ result.size());
+
+            OWLReasonerFactory fac = new ReasonerFactory();
+            AllJustificationGenerator gen = new AllJustificationGenerator(module, fac, fac.createReasoner(module));
+            OWLDataFactory factory = problem.getOntology()
+                    .getOWLOntologyManager()
+                    .getOWLDataFactory();
+            OWLSubClassOfAxiom entailment = factory.getOWLSubClassOfAxiom(factory.getOWLObjectOneOf(problem.getFact()), problem.getOwlClassExpression());
+            gen.computeUnionOfAllJustifications(entailment,result.size()/10, true);
+
+            result = gen.union_allJustifications;
 
             System.out.println("Selected " + result.size() + " relevant axioms.");
             if(PRINT_DETAILS) {

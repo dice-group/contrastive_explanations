@@ -14,6 +14,7 @@ import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,8 @@ public class ExperimenterWithClassExpressions {
 
         }
 
+        System.out.println("Reasoner choice: "+reasoner);
+
         ExperimenterWithClasses.reasoner=reasoner;
 
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -64,9 +67,12 @@ public class ExperimenterWithClassExpressions {
 
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 
-        int classExpressionSize = Integer.parseInt(args[1]);
+        final int classExpressionSize = Integer.parseInt(args[1]);
 
-        int maxIterations = Integer.parseInt(args[2]);
+        final int maxIterations = Integer.parseInt(args[2]);
+
+        System.out.println("Class expression size: "+classExpressionSize);
+        System.out.println("Iterations: "+maxIterations);
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLDataFactory factory = manager.getOWLDataFactory();
@@ -78,6 +84,15 @@ public class ExperimenterWithClassExpressions {
             System.out.println("Ontology has more than "+MAX_ONT_SIZE+" axioms!");
             System.exit(0);
         }
+
+        // remove unsupported axioms
+        List<OWLAxiom> toRemove = ont.axioms(Imports.INCLUDED)
+                        .filter(x -> x.isOfType(AxiomType.TBoxAxiomTypes))
+                        .filter( x-> x.individualsInSignature().findAny().isPresent())
+                        .collect(Collectors.toList());
+        ont.remove(toRemove);
+        toRemove.forEach(System.out::println);
+        System.out.println("Removed "+toRemove.size()+" unsupported axioms");
 
         Set<OWLNamedIndividual> allIndividuals = ont.individualsInSignature().collect(Collectors.toSet());
 

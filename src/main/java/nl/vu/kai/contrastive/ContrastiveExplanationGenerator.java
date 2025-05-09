@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class ContrastiveExplanationGenerator {
 
-    private boolean conflictOptimization=true;
+    private boolean conflictOptimization=false;
 
     private final IndividualGenerator individualGenerator;
 
@@ -33,12 +33,17 @@ public class ContrastiveExplanationGenerator {
 
     private final OWLOntologyManager manager;
 
+    private final OWLReasonerFactory reasonerFactory;
 
     public ContrastiveExplanationGenerator(OWLOntologyManager manager) {
         this.manager=manager;
         this.factory=manager.getOWLDataFactory();
         individualGenerator =new IndividualGenerator(factory);
         aboxProcessor=new ABoxProcessor(individualGenerator, factory);
+
+        reasonerFactory = ExperimenterWithClasses.reasoner== ExperimenterWithClasses.ReasonerChoice.ELK ?
+                new ElkReasonerFactory() :
+                new ReasonerFactory();
     }
 
     public void useConflictMinimality(boolean conflictMinimal) {
@@ -60,11 +65,8 @@ public class ContrastiveExplanationGenerator {
 
             Ontologies ontologies = computeOntologies(problem);
 
-            OWLReasonerFactory reasonerFactory = ExperimenterWithClasses.reasoner== ExperimenterWithClasses.ReasonerChoice.ELK ?
-                    new ElkReasonerFactory() :
-                    new ReasonerFactory();
 
-            makeABoxConsistent(problem, ontologies, reasonerFactory);
+            makeABoxConsistent(problem, ontologies);
 
             ContrastiveExplanation result = minimizeToExplanation(problem, ontologies);
 
@@ -76,9 +78,6 @@ public class ContrastiveExplanationGenerator {
         } else {
             Ontologies ontologies = computeOntologies(problem);
 
-            OWLReasonerFactory reasonerFactory = ExperimenterWithClasses.reasoner== ExperimenterWithClasses.ReasonerChoice.ELK ?
-                    new ElkReasonerFactory() :
-                    new ReasonerFactory();
 
             OWLOntologyManager manager = problem.getOntology().getOWLOntologyManager();
             OWLOntology foilVersion = instantiateFoils(ontologies.abox2, manager);
@@ -94,7 +93,7 @@ public class ContrastiveExplanationGenerator {
 
             //System.out.println(reasonerFactory.createReasoner(foilVersion).isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil())));
 
-            boolean success = minimizeConflict(ontologies, problem, foilVersion, reasonerFactory);
+            boolean success = minimizeConflict(ontologies, problem, foilVersion);
             if(!success)
                 throw new AssertionError("Couldn't eliminate conflict---shouldn't be possible!");
 
@@ -111,6 +110,7 @@ public class ContrastiveExplanationGenerator {
 
 
     private Ontologies computeOntologies(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
+
         Ontologies ontologies = new Ontologies();
         // Step 1: Use RelevantScopeFinder to get relevant axioms and individuals
         Set<OWLAxiom> relevantAxioms = RelevantScopeFinder.getRelevantAxioms(problem);
@@ -148,33 +148,49 @@ public class ContrastiveExplanationGenerator {
     }
 
 
-    private void makeABoxConsistent(ContrastiveExplanationProblem problem, Ontologies ontologies, OWLReasonerFactory reasonerFactory) throws OWLOntologyCreationException {
+    private void makeABoxConsistent(ContrastiveExplanationProblem problem, Ontologies ontologies) throws OWLOntologyCreationException {
 
-        Set<OWLAxiom> tbox = problem.getOntology().getTBoxAxioms(Imports.INCLUDED);
+        Set<OWLAxiom> tbox = ontologies.module
+                .stream()
+                .filter(x -> x.isOfType(AxiomType.TBoxAndRBoxAxiomTypes))
+                .collect(Collectors.toSet());
+                //problem.getOntology().getTBoxAxioms(Imports.INCLUDED);
 
-        OWLOntology ontology = manager.createOntology();
-        ontology.addAxioms(ontologies.abox3);
+        OWLOntology ontology = instantiateFoils(ontologies.abox2,manager);//manager.createOntology();
+        //ontology.addAxioms(ontologies.abox2);
         ontology.addAxioms(tbox);
 
         OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
 
-        if(reasoner.isConsistent())
+        if(reasoner.isConsistent()) {
+            System.out.println("Nothing to fix!");
             return;
+        }
 
         MultiMap<OWLNamedIndividual, OWLNamedIndividual> partners = new MultiMap<>();
         MultiMap<OWLNamedIndividual, OWLNamedIndividual> partnersInverse = new MultiMap<>();
         Set<OWLNamedIndividual> rangeIgnore = new HashSet<>();
         Set<OWLNamedIndividual> pairsSaveToRemove = new HashSet<>();
 
+        Map<OWLNamedIndividual,OWLNamedIndividual> assocPartnerInv = new HashMap<>();
+        assocPartnerInv.put(problem.getFoil(),problem.getFact());
+        Set<OWLNamedIndividual> usedFirst = new HashSet<>();
+        usedFirst.add(problem.getFact());
+
         individualGenerator.getMappedPairs().forEach(pair -> {
            partners.add(pair.getKey(),pair.getValue());
            partnersInverse.add(pair.getValue(), pair.getKey());
+           if(!usedFirst.contains(pair.getKey()) && !assocPartnerInv.containsKey(pair.getValue())){
+               assocPartnerInv.put(pair.getValue(),pair.getKey());
+           }
         });
 
         int differenceInRange = partnersInverse.keys().size() - partners.keys().size();
 
         if(differenceInRange<0)
             throw new AssertionError("Less individuals in target!");
+
+        //ontology.axioms().forEach(System.out::println);
 
         while(!reasoner.isConsistent()) {
 
@@ -183,9 +199,47 @@ public class ContrastiveExplanationGenerator {
 
             exp.removeAll(tbox);
 
+            //System.out.println("Explanation:");
+            //exp.forEach(System.out::println);
+
             OWLAxiom remove = null;
 
-            if (differenceInRange > 0) {
+            //remove=exp.stream().filter(x -> x.individualsInSignature().noneMatch(problem.getFoil()::equals)).findAny().get();
+            remove=exp.stream().filter(x -> {
+                if(x instanceof OWLClassAssertionAxiom) {
+                    OWLClassAssertionAxiom ax = (OWLClassAssertionAxiom) x;
+                    return !problem.getOntology().containsAxiom(factory.getOWLClassAssertionAxiom(ax.getClassExpression(),assocPartnerInv.get(ax.getIndividual())));
+                } else if(x instanceof OWLObjectPropertyAssertionAxiom){
+                    OWLObjectPropertyAssertionAxiom ax = (OWLObjectPropertyAssertionAxiom) x;
+                    return !problem.getOntology().containsAxiom(factory.getOWLObjectPropertyAssertionAxiom(ax.getProperty(),assocPartnerInv.get(ax.getSubject()), assocPartnerInv.get(ax.getObject())));
+                }
+                    return true;
+            }).findAny().get();
+            if(remove instanceof OWLClassAssertionAxiom){
+                OWLClassAssertionAxiom ax = (OWLClassAssertionAxiom) remove;
+                OWLNamedIndividual i2 = (OWLNamedIndividual) ax.getIndividual();
+                partnersInverse.get(i2).forEach(i1 -> {
+                    OWLClassAssertionAxiom cl = factory.getOWLClassAssertionAxiom(ax.getClassExpression(), individualGenerator.getIndividualForPair(i1,i2));
+                    ontologies.abox3.remove(cl);
+                });
+            } else if(remove instanceof OWLObjectPropertyAssertionAxiom){
+                OWLObjectPropertyAssertionAxiom ax = (OWLObjectPropertyAssertionAxiom) remove;
+                OWLNamedIndividual a2 = (OWLNamedIndividual) ax.getSubject();
+                OWLNamedIndividual b2 = (OWLNamedIndividual) ax.getObject();
+                partnersInverse.get(a2).forEach(a1 -> {
+                    partnersInverse.get(b2).forEach(b1 -> {
+                        OWLObjectPropertyAssertionAxiom p =
+                                factory.getOWLObjectPropertyAssertionAxiom(
+                                        ax.getProperty(),
+                                        individualGenerator.getIndividualForPair(a1,a2),
+                                        individualGenerator.getIndividualForPair(b1,b2));
+                        ontologies.abox3.remove(p);
+                    });
+
+                });
+            }
+
+            /*if (differenceInRange > 0) {
                 remove = exp.stream().findAny().get();
                 for(OWLNamedIndividual ind:remove.getIndividualsInSignature()) {
                     Pair<OWLNamedIndividual,OWLNamedIndividual> pair = individualGenerator.getPairForIndividual(ind);
@@ -237,9 +291,10 @@ public class ContrastiveExplanationGenerator {
                     partnersInverse.remove(pair.getValue(),pair.getKey());
                 }
             }
-
+            */
+            //System.out.println("Removing "+remove);
             ontology.remove(remove);
-            ontologies.abox3.remove(remove);
+            ontologies.abox2.remove(remove);
             reasoner.flush();
         }
 
@@ -253,8 +308,7 @@ public class ContrastiveExplanationGenerator {
 
     private boolean minimizeConflict(Ontologies ontologies,
                                         ContrastiveExplanationProblem problem,
-                                        OWLOntology foilOntology,
-                                        OWLReasonerFactory reasonerFactory) {
+                                        OWLOntology foilOntology) {
         OWLOntology ontology = foilOntology;
         OWLReasoner reasoner = reasonerFactory.createReasoner(foilOntology);
         if(reasoner.isConsistent()){
@@ -276,7 +330,7 @@ public class ContrastiveExplanationGenerator {
             for(OWLAxiom axiom:fresh){
                 //System.out.println("Try removing fresh "+axiom);
                 foilOntology.removeAxiom(axiom);
-                boolean success = minimizeConflict(ontologies,problem,foilOntology,reasonerFactory);
+                boolean success = minimizeConflict(ontologies,problem,foilOntology);
                 if(!success){
                     //System.out.println("Failed with "+axiom);
                     foilOntology.addAxiom(axiom);
@@ -290,7 +344,7 @@ public class ContrastiveExplanationGenerator {
                     foilOntology.removeAxiom(axiom);
                     //System.out.println("Try removing actual " + axiom);
                     //System.out.println("Failed with " + axiom);
-                    boolean success = minimizeConflict(ontologies, problem, foilOntology, reasonerFactory);
+                    boolean success = minimizeConflict(ontologies, problem, foilOntology);
                     if (!success) {
                         foilOntology.addAxiom(axiom);
                     } else {
@@ -306,7 +360,7 @@ public class ContrastiveExplanationGenerator {
     }
 
 
-    public ContrastiveExplanation minimizeToExplanation(ContrastiveExplanationProblem problem, Ontologies ontologies) {
+    public ContrastiveExplanation minimizeToExplanation(ContrastiveExplanationProblem problem, Ontologies ontologies) throws OWLOntologyCreationException {
 
         OWLNamedIndividual combinedIndividual = individualGenerator.getIndividualForPair(problem.getFact(),problem.getFoil());
 
@@ -337,7 +391,6 @@ public class ContrastiveExplanationGenerator {
 
         flexibleSet = ontologies.abox3;
 
-
         System.out.println("OverApproximated ontology size: "+ontologies.overApproximationOntology.getAxiomCount());
         System.out.println("Flexible: "+flexibleSet.size());
 
@@ -346,10 +399,47 @@ public class ContrastiveExplanationGenerator {
 
         System.out.println("Computed second justification");
 
-        // Step 8: extract mappings and conflict
+        // Step 8: Compute conflicts
+        ontologies.conflictSet = computeConflictSet(common,different,problem.getOntology());
+
+        // Step 9: extract mappings and conflict
 
         ContrastiveExplanation result = extractMappings(common,different, ontologies.conflictSet);
         return result;
+    }
+
+    private Set<OWLAxiom> computeConflictSet(Set<OWLAxiom> common, Set<OWLAxiom> different, OWLOntology ontology) throws OWLOntologyCreationException {
+        Set<OWLAxiom> explAxioms = new HashSet<>();
+        explAxioms.addAll(common);
+        explAxioms.addAll(different);
+
+        OWLOntology extOnt = instantiateFoils(explAxioms, manager);
+
+        Set<OWLAxiom> fixed = ontology.getTBoxAxioms(Imports.INCLUDED);
+        fixed.addAll(extOnt.getAxioms());
+        Set<OWLAxiom> flexible = ontology.getABoxAxioms(Imports.INCLUDED);
+        extOnt.addAxioms(fixed);
+        extOnt.addAxioms(flexible);
+
+        OWLReasoner reasoner = reasonerFactory.createReasoner(extOnt);
+
+        Set<OWLAxiom> conflictSet = new HashSet<>();
+        while(!reasoner.isConsistent()){
+            MyBlackBoxExplanation expl =
+                    new MyBlackBoxExplanation(extOnt, reasonerFactory, reasoner);
+            //expl.setStaticPart(fixed);
+            Set<OWLAxiom> just = expl.getExplanation(factory.getOWLThing());
+            //just.forEach(System.out::println);
+            just.removeAll(fixed);
+            if(just.isEmpty())
+                throw new AssertionError("Shouldn't be possible!");
+            OWLAxiom next = just.iterator().next();
+            conflictSet.add(next);
+            extOnt.remove(next);
+            reasoner.flush();
+        }
+
+        return conflictSet;
     }
 
     private OWLOntology instantiateFoils(Set<OWLAxiom> abox, OWLOntologyManager manager) throws OWLOntologyCreationException {
@@ -401,10 +491,6 @@ public class ContrastiveExplanationGenerator {
         //MyExplanation expl = new MyExplanation(ontology,fixedSet);
         //Set<OWLAxiom> result = expl.getEntailmentExplanation(axiom);
 
-        //ElkReasonerFactory reasonerFactory = new ElkReasonerFactory();
-        OWLReasonerFactory reasonerFactory = ExperimenterWithClasses.reasoner== ExperimenterWithClasses.ReasonerChoice.ELK ?
-                new ElkReasonerFactory() :
-                new ReasonerFactory();
 
         MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
         expl.setStaticPart(fixedSet);
