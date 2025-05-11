@@ -206,9 +206,9 @@ public class ContrastiveExplanationGenerator {
                 })
                 .collect(Collectors.toSet());
 
-        System.out.println("* Lower bound:");
-        lowerBound.forEach(System.out::println);
-        System.out.println();
+        //System.out.println("* Lower bound:");
+        //lowerBound.forEach(System.out::println);
+        //System.out.println();
 
         int differenceInRange = partnersInverse.keys().size() - partners.keys().size();
 
@@ -324,16 +324,16 @@ public class ContrastiveExplanationGenerator {
                 }
             }
             */
-            System.out.println("Removing "+remove);
+            //System.out.println("Removing "+remove);
             ontology.remove(remove);
             //ontologies.abox2.remove(remove);
             reasoner.flush();
         }
 
 
-        System.out.println("* After cleanup:");
+        /*System.out.println("* After cleanup:");
         ontology.axioms().filter(x -> x.isOfType(AxiomType.ABoxAxiomTypes)).forEach(System.out::println);
-        System.out.println();
+        System.out.println();*/
 
         if (!reasoner.isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil()))) {
             //System.out.println("Lost entailment! Backtracking...");

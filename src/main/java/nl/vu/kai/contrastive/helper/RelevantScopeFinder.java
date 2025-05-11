@@ -70,6 +70,10 @@ public class RelevantScopeFinder {
 
             System.out.println("Module size: "+ result.size());
 
+            System.out.println("Computing union of justifications...");
+
+            long start = System.currentTimeMillis();
+
             OWLReasonerFactory fac = new ReasonerFactory();
             AllJustificationGenerator gen = new AllJustificationGenerator(module, fac, fac.createReasoner(module));
             OWLDataFactory factory = problem.getOntology()
@@ -79,6 +83,8 @@ public class RelevantScopeFinder {
             gen.computeUnionOfAllJustifications(entailment,result.size()/10, true);
 
             result = gen.union_allJustifications;
+
+            System.out.println("Computing union of justifications took "+(System.currentTimeMillis()-start));
 
             System.out.println("Selected " + result.size() + " relevant axioms.");
             if(PRINT_DETAILS) {
@@ -146,6 +152,8 @@ public class RelevantScopeFinder {
         Set<OWLNamedIndividual> result = withinDistance(problem.getOntology(), problem.getFoil(), distance, signature);
 
         long numIndividuals = signature.stream().filter(x -> x instanceof OWLNamedIndividual).count();
+
+        numIndividuals -= result.size(); // how many additional individuals we may need
 
         for(int i = 0; i< numIndividuals; i++){
             OWLNamedIndividual fresh = factory.getOWLNamedIndividual(IRI.create("__C"+i));
