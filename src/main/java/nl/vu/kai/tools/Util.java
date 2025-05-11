@@ -14,6 +14,10 @@ public class Util {
     }
 
     public static <T> T randomItem(List<T> list, Random random){
+        if(list.isEmpty())
+            throw new IllegalArgumentException("Empty list!");
+        if(list.size()==1)
+            return list.get(0);
         return list.get(random.nextInt(list.size()));
     }
     public static <T> T randomItem(Stream<T> stream, Random random) {

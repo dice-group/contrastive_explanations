@@ -5,10 +5,8 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import nl.vu.kai.tools.Util;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ELClassExpressionGenerator extends ClassExpressionGenerator {
 
@@ -47,10 +45,13 @@ public class ELClassExpressionGenerator extends ClassExpressionGenerator {
         if(maxSize<1)
             throw new IllegalArgumentException("Cannot generate class expression of non-positive size!");
 
+        Set<OWLObjectPropertyAssertionAxiom> ras = ontology.getObjectPropertyAssertionAxioms(individual)
+                .stream()
+                .filter(x -> x.getObject().isNamed())
+                .collect(Collectors.toSet());
+
         if(maxSize==1
-                || !ontology.objectPropertyAssertionAxioms(individual)
-                .findAny()
-                .isPresent()
+                || ras.isEmpty()
                 || random.nextDouble()<chanceForClass
         ){
             OWLClass clazz = Util.randomItem(reasoner.types(individual), random);
@@ -60,11 +61,7 @@ public class ELClassExpressionGenerator extends ClassExpressionGenerator {
             assert maxSize>=2;
 
             OWLObjectPropertyAssertionAxiom pa =
-                    Util.randomItem(
-                            ontology.getObjectPropertyAssertionAxioms(individual)
-                                    .stream()
-                                    .filter(x -> x.getObject().isNamed()),
-                            random);
+                    Util.randomItem(ras, random);
             OWLClassExpression successorExpression =
                     generateClassExpression(pa.getObject().asOWLNamedIndividual(), maxSize-1);
             return factory.getOWLObjectSomeValuesFrom(pa.getProperty(), successorExpression);
