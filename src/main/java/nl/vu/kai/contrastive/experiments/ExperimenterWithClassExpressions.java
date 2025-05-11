@@ -124,7 +124,14 @@ public class ExperimenterWithClassExpressions {
         FoilCandidateFinder foilCandidateFinder = new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
         foilCandidateFinder.setReasoner(reasoner);
 
-        for(OWLClassExpression exp : classExpressionGenerator.generateClassExpressions(maxIterations,classExpressionSize))  {
+        List<OWLClassExpression> exps = classExpressionGenerator.generateClassExpressions(maxIterations,classExpressionSize);
+
+        System.out.println("Done finding contrastive explanation concepts");
+
+        if(exps.isEmpty())
+            System.out.println("No contrastive problems found!");
+
+        for(OWLClassExpression exp : exps)  {
 
             Set<OWLNamedIndividual> instances = reasoner.instances(exp)
                     .collect(Collectors.toSet());
@@ -137,8 +144,10 @@ public class ExperimenterWithClassExpressions {
                     .filter(x -> !instances.contains(x))
                     .collect(Collectors.toList());
 
-            if(others.isEmpty())
+            if(others.isEmpty()) {
+                System.out.println("no match!");
                 continue;
+            }
 
             OWLNamedIndividual foil = Util.randomItem(others, random);
 
