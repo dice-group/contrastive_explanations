@@ -18,6 +18,9 @@ import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,7 +144,8 @@ public class ContrastiveExplanationGenerator {
         // Step 4: Construct overApproximationOntology
         OWLOntologyManager manager = problem.getOntology().getOWLOntologyManager();
         ontologies.overApproximationOntology = manager.createOntology();
-        manager.addAxioms(ontologies.overApproximationOntology, ontologies.module);//problem.getOntology().getAxioms());
+        ontologies.module.stream().filter(x -> x.isOfType(AxiomType.TBoxAxiomTypes)).forEach(ontologies.overApproximationOntology::add);
+        //manager.addAxioms(ontologies.overApproximationOntology, ontologies.module);//problem.getOntology().getAxioms());
         manager.addAxioms(ontologies.overApproximationOntology, ontologies.abox2);
 
 
@@ -189,6 +193,9 @@ public class ContrastiveExplanationGenerator {
                assocPartnerInv.put(pair.getValue(),pair.getKey());
            }
         });
+
+        if(assocPartner.keySet().size()!=partners.keys().size())
+            throw new AssertionError("1:1 mapping not possible!");
 
         Set<OWLAxiom> lowerBound =
         ontologies.module
@@ -419,6 +426,20 @@ public class ContrastiveExplanationGenerator {
 
         System.out.println("Computed first justification");
 
+        if(different.isEmpty()) {
+            try {
+                manager.saveOntology(ontologies.overApproximationOntology, new FileOutputStream(new File("debug.owl")));
+                OWLOntology o = manager.createOntology();
+                o.addAxioms(flexibleSet);
+                manager.saveOntology(ontologies.overApproximationOntology, new FileOutputStream(new File("debug-flexible.owl")));
+            } catch (OWLOntologyStorageException e) {
+                throw new RuntimeException(e);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(specialAxiom);
+            throw new AssertionError("justification among differences empty - shouldn't be possible!");
+        }
         // Step 6: Update overApproximationOntology
         OWLOntologyManager manager = problem.getOntology().getOWLOntologyManager();
         manager.removeAxioms(ontologies.overApproximationOntology, flexibleSet);
@@ -527,13 +548,16 @@ public class ContrastiveExplanationGenerator {
         //MyExplanation expl = new MyExplanation(ontology,fixedSet);
         //Set<OWLAxiom> result = expl.getEntailmentExplanation(axiom);
 
-
+        /*if(!reasonerFactory.createReasoner(ontology).isEntailed(axiom))
+            throw new AssertionError("Axiom not entailed!");
+        */
         MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
         expl.setStaticPart(fixedSet);
         Set<OWLAxiom> result = expl.getExplanation(asUnsat(axiom));
 
+        //result.forEach(System.out::println);
 
-        result.removeAll(fixedSet);
+        result.retainAll(flexibleSet);
         return result;
     }
 

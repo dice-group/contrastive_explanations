@@ -104,15 +104,20 @@ public class SingleJustGenerator {
         Set<OWLAxiom> toReturn = ontology.getAxioms();
 //        System.out.println(ontology.getAxioms().size());
         for(OWLAxiom a: ontology.getAxioms()){
-            owlOntologyManager.applyChange(new RemoveAxiom(ontology, a));
-            reasoner.flush();
+            /** Adaptation for contrastive explanation use case: keep all TBox axioms in core.
+             */
+            if(a.isOfType(AxiomType.ABoxAxiomTypes)) {
+
+                owlOntologyManager.applyChange(new RemoveAxiom(ontology, a));
+                reasoner.flush();
 //            System.out.println(a);
 //            System.out.println(reasoner.isEntailed(axiom));
-            if(reasoner.isEntailed(axiom)){
-                toReturn.remove(a);
-            }
-            owlOntologyManager.applyChange(new AddAxiom(ontology, a));
+                if (reasoner.isEntailed(axiom)) {
+                    toReturn.remove(a);
+                }
+                owlOntologyManager.applyChange(new AddAxiom(ontology, a));
 //            reasoner.flush();
+            }
         }
 //        System.out.println(toReturn.size());
         if(toReturn.size()<1){

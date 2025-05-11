@@ -90,6 +90,8 @@ public class ExperimenterWithClassExpressions {
                         .filter(x -> x.isOfType(AxiomType.TBoxAxiomTypes))
                         .filter( x-> x.individualsInSignature().findAny().isPresent())
                         .collect(Collectors.toList());
+        ont.axioms(Imports.INCLUDED).filter(x -> x.isOfType(AxiomType.SAME_INDIVIDUAL))
+                        .forEach(toRemove::add);
         ont.remove(toRemove);
         toRemove.forEach(System.out::println);
         System.out.println("Removed "+toRemove.size()+" unsupported axioms");
@@ -143,20 +145,27 @@ public class ExperimenterWithClassExpressions {
             ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont,exp,fact,foil);
             System.out.println("CEP: "+cep.toString(renderer));
             long startTime = System.currentTimeMillis();
-            ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager);
-            gen.useConflictMinimality(conflictMinimal);
-            ContrastiveExplanation ce = gen.computeExplanation(cep);
-            System.out.println("CE: "+ce.toString(renderer));
-            long duration = System.currentTimeMillis()-startTime;
-            int commonSize = ce.getCommon().size();
-            int differenceSize = ce.getDifferent().size();
-            int conflictSize = ce.getConflict().size();
-            long freshIndividuals = ce.getFoilMapping()
-                    .values()
-                    .stream()
-                    .filter(x -> !allIndividuals.contains(x))
-                    .count();
-            System.out.println("STATS: "+commonSize+" "+differenceSize+" "+conflictSize+" "+freshIndividuals+" "+duration);
+            try {
+                ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager);
+                gen.useConflictMinimality(conflictMinimal);
+                ContrastiveExplanation ce = gen.computeExplanation(cep);
+                System.out.println("CE: " + ce.toString(renderer));
+                long duration = System.currentTimeMillis() - startTime;
+                int commonSize = ce.getCommon().size();
+                int differenceSize = ce.getDifferent().size();
+                int conflictSize = ce.getConflict().size();
+                long freshIndividuals = ce.getFoilMapping()
+                        .values()
+                        .stream()
+                        .filter(x -> !allIndividuals.contains(x))
+                        .count();
+                System.out.println("STATS: "+commonSize+" "+differenceSize+" "+conflictSize+" "+freshIndividuals+" "+duration);
+            } catch(Error error){
+                System.out.println("STATS: Exception "+error.getClass()+" "+error.getMessage());
+                if(error instanceof OutOfMemoryError)
+                    System.exit(1);
+            }
+
         }
 
 

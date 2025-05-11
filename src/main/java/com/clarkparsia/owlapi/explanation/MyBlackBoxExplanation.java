@@ -193,7 +193,7 @@ public class MyBlackBoxExplanation extends SingleExplanationGeneratorImpl
             //System.out.println("I am here!");
             satTestCount++;
             if (isFirstExplanation() && isSatisfiableSimple(unsatClass, getReasoner())) { //getReasoner().isSatisfiable(unsatClass)) {
-                //System.out.println("first explanation and satisfiable");
+                System.out.println("first explanation and satisfiable");
                 return staticPart; //Collections.emptySet();
             }
             reset();

@@ -5,6 +5,7 @@ import de.tu_dresden.inf.lat.evee.proofs.interfaces.IInference;
 import de.tu_dresden.inf.lat.evee.proofs.interfaces.IProof;
 import justifications.AllJustificationGenerator;
 import nl.vu.kai.contrastive.experiments.ExperimenterWithClasses;
+import nl.vu.kai.tools.NaiveUnionOfJustifications;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -73,8 +74,11 @@ public class RelevantScopeFinder {
             System.out.println("Computing union of justifications...");
 
             long start = System.currentTimeMillis();
-
             OWLReasonerFactory fac = new ReasonerFactory();
+            OWLDataFactory factory = ontology.getOWLOntologyManager().getOWLDataFactory();
+            OWLAxiom entailment = factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFact());
+            result = NaiveUnionOfJustifications.unionOfJustifications(module, asUnsat(entailment,factory), fac);
+            /*
             AllJustificationGenerator gen = new AllJustificationGenerator(module, fac, fac.createReasoner(module));
             OWLDataFactory factory = problem.getOntology()
                     .getOWLOntologyManager()
@@ -84,6 +88,8 @@ public class RelevantScopeFinder {
 
             result = gen.union_allJustifications;
 
+            result.retainAll(module.getABoxAxioms(Imports.INCLUDED));
+            */
             System.out.println("Computing union of justifications took "+(System.currentTimeMillis()-start));
 
             System.out.println("Selected " + result.size() + " relevant axioms.");
@@ -94,6 +100,15 @@ public class RelevantScopeFinder {
 
             return result;
         }
+    }
+
+
+    private static OWLClassExpression asUnsat(OWLAxiom axiom, OWLDataFactory factory) {
+        if(axiom instanceof OWLClassAssertionAxiom) {
+            OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom)axiom;
+            return factory.getOWLObjectIntersectionOf(factory.getOWLObjectOneOf(ca.getIndividual()), factory.getOWLObjectComplementOf(ca.getClassExpression()));
+        } else
+            throw new AssertionError("Not implemented!");
     }
 
     public static Set<OWLAxiom> getModule(OWLOntology ontology, Set<OWLEntity> signature){
@@ -154,6 +169,7 @@ public class RelevantScopeFinder {
         long numIndividuals = signature.stream().filter(x -> x instanceof OWLNamedIndividual).count();
 
         numIndividuals -= result.size(); // how many additional individuals we may need
+        numIndividuals ++;
 
         for(int i = 0; i< numIndividuals; i++){
             OWLNamedIndividual fresh = factory.getOWLNamedIndividual(IRI.create("__C"+i));
