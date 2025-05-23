@@ -1,30 +1,52 @@
-# Installation
+Project Setup & Experimentation Guide
+Installation
+To compile and run this project, you need to install EVEE locally by following the instructions provided in the official repository:
 
-To make this compile, one has to locally install evee, following the
-instructions on this page:
+🔗 EVEE GitHub Repository
 
-https://github.com/de-tu-dresden-inf-lat/evee
+Once EVEE is installed, you can compile the project using:
 
-Then the project can be compiled with
+bash
+Copy
+Edit
+mvn package
+Running Experiments
+All experiment scripts are located in the experiments/ subfolder.
 
-- mvn package
+Step 1: Copy the Compiled JAR
+After successful compilation, copy the generated JAR file from the target/ directory into the experiments/ folder:
 
-# Running Experiments
+bash
+Copy
+Edit
+cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar experiments/
+Step 2: Download the ORE 2015 Ontology Repository
+Download and extract the ORE 2015 ontology repository from the following link into a directory of your choice:
 
-The scripts for running the experiments are in the "experiments"-subfolder. After compiling the project, copy the file "contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar" from the target-folder to the experiments folder.
+🔗 ORE 2015 Repository (Zenodo)
 
-Download and unpack the ORE 2015 repository from here into some folder of your choice
+⚠️ Important: Do not add any of the ontology files to your Git repository. These files are large and should be kept out of version control.
 
-- https://zenodo.org/records/18578
+Step 3: Run the Experiment
+Update the file path in the run-rexperiment-complex.sh script to point to the location where you extracted the ontologies.
 
-IMPORTANT: make sure none of the ontologies is ever added to the git repository, as these files are too large!
+Then run the script from the command line:
 
-Adapt the folder name in "filer-redundancies.sh", and run the file from command line. This should take a while and create a new folder with processed ontologies that will be used for the experiment. Again, make sure these ontologies are never added to the git repository!
+bash
+Copy
+Edit
+cd experiments
+./run-rexperiment-complex.sh
+This script will process each ontology and generate corresponding OWL log files. This may take some time depending on the dataset size.
 
-Now adapt the folder name in "run-experiment-complex.sh" - this is the script that runs the experiment.
+⚠️ Again, ensure the generated OWL log files are not added to your Git repository.
 
-Running that script will create a bunch of log files for the different ontologies. To create from them a csv-file with the statistics you run:
+Step 4: Generate CSV Statistics
+To convert OWL log files into CSV statistics, run the following script:
 
-grep -h STATS *log|cut -d' ' -f1 --complement > statistics.csv
-
+bash
+Copy
+Edit
+./run_log_to_csv.sh
+This will produce one CSV file per OWL log file.
 
