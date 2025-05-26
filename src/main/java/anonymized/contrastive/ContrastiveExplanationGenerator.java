@@ -130,13 +130,13 @@ public class ContrastiveExplanationGenerator {
         ontologies.abox2 = aboxProcessor.generateAbox2(relevantAxioms, relevantIndividuals);
         ontologies.abox3 = aboxProcessor.generateABox3(ontologies.module, ontologies.abox2);
 
-        System.out.println("Size ABox2: "+ontologies.abox2.size());
-        System.out.println("Size ABox3: "+ontologies.abox3.size());
+     //   System.out.println("Size ABox2: "+ontologies.abox2.size());
+     //   System.out.println("Size ABox3: "+ontologies.abox3.size());
 
         /*System.out.println("ABox 3:");
         abox3.forEach(System.out::println);
         System.out.println();*/
-        System.out.println("Generated ABoxes");
+      //  System.out.println("Generated ABoxes");
 
 
         // Step 4: Construct overApproximationOntology
@@ -166,7 +166,7 @@ public class ContrastiveExplanationGenerator {
         OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
 
         if(reasoner.isConsistent()) {
-            System.out.println("Nothing to fix!");
+        //    System.out.println("Nothing to fix!");
             return;
         }
 
@@ -416,13 +416,13 @@ public class ContrastiveExplanationGenerator {
         flexibleSet.addAll(ontologies.abox2);
         flexibleSet.removeAll(ontologies.abox3);
 
-        System.out.println("OverApproximated ontology size: "+ontologies.overApproximationOntology.getAxiomCount());
-        System.out.println("Flexible: "+flexibleSet.size());
+      //  System.out.println("OverApproximated ontology size: "+ontologies.overApproximationOntology.getAxiomCount());
+      //  System.out.println("Flexible: "+flexibleSet.size());
 
         // Step 5: Compute first explanation
         Set<OWLAxiom> different = computeExplanation(ontologies.overApproximationOntology, specialAxiom, flexibleSet);
 
-        System.out.println("Computed first justification");
+      //  System.out.println("Computed first justification");
 
         if(different.isEmpty()) {
             try {
@@ -435,7 +435,7 @@ public class ContrastiveExplanationGenerator {
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println(specialAxiom);
+       //     System.out.println(specialAxiom);
             throw new AssertionError("justification among differences empty - shouldn't be possible!");
         }
         // Step 6: Update overApproximationOntology
@@ -446,13 +446,13 @@ public class ContrastiveExplanationGenerator {
 
         flexibleSet = ontologies.abox3;
 
-        System.out.println("OverApproximated ontology size: "+ontologies.overApproximationOntology.getAxiomCount());
-        System.out.println("Flexible: "+flexibleSet.size());
+      //  System.out.println("OverApproximated ontology size: "+ontologies.overApproximationOntology.getAxiomCount());
+      //  System.out.println("Flexible: "+flexibleSet.size());
 
         // Step 7: Compute second explanation
         Set<OWLAxiom> common = computeExplanation(ontologies.overApproximationOntology, specialAxiom, flexibleSet);
 
-        System.out.println("Computed second justification");
+     //   System.out.println("Computed second justification");
 
         // Step 8: Compute conflicts
         ontologies.conflictSet = computeConflictSet(common,different,problem.getOntology());

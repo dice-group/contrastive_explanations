@@ -47,10 +47,10 @@ public class RelevantScopeFinder {
                         .filter(problem.getOntology()::containsAxiom)
                         .collect(Collectors.toSet());
 
-                System.out.println("Selected " + result.size() + " relevant axioms.");
+                //System.out.println("Selected " + result.size() + " relevant axioms.");
                 if(PRINT_DETAILS) {
                     ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-                    System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
+                 //   System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
                 }
                 return result;
             } catch (ProofGenerationFailedException e) {
@@ -68,9 +68,9 @@ public class RelevantScopeFinder {
 
             OWLOntology module = problem.getOntology().getOWLOntologyManager().createOntology(result);
 
-            System.out.println("Module size: "+ result.size());
+          //  System.out.println("Module size: "+ result.size());
 
-            System.out.println("Computing union of justifications...");
+           // System.out.println("Computing union of justifications...");
 
             long start = System.currentTimeMillis();
             OWLReasonerFactory fac = new ReasonerFactory();
@@ -89,12 +89,12 @@ public class RelevantScopeFinder {
 
             result.retainAll(module.getABoxAxioms(Imports.INCLUDED));
             */
-            System.out.println("Computing union of justifications took "+(System.currentTimeMillis()-start));
+           // System.out.println("Computing union of justifications took "+(System.currentTimeMillis()-start));
 
-            System.out.println("Selected " + result.size() + " relevant axioms.");
+            //System.out.println("Selected " + result.size() + " relevant axioms.");
             if(PRINT_DETAILS) {
                 ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-                System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
+               // System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
             }
 
             return result;
@@ -117,9 +117,9 @@ public class RelevantScopeFinder {
 
         Set<OWLAxiom> result = moduleExtractor.extract(signature);
 
-        System.out.println("Chose module of size "+result.size()+".");
+      //  System.out.println("Chose module of size "+result.size()+".");
         if(PRINT_DETAILS){
-            System.out.println("The module contains: ");
+         //   System.out.println("The module contains: ");
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
             result.stream()
                     .map(renderer::render)
@@ -140,9 +140,9 @@ public class RelevantScopeFinder {
 
         Set<OWLAxiom> result = moduleExtractor.extract(signature);
 
-        System.out.println("Chose module of size "+result.size()+".");
+      //  System.out.println("Chose module of size "+result.size()+".");
         if(PRINT_DETAILS){
-            System.out.println("The module contains: ");
+     //       System.out.println("The module contains: ");
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
             result.stream()
                     .map(renderer::render)
@@ -175,10 +175,10 @@ public class RelevantScopeFinder {
             result.add(fresh);
         }
 
-        System.out.println("Selected "+result.size()+" relevant individuals.");
+        //System.out.println("Selected "+result.size()+" relevant individuals.");
         if(PRINT_DETAILS) {
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
+          //  System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
         }
 
         return result;

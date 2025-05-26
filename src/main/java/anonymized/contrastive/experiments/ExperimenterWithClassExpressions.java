@@ -71,13 +71,13 @@ public class ExperimenterWithClassExpressions {
 
         final int maxIterations = Integer.parseInt(args[2]);
 
-        System.out.println("Class expression size: "+classExpressionSize);
-        System.out.println("Iterations: "+maxIterations);
+        //System.out.println("Class expression size: "+classExpressionSize);
+        //System.out.println("Iterations: "+maxIterations);
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLDataFactory factory = manager.getOWLDataFactory();
 
-        System.out.println("Parsing ontology...");
+        //System.out.println("Parsing ontology...");
         OWLOntology ont = manager.loadOntologyFromOntologyDocument(new File(args[0]));
 
         if(ont.getAxiomCount()>MAX_ONT_SIZE){
@@ -93,8 +93,8 @@ public class ExperimenterWithClassExpressions {
         ont.axioms(Imports.INCLUDED).filter(x -> x.isOfType(AxiomType.SAME_INDIVIDUAL))
                         .forEach(toRemove::add);
         ont.remove(toRemove);
-        toRemove.forEach(System.out::println);
-        System.out.println("Removed "+toRemove.size()+" unsupported axioms");
+       // toRemove.forEach(System.out::println);
+        //System.out.println("Removed "+toRemove.size()+" unsupported axioms");
 
         Set<OWLNamedIndividual> allIndividuals = ont.individualsInSignature().collect(Collectors.toSet());
 

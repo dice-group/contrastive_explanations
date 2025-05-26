@@ -1,7 +1,7 @@
 #! /bin/bash
 
-#for i in `cat ~/Git/Data/ore2015_sample/pool_sample/el/instantiation/names-sorted-by-size.txt`
-for i in non-redundant-el/*owl
+for i in `cat el-corpus-sorted.csv`
+#for i in non-redundant-el/*owl
 do
     filename=$(basename "$i")
     echo $filename
