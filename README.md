@@ -1,5 +1,3 @@
-Got it! Here's the full content formatted exactly as a **README.md** file for your repo:
-
 ````markdown
 # Contrastive Explanations for ABox Entailments
 
@@ -55,8 +53,8 @@ It answers questions like:
 
 ## 📥 Inputs
 
-| Parameter                   | Description                                                                                         |
-|-----------------------------|-----------------------------------------------------------------------------------------------------|
+| Parameter                    | Description                                                                                         |
+|------------------------------|-----------------------------------------------------------------------------------------------------|
 | OWL ontology file            | Path to `.owl` ontology file                                                                        |
 | Class expression size (int)  | Size (complexity) of generated class expressions (e.g., conjunctions, restrictions)                  |
 | Number of repetitions (int)  | Number of CEP problems to generate per run                                                          |
@@ -67,43 +65,33 @@ It answers questions like:
 
 ## 📤 Outputs
 
-| Output                      | Description                                                                                          |
-|-----------------------------|-----------------------------------------------------------------------------------------------------|
-| Explanation summary (console) | - Class expression<br>- Fact and foil individuals<br>- Explanation patterns (`q₁`, `q₂`)<br>- Conflict axioms |
-| Statistics (console)        | - Sizes of commonality, difference, conflict<br>- Number of fresh individuals<br>- Runtime          |
-| Optional logs               | Debug or error logs (logging suppressed by default)                                                 |
+| Output                       | Description                                                                                          |
+|------------------------------|-----------------------------------------------------------------------------------------------------|
+| Explanation summary (console)| - Class expression<br>- Fact and foil individuals<br>- Explanation patterns (`q₁`, `q₂`)<br>- Conflict axioms |
+| Statistics (console)         | - Sizes of commonality, difference, conflict<br>- Number of fresh individuals<br>- Runtime          |
+| Optional logs                | Debug or error logs (logging suppressed by default)                                                 |
 
 ---
+## Installation
 
-## ⚙ How to Build and Run
+To compile and run this project, you need to install **EVEE** locally by following the instructions provided in the official repository:
 
-### Build
+🔗 [EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
+
+Once EVEE is installed, compile the project using:
 
 ```bash
 mvn package
-````
-
-### Run Experiment Directly
-
-```bash
-java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar \
-    anonymized.contrastive.experiments.ExperimenterWithClassExpressions \
-    path/to/ontology.owl 5 10 ELK conflict-minimal
-```
-
-Arguments:
-
-1. OWL ontology file path.
-2. Class expression size.
-3. Number of CEP repetitions.
-4. Reasoner choice (optional): `ELK` or `HERMIT`.
-5. Conflict-minimal flag (optional).
-
----
 
 ### Step-by-Step Experiment Run
+All experiment scripts are located in the `experiments/` subfolder.
+1. **Copy the Compiled JAR:**
+  After successful compilation, copy the generated JAR file from the `target/` directory into the `experiments/` folder:
 
-1. **Prepare ontology data:**
+  ```bash
+  cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar experiments/
+  ```
+2. **Prepare ontology data:**
 
    Download and extract the ORE 2015 ontologies:
 
