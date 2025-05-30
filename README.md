@@ -1,7 +1,7 @@
 ````markdown
 # Contrastive Explanations for ABox Entailments
 
-## 📘 Project Overview
+## Project Overview
 
 This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, following the methodology described in:
 
