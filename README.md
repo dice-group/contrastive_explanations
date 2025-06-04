@@ -1,135 +1,153 @@
-````markdown
-# Contrastive Explanations for ABox Entailments
+# 🧠 Contrastive Explanations for ABox Entailments
 
-## Project Overview
+## 📘 Project Overview
 
-This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, following the methodology described in:
+This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in:
 
 > *“Can You Tell the Difference? Contrastive Explanations for ABox Entailments” (KR 2025)*
 
-It answers questions like:
+It aims to answer questions like:
 
 > **Why is individual `a` an instance of concept `C`, but individual `b` is not?**
 
 ---
 
-## 🔍 What Does This Code Do?
+## 🔍 What This Code Does
 
-- Generates random complex OWL class expressions over an ontology.
-- Finds **fact** individuals that satisfy a class expression and **foil** individuals that do not.
-- Constructs a **Contrastive Explanation Problem (CEP)** by pairing a fact, a foil, and a target class.
-- Computes a minimal contrastive explanation consisting of:
-  - **q₁ (commonality):** what fact and foil share.
-  - **q₂ (difference):** what fact has that foil is missing.
-  - **Conflict set:** axioms that must be removed to make the foil satisfy the class.
-- Produces statistics on explanation size, fresh individuals introduced, and runtime.
-
----
-
-## 🏗 How Is It Implemented?
-
-- **Main driver (`ExperimenterWithClassExpressions`):**
-  - Loads OWL ontologies.
-  - Supports `ELK` or `HermiT` reasoners (configurable).
-  - Generates random complex class expressions.
-  - Finds fact and foil individuals.
-  - Builds and solves contrastive explanation problems.
-  - Outputs explanations and statistics.
-
-- **ABox processing (`ABoxProcessor`):**
-  - Expands ABox assertions using synthetic individuals.
-  - Processes class and role assertions for ABox augmentation.
-  - Tracks axiom preservation or modification.
-
-- **Dependencies:**
-  - Java 8+
-  - OWL API 5.1.20 for ontology parsing.
-  - ELK reasoner for fast EL⊥ reasoning.
-  - HermiT reasoner for expressive reasoning.
-  - EVEE-LIB for justification extraction.
-  - SLF4J / Logback for logging.
+- Generates random, complex OWL class expressions over a given ontology.
+- Identifies **fact** individuals (satisfy the expression) and **foil** individuals (do not).
+- Constructs **Contrastive Explanation Problems (CEP)** by pairing a fact, a foil, and a target class.
+- Computes contrastive explanations:
+    - `q₁` (commonality): shared assertions between fact and foil.
+    - `q₂` (difference): what fact has that foil lacks.
+    - **Conflict set**: axioms preventing foil from satisfying the class.
+- Reports statistics on explanation size, runtime, and synthetic individuals introduced.
 
 ---
 
-## 📥 Inputs
+## 🏗 Implementation Overview
 
-| Parameter                    | Description                                                                                         |
-|------------------------------|-----------------------------------------------------------------------------------------------------|
-| OWL ontology file            | Path to `.owl` ontology file                                                                        |
-| Class expression size (int)  | Size (complexity) of generated class expressions (e.g., conjunctions, restrictions)                  |
-| Number of repetitions (int)  | Number of CEP problems to generate per run                                                          |
-| Reasoner choice (optional)   | `"ELK"` (default) or `"HERMIT"`                                                                     |
-| Conflict-minimality flag     | Optional `"conflict-minimal"` to minimize conflicts in explanations                                  |
+### 🚀 Main Driver: `ExperimenterWithClassExpressions`
+
+- Loads OWL ontologies.
+- Supports **ELK** or **HermiT** reasoners.
+- Generates random complex class expressions.
+- Identifies fact/foil individuals.
+- Solves CEPs and outputs results.
+
+### 🧱 ABox Processing: `ABoxProcessor`
+
+- Augments ABox with synthetic individuals.
+- Processes class/role assertions.
+- Tracks axiom usage and transformations.
+
+### 🧰 Dependencies
+
+- Java 8+
+- [OWL API 5.1.20](https://github.com/owlcs/owlapi)
+- [ELK Reasoner](https://github.com/liveontologies/elk-reasoner)
+- [HermiT Reasoner](https://github.com/owlcs/hermit-reasoner)
+- [EVEE Library](https://github.com/de-tu-dresden-inf-lat/evee) for justification computation
+- SLF4J / Logback for logging
 
 ---
 
-## 📤 Outputs
+## 📥 Input Parameters
 
-| Output                       | Description                                                                                          |
-|------------------------------|-----------------------------------------------------------------------------------------------------|
-| Explanation summary (console)| - Class expression<br>- Fact and foil individuals<br>- Explanation patterns (`q₁`, `q₂`)<br>- Conflict axioms |
-| Statistics (console)         | - Sizes of commonality, difference, conflict<br>- Number of fresh individuals<br>- Runtime          |
-| Optional logs                | Debug or error logs (logging suppressed by default)                                                 |
+| Parameter                  | Description                                                                 |
+|---------------------------|-----------------------------------------------------------------------------|
+| OWL ontology file         | Path to the `.owl` ontology file                                            |
+| Class expression size     | Integer controlling the complexity of generated class expressions          |
+| Number of repetitions     | Number of CEPs to generate                                                  |
+| Reasoner (optional)       | `"ELK"` (default) or `"HERMIT"`                                             |
+| Conflict-minimality flag  | Optional flag `"conflict-minimal"` to minimize conflict axioms             |
 
 ---
-## Installation
 
-To compile and run this project, you need to install **EVEE** locally by following the instructions provided in the official repository:
+## 📤 Output Format
 
-🔗 [EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
+| Output                        | Description                                                                                     |
+|------------------------------|-------------------------------------------------------------------------------------------------|
+| Explanation summary          | Class expression, fact & foil individuals, `q₁`, `q₂`, and conflict axioms                     |
+| Statistics                   | Sizes of explanation components, number of synthetic individuals, and total execution time     |
+| Log files (optional)         | Debugging and error logs (disabled by default)                                                  |
 
-Once EVEE is installed, compile the project using:
+---
+
+## ⚙️ Installation & Setup
+
+### 🧱 Step 1: Install EVEE
+
+This project depends on the EVEE library. Please follow the installation steps provided in the official GitHub repository:
+
+👉 [EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
+
+### 📦 Step 2: Build the Project
+
+After EVEE is set up, build this project with:
 
 ```bash
 mvn package
-
-### Step-by-Step Experiment Run
-All experiment scripts are located in the `experiments/` subfolder.
-1. **Copy the Compiled JAR:**
-  After successful compilation, copy the generated JAR file from the `target/` directory into the `experiments/` folder:
-
-  ```bash
-  cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar experiments/
-  ```
-2. **Prepare ontology data:**
-
-   Download and extract the ORE 2015 ontologies:
-
-   [https://zenodo.org/records/18578](https://zenodo.org/records/18578)
-
-   > *Note:* Do not commit extracted ontologies to Git due to size.
-
-2. **Update experiment script:**
-
-   Edit `experiments/run-rexperiment-complex.sh` to point to the directory containing extracted ontologies.
-
-3. **Run the experiment:**
-
-   ```bash
-   cd experiments
-   ./run-rexperiment-complex.sh
-   ```
-
-   This processes each ontology and generates OWL log files. Execution time depends on dataset size.
-
-   > *Important:* Ensure OWL log files are **not** committed to the Git repository.
-
-4. **Generate CSV statistics:**
-
-   After running experiments, convert logs to CSV:
-
-   ```bash
-   ./run_log_to_csv.sh
-   ```
+```
 
 ---
 
-## 📦 Explanation Components: q₁ and q₂
+## 🧪 Running Experiments
 
-* **q₁ (Commonality):** ABox assertions shared by both fact and foil individuals.
-* **q₂ (Difference):** ABox assertions true for the fact individual but missing or contradicted in the foil individual.
+### Step-by-Step Guide
 
-These form the core of contrastive explanations, highlighting why the fact satisfies the concept and the foil does not.
+All scripts are located in the `experiments/` folder.
+
+#### 1. Copy the JAR
+
+After building, move the JAR into the `experiments/` folder:
+
+```bash
+cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar experiments/
+```
+
+#### 2. Download Ontologies
+
+Download the ORE 2015 benchmark ontologies:
+
+📥 [ORE 2015 Ontologies - Zenodo](https://zenodo.org/records/18578)
+
+> **Note:** Do not commit extracted `.owl` files to the Git repository due to size.
+
+#### 3. Update Script Path
+
+Edit `experiments/run-rexperiment-complex.sh` and update the path to your ontology directory.
+
+#### 4. Run the Experiment
+
+```bash
+cd experiments
+./run-rexperiment-complex.sh
+```
+
+> This processes each ontology and produces explanation log files.
+
+#### 5. Generate CSV from Logs
+
+Convert the output logs to CSV format:
+
+```bash
+./run_log_to_csv.sh
+```
+
+---
+
+## 🧠 Explanation Components
+
+### 🟦 `q₁` - Commonality
+
+ABox assertions shared between **fact** and **foil** individuals.
+
+### 🟥 `q₂` - Difference
+
+Assertions that hold for the **fact** but not for the **foil**.
+
+These components define a **contrastive explanation** — clarifying *why* one individual satisfies a concept while the other does not.
 
 ---
 
@@ -141,19 +159,27 @@ java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar 
     examples/university.owl 4 20 ELK
 ```
 
-Runs 20 CEP problems with class expression size 4 on `university.owl` using the ELK reasoner.
+- Runs 20 CEPs
+- Class expression size: 4
+- Ontology: `university.owl`
+- Reasoner: ELK
 
 ---
 
-## 🧪 Notes and Tips
+## 💡 Notes & Tips
 
-* Ontologies with >10,000 axioms are skipped for performance reasons.
-* Unsupported axioms (e.g., TBox axioms with individuals, same-as assertions) are filtered out.
-* Random seed fixed to `0` for reproducibility.
-* Logging is minimized for clean output but can be enabled for debugging.
+- Ontologies with >10,000 axioms are skipped for performance reasons.
+- Unsupported constructs (e.g., individual-based TBox axioms, `sameAs`) are filtered.
+- Random seed is fixed (`0`) for reproducibility.
+- Logging is suppressed for clarity — enable SLF4J if needed.
 
 ---
 
-## Contact & Contributions
+## 🤝 Contributions & Contact
 
-Please open issues or pull requests on GitHub for feedback or improvements.
+We welcome feedback and contributions! Please:
+
+- Submit pull requests
+- Open issues for bugs or suggestions
+
+📬 *For academic inquiries or collaborations, contact the project maintainers via GitHub.*
