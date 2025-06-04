@@ -1,56 +1,158 @@
-# Project Setup & Experimentation Guide
+# 🧠 Contrastive Explanations for ABox Entailments
 
-## Installation
+## 📘 Project Overview
 
-To compile and run this project, you need to install **EVEE** locally by following the instructions provided in the official repository:
+This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in research paper:
 
-🔗 [EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
+> *“Can You Tell the Difference? Contrastive Explanations for ABox Entailments” (KR 2025)*
 
-Once EVEE is installed, compile the project using:
+It aims to answer questions like:
+
+> **Why is individual `a` an instance of concept `C`, but individual `b` is not?**
+
+---
+
+## 🔍 What This Code Does
+
+- Generates random, complex OWL class expressions over a given ontology.
+- Identifies **fact** individuals (satisfy the expression) and **foil** individuals (do not).
+- Constructs **Contrastive Explanation Problems (CEP)** by pairing a fact, a foil, and a target class.
+- Computes contrastive explanations:
+    - `q₁` (commonality): shared assertions between fact and foil.
+    - `q₂` (difference): what fact has that foil lacks.
+    - **Conflict set**: axioms preventing foil from satisfying the class.
+- Reports statistics on explanation size, conflict size, runtime, and synthetic individuals introduced.
+
+---
+
+## 🏗 Implementation Overview
+
+### 🚀 Main Driver: `ExperimenterWithClassExpressions`
+
+- Loads OWL ontologies.
+- Supports **ELK** or **HermiT** reasoners.
+- Generates random complex class expressions.
+- Identifies fact/foil individuals.
+- Solves CEPs and outputs results.
+
+### 🧱 ABox Processing: `ABoxProcessor`
+
+- Augments ABox with synthetic individuals.
+- Processes class/role assertions.
+- Tracks axiom usage and transformations.
+
+### 🧰 Dependencies
+
+- Java 8+
+- [OWL API 5.1.20](https://github.com/owlcs/owlapi)
+- [ELK Reasoner](https://github.com/liveontologies/elk-reasoner)
+- [HermiT Reasoner](https://github.com/owlcs/hermit-reasoner)
+- [EVEE Library](https://github.com/de-tu-dresden-inf-lat/evee) for justification computation
+- SLF4J / Logback for logging
+
+---
+## ⚙️ Installation & Setup
+
+### 🧱 Step 1: Install EVEE
+
+This project depends on the EVEE library. Please follow the installation steps provided in the official GitHub repository:
+
+👉 [EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
+
+### 📦 Step 2: Build the Project
+
+After EVEE is set up, build this project with:
 
 ```bash
 mvn package
-````
-
-## Running Experiments
-
-All experiment scripts are located in the `experiments/` subfolder.
-
-**Step 1: Copy the Compiled JAR**
-
-After successful compilation, copy the generated JAR file from the `target/` directory into the `experiments/` folder:
-
-```bash
-cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar experiments/
 ```
 
-**Step 2: Download the ORE 2015 Ontology Repository**
+---
 
-Download and extract the ORE 2015 ontology repository from the following link into a directory of your choice:
+## 🧪 Running Experiments
 
-🔗 [ORE 2015 Repository (Zenodo)](https://zenodo.org/records/18578)
+### Step-by-Step Guide
 
-> **Important:** Do **not** add any of the ontology files to your Git repository. These files are large and should be excluded from version control.
+All scripts are located in the `experiments/` folder.
 
-**Step 3: Run the Experiment**
+#### 1. Copy the JAR
 
-Update the file path in the `run-rexperiment-complex.sh` script to point to the directory where the ontologies were extracted.
+After building, move the JAR into the `experiments/` folder:
 
-Then run the script from the command line:
+#### 2. Download Ontologies
+
+Download the ORE 2015 benchmark ontologies:
+
+📥 [ORE 2015 Ontologies - Zenodo](https://zenodo.org/records/18578)
+
+> **Note:** Do not commit extracted `.owl` files to the Git repository due to size.
+
+#### 3. Update Script Path
+
+Edit `experiments/run-rexperiment-complex.sh` and update the path to your ontology directory.
+
+#### 4. Run the Experiment
 
 ```bash
 cd experiments
 ./run-rexperiment-complex.sh
 ```
 
-This script will process each ontology and generate corresponding OWL log files. This may take some time depending on the dataset size.
+> This processes each ontology and produces explanation log files.
 
-> **Note:** Ensure the generated OWL log files are **not** committed to the Git repository.
+#### 5. Generate CSV from Logs
 
-**Step 4: Generate CSV Statistics**
-
-To convert the OWL log files into CSV statistics, run the following script:
+Convert the output logs to CSV format:
 
 ```bash
 ./run_log_to_csv.sh
 ```
+
+---
+
+## 🧠 Explanation Components
+
+### 🟦 `q₁` - Commonality
+
+ABox assertions shared between **fact** and **foil** individuals.
+
+### 🟥 `q₂` - Difference
+
+Assertions that hold for the **fact** but not for the **foil**.
+
+These components define a **contrastive explanation** — clarifying *why* one individual satisfies a concept while the other does not.
+
+---
+
+## 🚀 Example Run
+
+```bash
+java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar \
+    anonymized.contrastive.experiments.ExperimenterWithClassExpressions \
+    examples/university.owl 4 20 ELK
+```
+
+- Runs 20 CEPs
+- Class expression size: 4
+- Ontology: `university.owl`
+- Reasoner: ELK
+
+---
+
+## 💡 Notes & Tips
+
+- Ontologies with >10,000 axioms are skipped for performance reasons.
+- Unsupported constructs (e.g., individual-based TBox axioms, `sameAs`) are filtered.
+- Random seed is fixed (`0`) for reproducibility.
+- Logging is suppressed for clarity — enable SLF4J if needed.
+
+---
+
+## 🤝 Contributions & Contact
+
+We welcome feedback and contributions! Please:
+
+- Submit pull requests
+- Open issues for bugs or suggestions
+
+📬 *For academic inquiries or collaborations, contact the project maintainers via GitHub.*
