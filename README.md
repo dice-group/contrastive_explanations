@@ -1,6 +1,6 @@
-# 🧠 Contrastive Explanations for ABox Entailments
+# Contrastive Explanations for ABox Entailments
 
-## 📘 Project Overview
+## Project Overview
 
 This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in research paper:
 
@@ -12,7 +12,7 @@ It aims to answer questions like:
 
 ---
 
-## 🔍 What This Code Does
+## What This Code Does
 
 - Generates random, complex OWL class expressions over a given ontology.
 - Identifies **fact** individuals (satisfy the expression) and **foil** individuals (do not).
@@ -25,9 +25,9 @@ It aims to answer questions like:
 
 ---
 
-## 🏗 Implementation Overview
+## Implementation Overview
 
-### 🚀 Main Driver: `ExperimenterWithClassExpressions`
+### Main Driver: `ExperimenterWithClassExpressions`
 
 - Loads OWL ontologies.
 - Supports **ELK** or **HermiT** reasoners.
@@ -35,13 +35,13 @@ It aims to answer questions like:
 - Identifies fact/foil individuals.
 - Solves CEPs and outputs results.
 
-### 🧱 ABox Processing: `ABoxProcessor`
+### ABox Processing: `ABoxProcessor`
 
 - Augments ABox with synthetic individuals.
 - Processes class/role assertions.
 - Tracks axiom usage and transformations.
 
-### 🧰 Dependencies
+### Dependencies
 
 - Java 8+
 - [OWL API 5.1.20](https://github.com/owlcs/owlapi)
@@ -52,7 +52,7 @@ It aims to answer questions like:
 
 ---
 
-## 📥 Input Parameters
+## Input Parameters
 
 | Parameter                  | Description                                                                 |
 |---------------------------|-----------------------------------------------------------------------------|
@@ -64,7 +64,7 @@ It aims to answer questions like:
 
 ---
 
-## 📤 Output Format
+## Output Format
 
 | Output                        | Description                                                                                     |
 |------------------------------|-------------------------------------------------------------------------------------------------|
@@ -74,15 +74,14 @@ It aims to answer questions like:
 
 ---
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
-### 🧱 Step 1: Install EVEE
+### Step 1: Install EVEE
 
 This project depends on the EVEE library. Please follow the installation steps provided in the official GitHub repository:
+[EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
 
-👉 [EVEE GitHub Repository](https://github.com/de-tu-dresden-inf-lat/evee)
-
-### 📦 Step 2: Build the Project
+### Step 2: Build the Project
 
 After EVEE is set up, build this project with:
 
@@ -92,7 +91,7 @@ mvn package
 
 ---
 
-## 🧪 Running Experiments
+## Running Experiments
 
 ### Step-by-Step Guide
 
@@ -105,8 +104,7 @@ After building, move the JAR into the `experiments/` folder:
 #### 2. Download Ontologies
 
 Download the ORE 2015 benchmark ontologies:
-
-📥 [ORE 2015 Ontologies - Zenodo](https://zenodo.org/records/18578)
+[ORE 2015 Ontologies - Zenodo](https://zenodo.org/records/18578)
 
 > **Note:** Do not commit extracted `.owl` files to the Git repository due to size.
 
@@ -133,13 +131,13 @@ Convert the output logs to CSV format:
 
 ---
 
-## 🧠 Explanation Components
+## Explanation Components
 
-### 🟦 `q₁` - Commonality
+### `q₁` - Commonality
 
 ABox assertions shared between **fact** and **foil** individuals.
 
-### 🟥 `q₂` - Difference
+### `q₂` - Difference
 
 Assertions that hold for the **fact** but not for the **foil**.
 
@@ -147,7 +145,7 @@ These components define a **contrastive explanation** — clarifying *why* one i
 
 ---
 
-## 🚀 Example Run
+## Example Run
 
 ```bash
 java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar \
@@ -162,7 +160,7 @@ java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar 
 
 ---
 
-## 💡 Notes & Tips
+## Notes & Tips
 
 - Ontologies with >10,000 axioms are skipped for performance reasons.
 - Unsupported constructs (e.g., individual-based TBox axioms, `sameAs`) are filtered.
@@ -171,11 +169,10 @@ java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar 
 
 ---
 
-## 🤝 Contributions & Contact
+## Contributions & Contact
 
 We welcome feedback and contributions! Please:
 
 - Submit pull requests
 - Open issues for bugs or suggestions
-
-📬 *For academic inquiries or collaborations, contact the project maintainers via GitHub.*
+- *For academic inquiries or collaborations, contact the project maintainers via GitHub.*
