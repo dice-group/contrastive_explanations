@@ -2,7 +2,7 @@
 
 ## 📘 Project Overview
 
-This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in:
+This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in research paper:
 
 > *“Can You Tell the Difference? Contrastive Explanations for ABox Entailments” (KR 2025)*
 
@@ -21,7 +21,7 @@ It aims to answer questions like:
     - `q₁` (commonality): shared assertions between fact and foil.
     - `q₂` (difference): what fact has that foil lacks.
     - **Conflict set**: axioms preventing foil from satisfying the class.
-- Reports statistics on explanation size, runtime, and synthetic individuals introduced.
+- Reports statistics on explanation size, conflict size, runtime, and synthetic individuals introduced.
 
 ---
 
@@ -101,10 +101,6 @@ All scripts are located in the `experiments/` folder.
 #### 1. Copy the JAR
 
 After building, move the JAR into the `experiments/` folder:
-
-```bash
-cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar experiments/
-```
 
 #### 2. Download Ontologies
 
