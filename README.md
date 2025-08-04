@@ -1,22 +1,10 @@
 # Contrastive Explanations for ABox Entailments
 
-## Project Overview
-
-This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in research paper:
-
-> *“Can You Tell the Difference? Contrastive Explanations for ABox Entailments” (KR 2025)*
-
-It aims to answer questions like:
-
-> **Why is individual `a` an instance of concept `C`, but individual `b` is not?**
-
----
-
 ## What This Code Does
 
 - Generates random, complex OWL class expressions over a given ontology.
 - Identifies **fact** individuals (satisfy the expression) and **foil** individuals (do not).
-- Constructs **Contrastive Explanation Problems (CEP)** by pairing a fact, a foil, and a target class.
+- Constructs **Contrastive Explanation Problems (CP)** by pairing a fact, a foil, and a target class.
 - Computes contrastive explanations:
     - `q₁` (commonality): shared assertions between fact and foil.
     - `q₂` (difference): what fact has that foil lacks.
@@ -33,7 +21,7 @@ It aims to answer questions like:
 - Supports **ELK** or **HermiT** reasoners.
 - Generates random complex class expressions.
 - Identifies fact/foil individuals.
-- Solves CEPs and outputs results.
+- Solves CPs and outputs results.
 
 ### ABox Processing: `ABoxProcessor`
 
@@ -130,7 +118,7 @@ java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar 
     examples/university.owl 4 20 ELK
 ```
 
-- Runs 20 CEPs
+- Runs 20 CPs
 - Class expression size: 4
 - Ontology: `university.owl`
 - Reasoner: ELK
