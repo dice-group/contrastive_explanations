@@ -21,6 +21,9 @@ public class ContrastiveExplanationProblem {
         return ontology;
     }
 
+    /**
+     * This is what is called the concept in the paper.
+     */
     public OWLClassExpression getOwlClassExpression() {
         return owlClassExpression;
     }

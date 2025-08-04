@@ -23,22 +23,37 @@ public class ContrastiveExplanation {
         this.conflict = conflict;
     }
 
+    /**
+     * This corresponds to what is called commonality in the paper, e.g. q_com
+     */
     public Set<OWLAxiom> getCommon() {
         return common;
     }
 
+    /**
+     * This corresponds to what is called difference in the paper, e.g. q_diff
+     */
     public Set<OWLAxiom> getDifferent() {
         return different;
     }
 
+    /**
+     * this is how we implemented the fact evidence vector, as a mapping from variables to individual names
+     */
     public Map<OWLNamedIndividual, OWLNamedIndividual> getFactMapping() {
         return factMapping;
     }
 
+    /**
+     * this is how we implemented the foil evidence vector, as a mapping from variables to individual names
+     */
     public Map<OWLNamedIndividual, OWLNamedIndividual> getFoilMapping() {
         return foilMapping;
     }
 
+    /**
+     * this is what is called conflict set in the paper, i.e. \mathcal{C}
+     */
     public Set<OWLAxiom> getConflict() {
         return conflict;
     }

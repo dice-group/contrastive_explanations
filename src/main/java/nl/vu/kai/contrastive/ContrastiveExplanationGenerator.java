@@ -25,6 +25,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * This class implements the algorithm for computing difference-minimal contrastive explanations shown in the
+ * supplemental material of the paper, sketched in the evaluation section of the main text, and based on the
+ * procedure described in the section on difference-minimal explanations.
+ */
 public class ContrastiveExplanationGenerator {
 
     private boolean conflictOptimization=false;
@@ -54,21 +59,28 @@ public class ContrastiveExplanationGenerator {
         this.conflictOptimization=conflictMinimal;
     }
 
+    /**
+     * Data structure to contain initially the CE super structure, and later the minimized CP
+     */
     private class Ontologies {
-        Set<OWLAxiom> module,abox2,abox3;
-        OWLOntology overApproximationOntology;
+        Set<OWLAxiom> module,abox2,abox3; // abox2 corresponds to q in the super structure, abox3 to q_com, the module is used as replacement of the ontology, for optimization
+        OWLOntology overApproximationOntology; // this is the union of q and T, needed for reasoning and repair
         Set<OWLAxiom> conflictSet = new HashSet<>();
     }
 
+    /**
+     * Computing difference-minimal explanations as described in the paper.
+     */
     public ContrastiveExplanation computeExplanation(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
 
         if(!conflictOptimization) {
+            // This version is not discussed in the paper, and wasn't used in the experiments.
+
             // Step 0: make TBox "conflict-save"
             //ConflictHandler conflictHandler = new ConflictHandler(problem.getOntology(), factory);
             //conflictHandler.makeTBoxConflictSave();
 
             Ontologies ontologies = computeOntologies(problem);
-
 
             makeABoxConsistent(problem, ontologies);
 
@@ -80,22 +92,14 @@ public class ContrastiveExplanationGenerator {
             // Step 8: Return ContrastiveExplanation
             return result;
         } else {
+
+            // we first compute the super structure
             Ontologies ontologies = computeOntologies(problem);
 
-
+            // Step P1' from the paper: remove conflicts
             OWLOntologyManager manager = problem.getOntology().getOWLOntologyManager();
             OWLOntology foilVersion = instantiateFoils(ontologies.abox2, manager);
             foilVersion.addAxioms(ontologies.module);
-
-            /*ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            System.out.println("This is the foil ontology: ");
-            System.out.println("-------");
-            System.out.println(foilVersion.axioms()
-                    .map(renderer::render)
-                    .collect(Collectors.joining("\n")));
-            System.out.println("-------");*/
-
-            //System.out.println(reasonerFactory.createReasoner(foilVersion).isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil())));
 
             boolean success = minimizeConflict(ontologies, problem, foilVersion);
             if(!success)
@@ -108,6 +112,7 @@ public class ContrastiveExplanationGenerator {
             }
             ontologies.abox3.retainAll(ontologies.abox2);
 
+            // P2' - P4' are implemented in minimizeToExplanation
             return minimizeToExplanation(problem,ontologies);
         }
     }
@@ -116,10 +121,14 @@ public class ContrastiveExplanationGenerator {
     private Ontologies computeOntologies(ContrastiveExplanationProblem problem) throws OWLOntologyCreationException {
 
         Ontologies ontologies = new Ontologies();
-        // Step 1: Use RelevantScopeFinder to get relevant axioms and individuals
+
+        // from the paper: compute the set A' of assertions
         Set<OWLAxiom> relevantAxioms = RelevantScopeFinder.getRelevantAxioms(problem);
+
+        // from the paper: compute the set I of relevant individual names
         Set<OWLNamedIndividual> relevantIndividuals = RelevantScopeFinder.getRelevantIndividuals(problem, relevantAxioms, factory);
 
+        // optimization: compute a module for the relevant signature
         Set<OWLEntity> signature = relevantAxioms.stream()
                 .flatMap(x -> x.signature())
                 .collect(Collectors.toSet());
@@ -128,7 +137,8 @@ public class ContrastiveExplanationGenerator {
         ontologies.module = RelevantScopeFinder.getModule(problem.getOntology(), signature);
         //ontologies.module = RelevantScopeFinder.getModule(problem, relevantIndividuals);
 
-        // Step 2: Compute ABox2 and ABox3
+
+        // abox2 and abox3 correspond to the ABox patterns q_m and q_com for the from the paper
         ontologies.abox2 = aboxProcessor.generateAbox2(relevantAxioms, relevantIndividuals);
         ontologies.abox3 = aboxProcessor.generateABox3(ontologies.module, ontologies.abox2);
 
@@ -141,7 +151,7 @@ public class ContrastiveExplanationGenerator {
         System.out.println("Generated ABoxes");
 
 
-        // Step 4: Construct overApproximationOntology
+        // the over approximated ontology is the union of the TBox and the ABox pattern
         OWLOntologyManager manager = problem.getOntology().getOWLOntologyManager();
         ontologies.overApproximationOntology = manager.createOntology();
         ontologies.module.stream().filter(x -> x.isOfType(AxiomType.TBoxAxiomTypes)).forEach(ontologies.overApproximationOntology::add);
@@ -152,8 +162,12 @@ public class ContrastiveExplanationGenerator {
         return ontologies;
     }
 
-
+    /**
+     * Implements Step P1' from the paper (supplemental material)
+     */
     private void makeABoxConsistent(ContrastiveExplanationProblem problem, Ontologies ontologies) throws OWLOntologyCreationException {
+
+        // we first need to create the ontology to be repaired
 
         Set<OWLAxiom> tbox = ontologies.module
                 .stream()
@@ -177,6 +191,8 @@ public class ContrastiveExplanationGenerator {
         Set<OWLNamedIndividual> rangeIgnore = new HashSet<>();
         Set<OWLNamedIndividual> pairsSaveToRemove = new HashSet<>();
 
+        // The mapping assocPartner and its inverse are used to check the conditions of Lemma 9+10 from the paper.
+        // in particular, it is a superset of the safe vectors,
         Map<OWLNamedIndividual,OWLNamedIndividual> assocPartnerInv = new HashMap<>();
         assocPartnerInv.put(problem.getFoil(),problem.getFact());
         Set<OWLNamedIndividual> usedFirst = new HashSet<>();
@@ -197,6 +213,8 @@ public class ContrastiveExplanationGenerator {
         if(assocPartner.keySet().size()!=partners.keys().size())
             throw new AssertionError("1:1 mapping not possible!");
 
+        // lower bound contains now a set of axioms, based on Lemma 9+10, that should stay in the ABox if we want to
+        // preserve the entailment of the fact
         Set<OWLAxiom> lowerBound =
         ontologies.module
                 .stream()
@@ -228,6 +246,8 @@ public class ContrastiveExplanationGenerator {
         staticAxioms.addAll(tbox);
         staticAxioms.addAll(lowerBound);
 
+        // We now apply the basic repair algorithm as described in the paper, making sure we never remove axioms from
+        // the lower bound
         while(!reasoner.isConsistent()) {
 
             MyBlackBoxExplanation expl = new MyBlackBoxExplanation(ontology, reasonerFactory, reasonerFactory.createReasoner(ontology));
@@ -342,6 +362,8 @@ public class ContrastiveExplanationGenerator {
         ontology.axioms().filter(x -> x.isOfType(AxiomType.ABoxAxiomTypes)).forEach(System.out::println);
         System.out.println();*/
 
+        // For debugging purposes, we track situations where the entailment got lost, which shouldn't be possible by
+        // the theoretical results from the paper
         if (!reasoner.isEntailed(factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFoil()))) {
             //System.out.println("Lost entailment! Backtracking...");
             throw new AssertionError("Fixing problem destroyed entailment!");
@@ -349,6 +371,9 @@ public class ContrastiveExplanationGenerator {
             return;
     }
 
+    /**
+     * Step P4': minimize the conflict set
+     */
     private boolean minimizeConflict(Ontologies ontologies,
                                         ContrastiveExplanationProblem problem,
                                         OWLOntology foilOntology) {
@@ -402,7 +427,9 @@ public class ContrastiveExplanationGenerator {
         }
     }
 
-
+    /**
+     * Step P2' and P3' from the paper
+     */
     public ContrastiveExplanation minimizeToExplanation(ContrastiveExplanationProblem problem, Ontologies ontologies) throws OWLOntologyCreationException {
 
         OWLNamedIndividual combinedIndividual = individualGenerator.getIndividualForPair(problem.getFact(),problem.getFoil());
