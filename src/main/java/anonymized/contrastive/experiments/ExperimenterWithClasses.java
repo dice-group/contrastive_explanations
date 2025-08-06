@@ -1,13 +1,14 @@
 package anonymized.contrastive.experiments;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import anonymized.contrastive.ContrastiveExplanation;
 import anonymized.contrastive.ContrastiveExplanationGenerator;
 import anonymized.contrastive.ContrastiveExplanationProblem;
 import anonymized.contrastive.experiments.helpers.FoilCandidateFinder;
+import anonymized.tools.Util;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -18,7 +19,6 @@ import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.LoggerFactory;
-import anonymized.tools.Util;
 
 import java.io.File;
 import java.util.*;
@@ -26,29 +26,29 @@ import java.util.stream.Collectors;
 
 public class ExperimenterWithClasses {
 
-    public static int MAX_ONT_SIZE=10000;
+    public static int MAX_ONT_SIZE = 10000;
 
-    public static enum ReasonerChoice { ELK, HERMIT }
+    public static enum ReasonerChoice {ELK, HERMIT}
 
     public static ReasonerChoice reasoner = ReasonerChoice.ELK;
 
     public static void main(String[] args) throws OWLOntologyCreationException {
-        boolean conflictMinimal=false;
-        if(args.length<2){
+        boolean conflictMinimal = false;
+        if (args.length < 2) {
             System.out.println("Usage: ");
-            System.out.println(ExperimenterWithClasses.class+ " ONTOLOGY NUMBER_OF_REPITITIONS [ELK|HERMIT] [conflict-minimal]");
+            System.out.println(ExperimenterWithClasses.class + " ONTOLOGY NUMBER_OF_REPITITIONS [ELK|HERMIT] [conflict-minimal]");
             System.exit(0);
         }
-        if(args.length>=3){
-            if(args[2]=="HERMIT")
+        if (args.length >= 3) {
+            if (args[2] == "HERMIT")
                 reasoner = ReasonerChoice.HERMIT;
-            else if(args[2]!="ELK")
-                throw new IllegalArgumentException("Unexpected reasoner choice: "+args[2]);
+            else if (args[2] != "ELK")
+                throw new IllegalArgumentException("Unexpected reasoner choice: " + args[2]);
         }
-        if(args.length==4){
-            if(args[3]!="conflict-minimal")
-                throw new IllegalArgumentException("Expected 'conflict-minimal' as 5th argument, got "+args[3]);
-            conflictMinimal=true;
+        if (args.length == 4) {
+            if (args[3] != "conflict-minimal")
+                throw new IllegalArgumentException("Expected 'conflict-minimal' as 5th argument, got " + args[3]);
+            conflictMinimal = true;
 
         }
 
@@ -69,8 +69,8 @@ public class ExperimenterWithClasses {
         System.out.println("Parsing ontology...");
         OWLOntology ont = manager.loadOntologyFromOntologyDocument(new File(args[0]));
 
-        if(ont.getAxiomCount()>MAX_ONT_SIZE){
-            System.out.println("Ontology has more than "+MAX_ONT_SIZE+" axioms!");
+        if (ont.getAxiomCount() > MAX_ONT_SIZE) {
+            System.out.println("Ontology has more than " + MAX_ONT_SIZE + " axioms!");
             System.exit(0);
         }
 
@@ -84,7 +84,7 @@ public class ExperimenterWithClasses {
         int maxFacts = 0;
 
         OWLReasonerFactory reasonerFactory =
-                reasoner==ReasonerChoice.HERMIT ?
+                reasoner == ReasonerChoice.HERMIT ?
                         new ReasonerFactory() :
                         new ElkReasonerFactory();
 
@@ -97,21 +97,21 @@ public class ExperimenterWithClasses {
 
         Set<OWLAxiom> notABox = new HashSet<>(ont.getAxioms(Imports.INCLUDED));
         notABox.removeAll(ont.getABoxAxioms(Imports.INCLUDED));
-        System.out.println("ABox:   "+ont.getABoxAxioms(Imports.INCLUDED));
-        System.out.println("notABox:   "+notABox);
+        System.out.println("ABox:   " + ont.getABoxAxioms(Imports.INCLUDED));
+        System.out.println("notABox:   " + notABox);
 
 
         MyBlackBoxExplanation explainer = new MyBlackBoxExplanation(ont, reasonerFactory, reasoner);
-        System.out.println("explainer:   "+explainer);
+        System.out.println("explainer:   " + explainer);
         explainer.setStaticPart(notABox);
 
-        for(OWLClass clazz : ont.classesInSignature().collect(Collectors.toSet()))  {
+        for (OWLClass clazz : ont.classesInSignature().collect(Collectors.toSet())) {
             Set<OWLNamedIndividual> pos = reasoner.getInstances(clazz).getFlattened();
             Set<OWLNamedIndividual> neg = new HashSet<>(allIndividuals);
             neg.removeAll(pos);
 
-            for(OWLNamedIndividual ind:new LinkedList<>(pos)){
-                if(ont.classAssertionAxioms(ind)
+            for (OWLNamedIndividual ind : new LinkedList<>(pos)) {
+                if (ont.classAssertionAxioms(ind)
                         .map(x -> x.getClassExpression())
                         .anyMatch(clazz::equals))
                     pos.remove(ind);
@@ -121,7 +121,7 @@ public class ExperimenterWithClasses {
                                     factory.getOWLObjectOneOf(ind),
                                     factory.getOWLObjectComplementOf(clazz)
                             ));
-                     explanation.removeAll(notABox);
+                    explanation.removeAll(notABox);
                     if (explanation.size() < 2) {
                         System.out.println("ABox justification too simple: " + clazz + ", " + ind);
                         pos.remove(ind);
@@ -130,7 +130,7 @@ public class ExperimenterWithClasses {
                 }
             }
 
-            if(!pos.isEmpty() && !neg.isEmpty()){
+            if (!pos.isEmpty() && !neg.isEmpty()) {
                 candidates.add(clazz);
                 maxFacts = Math.max(maxFacts, pos.size());
                 maxFoils = Math.max(maxFoils, neg.size());
@@ -139,18 +139,14 @@ public class ExperimenterWithClasses {
             }
         }
 
-        System.out.println("Ontology: "+args[0]);
-        System.out.println("Candidate classes: "+candidates.size());
-        System.out.println("Max facts per class: "+maxFacts);
-        System.out.println("Max foils per class: "+maxFoils);
+        System.out.println("Ontology: " + args[0]);
+        System.out.println("Candidate classes: " + candidates.size());
+        System.out.println("Max facts per class: " + maxFacts);
+        System.out.println("Max foils per class: " + maxFoils);
 
         Random random = new Random(0);
 
-        //List<Integer> commonSizes = new LinkedList<>();
-        //List<Integer> differenceSizes = new LinkedList<>();
-        //List<Long> freshIndividuals = new LinkedList<>();
-
-        if(candidates.isEmpty()){
+        if (candidates.isEmpty()) {
             System.out.println("NO CONTRASTIVE EXPLANATION PROBLEMS!");
             System.exit(0);
         }
@@ -161,19 +157,18 @@ public class ExperimenterWithClasses {
                 new FoilCandidateFinder(ont, FoilCandidateFinder.Strategy.CommonClass);
         foilCandidateFinder.setReasoner(reasoner);
 
-        for(int i = 0; i<maxIterations; i++){
+        for (int i = 0; i < maxIterations; i++) {
             OWLClass cl = candidates.get(random.nextInt(candidates.size()));
             List<OWLNamedIndividual> factC = facts.get(cl);
             List<OWLNamedIndividual> foilC = foils.get(cl);
             OWLNamedIndividual fact = factC.get(random.nextInt(factC.size()));
             foilC.retainAll(foilCandidateFinder.foilCandidates(fact).collect(Collectors.toSet()));
 
-            if(!foilC.isEmpty()) {
+            if (!foilC.isEmpty()) {
                 OWLNamedIndividual foil = Util.randomItem(
                         foilCandidateFinder.foilCandidates(fact)
                                 .filter(foilC::contains),
                         random);
-                //foilC.get(random.nextInt(foilC.size()));
                 ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont, cl, fact, foil);
                 System.out.println("CEP: " + cep.toString(renderer));
                 long startTime = System.currentTimeMillis();
@@ -192,7 +187,7 @@ public class ExperimenterWithClasses {
                         .count();
                 System.out.println("STATS: " + commonSize + " " + differenceSize + " " + " " + conflictSize + " " + freshIndividuals + " " + duration);
             } else {
-                System.out.println("Skipped -- no foil candidate: "+cl+" "+fact);
+                System.out.println("Skipped -- no foil candidate: " + cl + " " + fact);
             }
         }
 
@@ -201,8 +196,8 @@ public class ExperimenterWithClasses {
 
 
     private static OWLClassExpression asUnsat(OWLAxiom axiom, OWLDataFactory factory) {
-        if(axiom instanceof OWLClassAssertionAxiom) {
-            OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom)axiom;
+        if (axiom instanceof OWLClassAssertionAxiom) {
+            OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom) axiom;
             return factory.getOWLObjectIntersectionOf(factory.getOWLObjectOneOf(ca.getIndividual()), factory.getOWLObjectComplementOf(ca.getClassExpression()));
         } else
             throw new AssertionError("Not implemented!");

@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 public class Util {
 
     private Util(){
-        // utilities class
     }
 
     public static <T> T randomItem(List<T> list, Random random){

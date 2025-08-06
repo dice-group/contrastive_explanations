@@ -1,7 +1,11 @@
 package anonymized.contrastive.experiments;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -41,7 +45,7 @@ public class ExtractSummaryStatsToCSV {
         String folderPath = args[1];
         // Generate file name with current date
         String currentDate = new SimpleDateFormat("MM-dd-yyyy").format(new Date());
-        String outputFilePath = "extracted_summary_stats_"+ currentDate+".csv";
+        String outputFilePath = "extracted_summary_stats_" + currentDate + ".csv";
         List<String> fileNames = Files.readAllLines(Paths.get(fileListPath));
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {

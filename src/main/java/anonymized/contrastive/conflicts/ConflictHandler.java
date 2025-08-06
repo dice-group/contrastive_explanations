@@ -1,9 +1,8 @@
 package anonymized.contrastive.conflicts;
 
-import com.clarkparsia.owlapi.explanation.*;
 import anonymized.contrastive.ContrastiveExplanation;
-import anonymized.contrastive.ContrastiveExplanationGenerator;
 import anonymized.contrastive.helper.ContrastiveExplanationInstatiator;
+import com.clarkparsia.owlapi.explanation.MyBlackBoxExplanation;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.*;
@@ -28,8 +27,8 @@ public class ConflictHandler {
     private ContrastiveExplanationInstatiator contrastiveExplanationInstatiator;
 
     public ConflictHandler(OWLOntology ontology, OWLDataFactory factory) {
-        this.ontology=ontology;
-        this.factory=factory;
+        this.ontology = ontology;
+        this.factory = factory;
         this.contrastiveExplanationInstatiator =
                 new ContrastiveExplanationInstatiator(factory);
     }
@@ -37,33 +36,24 @@ public class ConflictHandler {
     /**
      * Adapt the TBox so that no conflicts with the ABox are possible, assuming ontology is in EL
      */
-    public void makeTBoxConflictSave(){
+    public void makeTBoxConflictSave() {
         removedAxioms = ontology.tboxAxioms(Imports.INCLUDED)
                 .filter(this::conflictUnsave)
                 .collect(Collectors.toSet());
 
         ontology.removeAxioms(removedAxioms);
 
-        System.out.println("Removed "+removedAxioms.size()+" TBox axioms to avoid conflicts");
-        /*System.out.println("Those are: ");
-        removedAxioms.stream()
-                .map(OWLAxiom::toString)
-                .forEach(System.out::println);
-        System.out.println();*/
+        System.out.println("Removed " + removedAxioms.size() + " TBox axioms to avoid conflicts");
     }
 
-    public void restoreOntology(){
+    public void restoreOntology() {
         ontology.addAxioms(removedAxioms);
-        removedAxioms=null;
+        removedAxioms = null;
     }
 
     public ContrastiveExplanation addConflict(ContrastiveExplanation explanation) {
 
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-
-        /*System.out.println("We are going to add the conflict for the following explanation:");
-        System.out.println(explanation.toString(renderer));
-        System.out.println();*/
 
         OWLOntologyManager manager = ontology.getOWLOntologyManager();
         OWLOntology toRepair = null;
@@ -82,28 +72,21 @@ public class ConflictHandler {
         toRepair.addAxioms(removedAxioms);
         toRepair.addAxioms(difference);
 
-        /*System.out.println("The following may be inconsistent: ");
-        toRepair.axioms()
-                .filter(x -> x.isLogicalAxiom())
-                .map(renderer::render)
-                .forEach(System.out::println);
-        */
 
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
         OWLReasoner reasoner = reasonerFactory.createReasoner(toRepair);
         Set<OWLAxiom> conflict = new HashSet<>();
-        while(!reasoner.isConsistent()){
+        while (!reasoner.isConsistent()) {
             MyBlackBoxExplanation explanationGenerator =
-                    new MyBlackBoxExplanation(toRepair,reasonerFactory,reasoner);
+                    new MyBlackBoxExplanation(toRepair, reasonerFactory, reasoner);
             explanationGenerator.setStaticPart(difference);
             Set<OWLAxiom> justification = explanationGenerator.getExplanation(factory.getOWLThing());
-            //System.out.println("Justification: "+justification.stream().map(renderer::render).collect(Collectors.joining(", ")));
             Optional<OWLAxiom> toFix = justification
                     .stream()
                     .filter(x -> x.isOfType(AxiomType.ABoxAxiomTypes))
                     .filter(x -> !difference.contains(x))
                     .findFirst();
-            if(toFix.isPresent()){
+            if (toFix.isPresent()) {
                 toRepair.removeAxiom(toFix.get());
                 conflict.add(toFix.get());
                 reasoner.flush();
@@ -120,23 +103,21 @@ public class ConflictHandler {
     }
 
 
-
     /**
      * Check whether the axiom can contribute to a conflict in the ABox, assuming ontology is in EL
      */
     private boolean conflictUnsave(OWLAxiom axiom) {
-        if(axiom instanceof OWLDisjointClassesAxiom)
+        if (axiom instanceof OWLDisjointClassesAxiom)
             return true;
-        else if(axiom instanceof OWLDisjointUnionAxiom)
+        else if (axiom instanceof OWLDisjointUnionAxiom)
             return true;
-        else if(axiom instanceof OWLSubClassOfAxiom) {
+        else if (axiom instanceof OWLSubClassOfAxiom) {
             OWLSubClassOfAxiom sub = (OWLSubClassOfAxiom) axiom;
             return syntacticallyUnsatisfiable(sub.getSuperClass());
-        }
-        else if(axiom instanceof OWLSubClassOfAxiomShortCut){
+        } else if (axiom instanceof OWLSubClassOfAxiomShortCut) {
             OWLSubClassOfAxiomShortCut shortCut = (OWLSubClassOfAxiomShortCut) axiom;
             return conflictUnsave(shortCut.asOWLSubClassOfAxiom());
-        } else if(axiom instanceof OWLSubClassOfAxiomSetShortCut){
+        } else if (axiom instanceof OWLSubClassOfAxiomSetShortCut) {
             OWLSubClassOfAxiomSetShortCut shortCut = (OWLSubClassOfAxiomSetShortCut) axiom;
             return shortCut.asOWLSubClassOfAxioms().stream().anyMatch(this::conflictUnsave);
         }
@@ -144,14 +125,13 @@ public class ConflictHandler {
     }
 
     private boolean syntacticallyUnsatisfiable(OWLClassExpression expression) {
-        if(expression.isBottomEntity())
+        if (expression.isBottomEntity())
             return true;
-        else if(expression instanceof OWLObjectIntersectionOf){
+        else if (expression instanceof OWLObjectIntersectionOf) {
             OWLObjectIntersectionOf intersection = (OWLObjectIntersectionOf) expression;
             return intersection.conjunctSet()
                     .anyMatch(this::syntacticallyUnsatisfiable);
-        }
-        else if(expression instanceof OWLObjectSomeValuesFrom){
+        } else if (expression instanceof OWLObjectSomeValuesFrom) {
             OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) expression;
             return syntacticallyUnsatisfiable(some.getFiller());
         } else

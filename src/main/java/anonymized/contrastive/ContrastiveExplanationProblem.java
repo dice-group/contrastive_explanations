@@ -1,7 +1,9 @@
 package anonymized.contrastive;
 
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLClassExpression;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 public class ContrastiveExplanationProblem {
     private final OWLOntology ontology;
@@ -15,7 +17,7 @@ public class ContrastiveExplanationProblem {
         this.owlClassExpression = owlClassExpression;
         this.fact = fact;
         this.foil = foil;
-     }
+    }
 
     public OWLOntology getOntology() {
         return ontology;
@@ -34,11 +36,11 @@ public class ContrastiveExplanationProblem {
     }
 
     public String toString() {
-        return "ClassExpression: "+owlClassExpression+",   Fact: "+fact+",   Foil: "+foil;
+        return "ClassExpression: " + owlClassExpression + ",   Fact: " + fact + ",   Foil: " + foil;
     }
 
     public String toString(ManchesterOWLSyntaxOWLObjectRendererImpl renderer) {
 
-        return "ClassExpression: "+renderer.render(owlClassExpression)+",   Fact: "+renderer.render(fact)+",   Foil: "+renderer.render(foil);
+        return "ClassExpression: " + renderer.render(owlClassExpression) + ",   Fact: " + renderer.render(fact) + ",   Foil: " + renderer.render(foil);
     }
 }

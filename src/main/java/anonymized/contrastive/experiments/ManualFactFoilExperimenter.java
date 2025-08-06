@@ -108,8 +108,6 @@ public class ManualFactFoilExperimenter {
                     OWLNamedIndividual foil = dataFactory.getOWLNamedIndividual(IRI.create(getOntologyBaseIRI(ontology) + foilName));
 
                     System.out.println("\nFact: " + factName + " | Foil: " + foilName);
-                    //System.out.println("Using Manchester: " + renderer.render(classExpr));
-
                     ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ontology, classExpr, fact, foil);
                     ContrastiveExplanationGenerator gen = new ContrastiveExplanationGenerator(manager);
                     gen.useConflictMinimality(conflictMinimal);

@@ -1,14 +1,11 @@
 package com.clarkparsia.owlapi.explanation;
 
 
-
 import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.OWLAPIPreconditions;
-
 
 import javax.annotation.Nonnegative;
 import java.util.*;
@@ -27,7 +24,7 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
     // attributes to do some forward reasoning
     // disconnect from other ontology to make memory freeing easier
     private final OWLOntologyManager forwardManager = OWLManager.createOWLOntologyManager();
-    private OWLOntology forwardOntology  = forwardManager.createOntology();
+    private OWLOntology forwardOntology = forwardManager.createOntology();
     private final ReasonerFactory rf = new ReasonerFactory();
     private OWLReasoner forwardReasoner = rf.createReasoner(forwardOntology);
     private final OWLDataFactory owlFactory = forwardManager.getOWLDataFactory();
@@ -46,19 +43,13 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
         super(relevantAxioms, hookIndividualAxioms, anchorAxioms, singleExplanationGenerator);
         this.originalAxioms = getOntology().getAxioms();
     }
-
-
-
-
-
     // Hitting Set Stuff
-
 
     @Override
     public Set<Set<OWLAxiom>> getExplanations(OWLClassExpression unsatClass,
-					      @Nonnegative int maxExplanations) {
+                                              @Nonnegative int maxExplanations) {
         OWLAPIPreconditions
-            .checkNotNegative(maxExplanations, "max explanations cannot be negative");
+                .checkNotNegative(maxExplanations, "max explanations cannot be negative");
         Object max = maxExplanations == 0 ? "all" : Integer.valueOf(maxExplanations);
         LOGGER.info("Get {} explanation(s) for: {}", max, unsatClass);
         try {
@@ -66,25 +57,20 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
 
             if (firstMups.isEmpty()) {
                 LOGGER.info("First MUPS empty");
-                //System.out.println("First MUPS is empty!");
-                //return Collections.emptySet();
             }
             Set<Set<OWLAxiom>> allMups = new LinkedHashSet<>();
-
 
 
             progressMonitor.foundExplanation(firstMups);
             allMups.add(firstMups);
             // call to schemas
             addAnalogMUPS(firstMups, allMups);
-            //System.out.println(firstMups);
-            //System.out.println(allMups);
             Set<Set<OWLAxiom>> satPaths = new HashSet<>();
             Set<OWLAxiom> currentPathContents = new HashSet<>();
             singleExplanationGenerator.beginTransaction();
             try {
                 constructHittingSetTree(unsatClass, firstMups, allMups, satPaths,
-                    currentPathContents, maxExplanations);
+                        currentPathContents, maxExplanations);
             } finally {
                 singleExplanationGenerator.endTransaction();
             }
@@ -101,30 +87,30 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
     /**
      * Recurse.
      *
-     * @param unsatClass the unsat class
-     * @param allMups the all mups
-     * @param satPaths the sat paths
+     * @param unsatClass          the unsat class
+     * @param allMups             the all mups
+     * @param satPaths            the sat paths
      * @param currentPathContents the current path contents
-     * @param maxExplanations the max explanations
-     * @param orderedMups the ordered mups
-     * @param axiom the axiom
+     * @param maxExplanations     the max explanations
+     * @param orderedMups         the ordered mups
+     * @param axiom               the axiom
      * @return the list
      * @throws OWLException the oWL exception
      */
     @Override
     protected List<OWLAxiom> recurse(OWLClassExpression unsatClass, Set<Set<OWLAxiom>> allMups,
-				   Set<Set<OWLAxiom>> satPaths, Set<OWLAxiom> currentPathContents, int maxExplanations,
-				   List<OWLAxiom> orderedMups,
-				   OWLAxiom axiom) throws OWLException {
-	
+                                     Set<Set<OWLAxiom>> satPaths, Set<OWLAxiom> currentPathContents, int maxExplanations,
+                                     List<OWLAxiom> orderedMups,
+                                     OWLAxiom axiom) throws OWLException {
+
         Set<OWLAxiom> newMUPS = getNewMUPS(unsatClass, allMups, currentPathContents);
-		
+
         // Generate a new node - i.e. a new justification set
         if (newMUPS.contains(axiom)) {
             // How can this be the case???
             throw new OWLRuntimeException("Explanation contains removed axiom: " + axiom);
         }
-		
+
         if (newMUPS.isEmpty()) {
             LOGGER.info("Stop - satisfiable");
             // End of current path - add it to the list of paths
@@ -143,7 +129,7 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
             progressMonitor.foundExplanation(newMUPS);
             // Recompute priority here?
             constructHittingSetTree(unsatClass, newMUPS, allMups, satPaths, currentPathContents,
-                maxExplanations);
+                    maxExplanations);
             // We have found a new MUPS, so recalculate the ordering
             // axioms in the MUPS at the current level
             return getOrderedMUPS(orderedMups, allMups);
@@ -153,19 +139,9 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
 
     // adds all analog mups to set of all mups
     protected void addAnalogMUPS(Set<OWLAxiom> newMUPS, Set<Set<OWLAxiom>> allMUPS) {
-       // System.out.println("original mups ");
-        // System.out.println(newMUPS);
         Set<Set<OWLAxiom>> analogMUPS = computeAnalogJustifications(newMUPS);
-        //Integer i = 0;
-        // System.out.println("analogue mups " + i++);
-        //System.out.println(newMUPS);
-        //System.out.println("found analog: " + analogMUPS.size());
-        //for (Set<OWLAxiom> m : analogMUPS)
-        //    if (allMUPS.contains(m))
-        //       System.out.println("bad");
         allMUPS.addAll(analogMUPS);
     }
-
 
 
     /////////////////////////////////////////////////
@@ -195,11 +171,8 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
         return analogJustifications;
     }
 
-    private void updateForwardReasoner(Set<OWLAxiom> newAxioms)  {
+    private void updateForwardReasoner(Set<OWLAxiom> newAxioms) {
         OWLOntology oldOntology = forwardReasoner.getRootOntology();
-        //oldOntology.removeAxioms(oldOntology.getAxioms())
-        //oldOntology.addAxioms(ontology.getAxioms())
-
         Set<OWLAxiom> oldAxioms = oldOntology.getAxioms();
         Set<OWLAxiom> deleteAxioms = oldOntology.getAxioms();
         deleteAxioms.removeAll(newAxioms);
@@ -212,7 +185,6 @@ public class SchemaHSTExplanationGenerator extends com.clarkparsia.owlapi.explan
 
         forwardReasoner.flush();
     }
-
 
 
 }
@@ -235,7 +207,7 @@ class JustificationSchema {
         Set<OWLIndividual> justIndividuals = new HashSet<>();
         for (OWLAxiom a : justification)
             // only consider the individuals in assertions
-            if (a instanceof OWLClassAssertionAxiom || a instanceof  OWLObjectPropertyAssertionAxiom)
+            if (a instanceof OWLClassAssertionAxiom || a instanceof OWLObjectPropertyAssertionAxiom)
                 Collections.addAll(justIndividuals, a.individualsInSignature().toArray(OWLIndividual[]::new));
 
         Map<OWLIndividual, OWLIndividual> indToVarMap = new HashMap<>();
@@ -272,13 +244,10 @@ class JustificationSchema {
         Set<Map<OWLIndividual, OWLIndividual>> varToIndMap = new HashSet<>(allMappings);
 
 
-
-                // check, if the mapping is allowed or not
-        for (Map<OWLIndividual, OWLIndividual> map : allMappings){
+        // check, if the mapping is allowed or not
+        for (Map<OWLIndividual, OWLIndividual> map : allMappings) {
             // compute instantiatiation according to mapping
             Set<OWLAxiom> instantiatedPattern = instantiate(map);
-            //if (instantiatedPattern.toString().contains("aa") && instantiatedPattern.toString().contains("ab"))
-           //     System.out.println("found");
             for (OWLAxiom axiom : instantiatedPattern) {
                 // check if any instantiated axiom is not in ontology --> remove this mapping
                 // TODO: check if the axiom is a fluent, only then check, if it is in ontology?
@@ -292,7 +261,7 @@ class JustificationSchema {
         return varToIndMap;
     }
 
-    public Set<OWLAxiom> instantiate(Map<OWLIndividual, OWLIndividual> varToIndMap){
+    public Set<OWLAxiom> instantiate(Map<OWLIndividual, OWLIndividual> varToIndMap) {
         Set<OWLAxiom> instantiatedAxioms = new HashSet<>();
         // replace all variables in the axioms to get schema
         for (OWLAxiom a : justificationSchema) {
@@ -325,7 +294,7 @@ class JustificationSchema {
     }
 
     // returns true if all variables in the axiom are assigned to something by the map
-    private boolean allVariablesMapped(OWLAxiom axiom, Map<OWLIndividual, OWLIndividual> varToIndMap){
+    private boolean allVariablesMapped(OWLAxiom axiom, Map<OWLIndividual, OWLIndividual> varToIndMap) {
         for (OWLIndividual i : axiom.individualsInSignature().collect(Collectors.toSet())) {
             if (!varToIndMap.containsKey(i))
                 return false;
@@ -335,26 +304,23 @@ class JustificationSchema {
 
     // replaces all individuals according to the map
     private OWLAxiom replaceIndividuals(OWLAxiom axiom, Map<OWLIndividual, OWLIndividual> mapping) {
-       if (axiom instanceof OWLClassAssertionAxiom) {
-           OWLIndividual oldInd = ((OWLClassAssertionAxiom) axiom).getIndividual();
-           return owlFactory.getOWLClassAssertionAxiom(
-                   ((OWLClassAssertionAxiom) axiom).getClassExpression(),
-                   mapping.getOrDefault(oldInd, oldInd)
-           );
-       }
-       else if (axiom instanceof OWLObjectPropertyAssertionAxiom)  {
-           OWLIndividual subject = ((OWLObjectPropertyAssertionAxiom) axiom).getSubject();
-           OWLIndividual object = ((OWLObjectPropertyAssertionAxiom) axiom).getObject();
-           return owlFactory.getOWLObjectPropertyAssertionAxiom(
-                   ((OWLObjectPropertyAssertionAxiom) axiom).getProperty(),
-                   mapping.getOrDefault(subject, subject),
-                   mapping.getOrDefault(object, object)
-           );
-       }
-       else {
-           //System.out.println("WARNING: axiom not supported yet: " + axiom);
-           return axiom;
-       }
+        if (axiom instanceof OWLClassAssertionAxiom) {
+            OWLIndividual oldInd = ((OWLClassAssertionAxiom) axiom).getIndividual();
+            return owlFactory.getOWLClassAssertionAxiom(
+                    ((OWLClassAssertionAxiom) axiom).getClassExpression(),
+                    mapping.getOrDefault(oldInd, oldInd)
+            );
+        } else if (axiom instanceof OWLObjectPropertyAssertionAxiom) {
+            OWLIndividual subject = ((OWLObjectPropertyAssertionAxiom) axiom).getSubject();
+            OWLIndividual object = ((OWLObjectPropertyAssertionAxiom) axiom).getObject();
+            return owlFactory.getOWLObjectPropertyAssertionAxiom(
+                    ((OWLObjectPropertyAssertionAxiom) axiom).getProperty(),
+                    mapping.getOrDefault(subject, subject),
+                    mapping.getOrDefault(object, object)
+            );
+        } else {
+            return axiom;
+        }
     }
 
     private Set<Map<OWLIndividual, OWLIndividual>> allMappings(Set<OWLIndividual> variables,
@@ -375,15 +341,14 @@ class JustificationSchema {
                     mappings.add(mapping);
             }
             return mappings;
-        }
-        else {
+        } else {
             // recursive call
             Set<OWLIndividual> newVariables = new HashSet<>(variables);
             newVariables.remove(variable.get());
             Set<Map<OWLIndividual, OWLIndividual>> recursiveMappings = allMappings(newVariables, individuals, allowedAxioms);
             Set<Map<OWLIndividual, OWLIndividual>> mappings = new HashSet<>();
 
-            for (Map<OWLIndividual, OWLIndividual> map : recursiveMappings){
+            for (Map<OWLIndividual, OWLIndividual> map : recursiveMappings) {
                 for (OWLIndividual ind : individuals) {
                     Map<OWLIndividual, OWLIndividual> mapping = new HashMap<>(map);
                     mapping.put(variable.get(), ind);

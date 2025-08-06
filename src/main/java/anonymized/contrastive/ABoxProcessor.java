@@ -1,34 +1,27 @@
 package anonymized.contrastive;
 
 import anonymized.contrastive.helper.IndividualGenerator;
-import org.semanticweb.owlapi.model.*;
 import anonymized.tools.Pair;
-import java.util.*;
+import org.semanticweb.owlapi.model.*;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ABoxProcessor {
 
     private final IndividualGenerator individualGenerator;
     private final OWLDataFactory factory;
 
-    public ABoxProcessor(IndividualGenerator individualGenerator, OWLDataFactory factory){
-        this.individualGenerator=individualGenerator;
-        this.factory=factory;
+    public ABoxProcessor(IndividualGenerator individualGenerator, OWLDataFactory factory) {
+        this.individualGenerator = individualGenerator;
+        this.factory = factory;
     }
 
-    /*
-        ABox 1: the original ABox
-        ABox 2: for every axiom A(a)/r(a,b) in ABox 1, and all individuals x1,x2, we add A([a,x1])/r([a,x1],[b,x2])
-        ABox 3: contains all axioms A([a,x])/r([a,x1],[b,x2]) from ABox 2 for which A(x)/r(x1,x2) is in original abox
-     */
     // Process the ABox and generate new ABox entries based on the axiom type
-    //private Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>>
     public Set<OWLAxiom> generateAbox2(
             Set<OWLAxiom> abox, Set<OWLNamedIndividual> individuals) {
-        // Set to store either OWLClass or OWLObjectProperty with two lists of OWLNamedIndividual
-        //Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> newAbox = new HashSet<>();
-
         Set<OWLAxiom> abox2 = new HashSet<>();
-
         for (OWLAxiom axiom : abox) {
             if (axiom instanceof OWLClassAssertionAxiom) {
                 OWLClassAssertionAxiom classAssertion = (OWLClassAssertionAxiom) axiom;
@@ -37,8 +30,7 @@ public class ABoxProcessor {
 
                 // Check if the class expression is a named class
                 for (OWLNamedIndividual ind : individuals) {
-                    abox2.add(factory.getOWLClassAssertionAxiom(classExpression,individualGenerator.getIndividualForPair(individual,ind)));
-                    //ewAbox.add(new Pair<>(classExpression, new Pair<>(Arrays.asList(individual, ind), Collections.singletonList(ind))));
+                    abox2.add(factory.getOWLClassAssertionAxiom(classExpression, individualGenerator.getIndividualForPair(individual, ind)));
                 }
 
             } else if (axiom instanceof OWLObjectPropertyAssertionAxiom) {
@@ -52,10 +44,9 @@ public class ABoxProcessor {
                         // Add the OWLObjectProperty as the property in the pair
                         abox2.add(factory.getOWLObjectPropertyAssertionAxiom(
                                 property,
-                                individualGenerator.getIndividualForPair(subject,ind1),
-                                individualGenerator.getIndividualForPair(object,ind2)
-                                ));
-                        //newAbox.add(new Pair<>(property, new Pair<>(Arrays.asList(subject, ind1), Arrays.asList(object, ind2))));
+                                individualGenerator.getIndividualForPair(subject, ind1),
+                                individualGenerator.getIndividualForPair(object, ind2)
+                        ));
                     }
                 }
             }
@@ -63,50 +54,30 @@ public class ABoxProcessor {
         return abox2;
     }
 
-    /*public Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> generateNewAbox3(
-            Set<OWLAxiom> originalAbox,
-            Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox2,
-            OWLDataFactory dataFactory) {
-     */
     public Set<OWLAxiom> generateABox3(Set<OWLAxiom> originalABox, Set<OWLAxiom> abox2) {
-        //Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> newAbox = new HashSet<>();
         Set<OWLAxiom> abox3 = new HashSet<>();
-        for (//Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>> element : abox2
-            OWLAxiom axiom: abox2) {
-            //Object firstElement = element.getKey();
-            //Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>> internalpair = element.getValue();
+        for (OWLAxiom axiom : abox2) {
             if (axiom instanceof OWLClassAssertionAxiom) {
-                    //firstElement instanceof OWLClassExpression) {
-                OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom)axiom;
-                OWLClassExpression classExpression = ca.getClassExpression();//(OWLClassExpression) firstElement;
-                // Ensure that the size of the value is exactly 1
-                //assert internalpair.getValue().size() == 1 : "The size of the value pair is not 1: " + internalpair;
-                //OWLNamedIndividual individual = internalpair.getValue().get(0);
+                OWLClassAssertionAxiom ca = (OWLClassAssertionAxiom) axiom;
+                OWLClassExpression classExpression = ca.getClassExpression();
                 OWLNamedIndividual ind2 = individualGenerator
                         .getPairForIndividual((OWLNamedIndividual) ca.getIndividual())
                         .getValue();
                 OWLClassAssertionAxiom classAssertion = factory.getOWLClassAssertionAxiom(classExpression, ind2);
-                //System.out.println("Candidate for ABox3: "+classAssertion);
                 // Check if the original Abox contains the axiom and add the element to newAbox if true
                 if (originalABox.contains(classAssertion)) {
-                    //System.out.println(" -- adding that fucker");
                     abox3.add(ca);
                 }
-            } else if (axiom instanceof OWLObjectPropertyAssertionAxiom){//firstElement instanceof OWLObjectProperty) {
+            } else if (axiom instanceof OWLObjectPropertyAssertionAxiom) {
                 OWLObjectPropertyAssertionAxiom pa = (OWLObjectPropertyAssertionAxiom) axiom;
-                OWLObjectPropertyExpression objectProperty = pa.getProperty();//(OWLObjectProperty) firstElement;
-
-                //if (internalpair.getValue().size() == 2) {
-                   // OWLNamedIndividual subject = internalpair.getKey().get(1);
-                   // OWLNamedIndividual object = internalpair.getValue().get(1);
-
+                OWLObjectPropertyExpression objectProperty = pa.getProperty();
                 OWLNamedIndividual subject = individualGenerator.getPairForIndividual((OWLNamedIndividual) pa.getSubject()).getValue();
                 OWLNamedIndividual object = individualGenerator.getPairForIndividual((OWLNamedIndividual) pa.getObject()).getValue();
 
                 OWLObjectPropertyAssertionAxiom propertyAssertion = factory.getOWLObjectPropertyAssertionAxiom(objectProperty, subject, object);
 
                 if (originalABox.contains(propertyAssertion)) {
-                   abox3.add(pa);
+                    abox3.add(pa);
                 }
 
             }
@@ -114,7 +85,6 @@ public class ABoxProcessor {
         return abox3;
     }
 
-    //Return  Set<OWLAxiom> as A(a)/r(a,x1),r(b,x2) for all existing axioms A([a,x])/r([a,x1],[b,x2])
     private Set<OWLAxiom> transform2ABox(Set<Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>>> abox, OWLDataFactory dataFactory) {
         Set<OWLAxiom> axioms = new HashSet<>();
         for (Pair<Object, Pair<List<OWLNamedIndividual>, List<OWLNamedIndividual>>> element : abox) {

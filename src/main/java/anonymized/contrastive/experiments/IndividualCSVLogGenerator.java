@@ -1,8 +1,14 @@
 package anonymized.contrastive.experiments;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class IndividualCSVLogGenerator {
     public static void main(String[] args) throws IOException {

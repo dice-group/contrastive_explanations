@@ -1,8 +1,11 @@
 package anonymized.contrastive;
 
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
-import org.semanticweb.owlapi.model.*;
-import java.util.*;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ContrastiveExplanation {
@@ -43,32 +46,32 @@ public class ContrastiveExplanation {
         return conflict;
     }
 
-    public String toString(){
-        return "Common: "+common+"\n"+
-                "Different: "+different+"\n"+
-                "Fact mapping: "+factMapping+"\n"+
-                "Foil mapping: "+foilMapping+"\n"+
-                "Conflicts: "+conflict;
+    public String toString() {
+        return "Common: " + common + "\n" +
+                "Different: " + different + "\n" +
+                "Fact mapping: " + factMapping + "\n" +
+                "Foil mapping: " + foilMapping + "\n" +
+                "Conflicts: " + conflict;
     }
 
     public String toString(ManchesterOWLSyntaxOWLObjectRendererImpl renderer) {
-        return "Common: "+common.stream()
-                    .map(renderer::render)
-                    .collect(Collectors.joining(", "))+"\n"+
-                "Different: "+different.stream()
-                    .map(renderer::render)
-                    .collect(Collectors.joining(", "))+"\n"+
-                "Fact mapping: "+factMapping.entrySet()
-                    .stream()
-                    .map(x -> renderer.render(x.getKey())+"->"+renderer.render(x.getValue()))
-                    .collect(Collectors.joining(", "))+"\n"+
-                "Foil mapping: "+foilMapping.entrySet()
-                    .stream()
-                    .map(x -> renderer.render(x.getKey())+"->"+renderer.render(x.getValue()))
-                    .collect(Collectors.joining(", "))+"\n"+
-                "Conflicts: "+conflict.stream()
-                    .map(renderer::render)
-                .collect(Collectors.joining(", "))+"\n";
+        return "Common: " + common.stream()
+                .map(renderer::render)
+                .collect(Collectors.joining(", ")) + "\n" +
+                "Different: " + different.stream()
+                .map(renderer::render)
+                .collect(Collectors.joining(", ")) + "\n" +
+                "Fact mapping: " + factMapping.entrySet()
+                .stream()
+                .map(x -> renderer.render(x.getKey()) + "->" + renderer.render(x.getValue()))
+                .collect(Collectors.joining(", ")) + "\n" +
+                "Foil mapping: " + foilMapping.entrySet()
+                .stream()
+                .map(x -> renderer.render(x.getKey()) + "->" + renderer.render(x.getValue()))
+                .collect(Collectors.joining(", ")) + "\n" +
+                "Conflicts: " + conflict.stream()
+                .map(renderer::render)
+                .collect(Collectors.joining(", ")) + "\n";
     }
 }
 

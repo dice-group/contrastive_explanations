@@ -96,13 +96,7 @@ public class SingleJustGenerator {
     }
 
     public static Set<OWLAxiom> computeCoreofAllJustifications(OWLSubClassOfAxiom axiom) {
-//        if(!reasoner.isEntailed(axiom)){
-//            System.out.println("!!! The following conclusion is not entailed by the ontology: "+axiom );
-//            return Collections.emptySet();
-//        }
-
         Set<OWLAxiom> toReturn = ontology.getAxioms();
-//        System.out.println(ontology.getAxioms().size());
         for(OWLAxiom a: ontology.getAxioms()){
             /** Adaptation for contrastive explanation use case: keep all TBox axioms in core.
              */
@@ -110,16 +104,12 @@ public class SingleJustGenerator {
 
                 owlOntologyManager.applyChange(new RemoveAxiom(ontology, a));
                 reasoner.flush();
-//            System.out.println(a);
-//            System.out.println(reasoner.isEntailed(axiom));
                 if (reasoner.isEntailed(axiom)) {
                     toReturn.remove(a);
                 }
                 owlOntologyManager.applyChange(new AddAxiom(ontology, a));
-//            reasoner.flush();
             }
         }
-//        System.out.println(toReturn.size());
         if(toReturn.size()<1){
             return Collections.emptySet();
         }
@@ -135,164 +125,21 @@ public class SingleJustGenerator {
         return toReturn;
     }
 
-    /*public static Set<OWLAxiom> computeSingleJustificationByAD(OWLSubClassOfAxiom axiom, AtomicDecomposition<OWLAxiom, OWLAxiom> ad){
-
-        Configuration configuration=new Configuration();
-        configuration.throwInconsistentOntologyException=false;
-        OWLReasoner reasoner=reasonerFactory.createReasoner(ontology, configuration);
-
-        if(!reasoner.isEntailed(axiom)){
-            System.out.println("!!! The following conclusion is not entailed by the ontology: "+axiom );
-            return Collections.emptySet();
-        }
-
-        HashSet<OWLAxiom> toReturn = new HashSet<>(ontology.getAxioms());
-//        HashSet<OWLAxiom> copy = new HashSet<>(ontology.getAxioms());
-
-        //do atomic decomposition
-
-        HashMap<Integer, LinkedList<OWLAxiom>> atomMap = getAtomChainMap(ad);
-        LinkedList<LinkedList<OWLAxiom>> bubbleList = getBigAtomBubbleList(atomMap,ad);
-
-        System.out.println("----root:"+getRootAtomChainMap(ad).keySet().size());
-        for(LinkedList<OWLAxiom>a: bubbleList){
-            System.out.println(a.size());
-        }
-
-        LinkedList<OWLAxiom> axioms = new LinkedList<OWLAxiom>(ontology.getAxioms());
-
-        int nrReasonerCalls = 0;
-        Set<OWLAxiom> checkedAxiom = new HashSet<>();
-
-
-        while (!bubbleList.isEmpty()) {
-
-            List<OWLAxiom> bubble = bubbleList.poll();
-            bubble.removeAll(checkedAxiom);
-            if(bubble.size()==0){
-                continue;
-            }
-            toReturn.removeAll(bubble);
-
-            for(OWLAxiom a: bubble){
-                owlOntologyManager.applyChange(new RemoveAxiom(ontology, a));
-            }
-            reasoner.flush();
-            if(reasoner.isEntailed(axiom)){
-                toReturn.removeAll(bubble);
-                checkedAxiom.addAll(bubble);
-            }else{
-                for(OWLAxiom a: bubble){
-                    owlOntologyManager.applyChange(new AddAxiom(ontology, a));
-                }
-                toReturn.addAll(bubble);
-
-
-                Integer index = checkIndex(bubble,ad,atomMap);
-                if(index == null){
-                    System.out.println("!!!cannot find original atom index of "+bubble);
-                }
-                System.out.println("root:"+ad.get_atom(index));
-                bubbleList.addFirst(new LinkedList<>(ad.get_atom(index)));
-                System.out.println(" ad.get_successor_indices(index)"+ ad.get_successor_indices(index));
-                for(Integer i: ad.get_successor_indices(index)){
-
-                    bubbleList.addFirst(atomMap.get(i));
-                }
-//  split bubble into half
-//                final int thebubbleSize = bubble.size();
-//                if (thebubbleSize > 1) {
-//                    int halfBubbleSize = thebubbleSize / 2;
-//                    LinkedList<OWLAxiom> newLeftBubble = new LinkedList<OWLAxiom>();
-//                    LinkedList<OWLAxiom> newRightBubble = new LinkedList<OWLAxiom>(bubble);
-//                    for (int i = 0; i < halfBubbleSize; ++i) {
-//                        newLeftBubble.add(newRightBubble.poll());
-//                    }
-//                    bubbleList.addFirst(newLeftBubble);
-//                    bubbleList.addFirst(newRightBubble);
-//                }
-
-            }
-            ++nrReasonerCalls;
-//            reasoner.flush();
-        }
-        reasoner.dispose();
-
-//        System.out.println("- Number of reasoner call: "+nrReasonerCalls);
-        return toReturn;
-    }
-
-    private static Integer checkIndex(List<OWLAxiom> bubble, AtomicDecomposition<OWLAxiom, OWLAxiom> ad, HashMap<Integer, LinkedList<OWLAxiom>> atomMap) {
-        Integer toReturn;
-        for(Integer i: atomMap.keySet()){
-            atomMap.get(i).equals(bubble);
-            return i;
-        }
-        return null;
-    }
-
-    private static LinkedList<LinkedList<OWLAxiom>> getBigAtomBubbleList(HashMap<Integer, LinkedList<OWLAxiom>> bubbleMap,AtomicDecomposition<OWLAxiom, OWLAxiom> ad) {
-
-        LinkedList<LinkedList<OWLAxiom>> toReturn = new LinkedList();
-
-        for(Integer i: bubbleMap.keySet()){
-            if(ad.get_root_atom_indices().contains(i)){
-                toReturn.addFirst(bubbleMap.get(i));
-            }
-        }
-        return toReturn;
-    }
-
-    private static HashMap<Integer, LinkedList<OWLAxiom>> getRootAtomChainMap(AtomicDecomposition<OWLAxiom, OWLAxiom> ad) {
-
-        HashMap<Integer, LinkedList<OWLAxiom>> toReturn = new HashMap<>();
-
-        for(Integer rootAtomIndex: ad.get_root_atom_indices()){
-            System.out.println("atom("+rootAtomIndex+").size() = "+ad.get_atom(rootAtomIndex).size());
-            LinkedList<OWLAxiom> atomChain = new LinkedList<>(ad.get_atom(rootAtomIndex));
-            for(Integer succ: ad.get_decentant_indices(rootAtomIndex)){
-                atomChain.addAll(ad.get_atom(succ));
-            }
-            toReturn.put(rootAtomIndex,atomChain);
-        }
-        return toReturn;
-    }
-    private static HashMap<Integer, LinkedList<OWLAxiom>> getAtomChainMap(AtomicDecomposition<OWLAxiom, OWLAxiom> ad) {
-
-        HashMap<Integer, LinkedList<OWLAxiom>> toReturn = new HashMap<>();
-
-        for(Integer index = 0; index<ad.get_number_of_atoms()-1;index++){
-            System.out.println("atom("+index+").size() = "+ad.get_atom(index).size());
-            LinkedList<OWLAxiom> atomChain = new LinkedList<>(ad.get_atom(index));
-            for(Integer succ: ad.get_decentant_indices(index)){
-                atomChain.addAll(ad.get_atom(succ));
-            }
-//            System.out.println("--size of atoms:"+atomChain.size());
-            toReturn.put(index,atomChain);
-        }
-        return toReturn;
-    }*/
-
-
     public static Set<OWLAxiom> computeSingleJustification(OWLSubClassOfAxiom axiom,  int bubbleSize) {
         return computeSingleJustificationWithCore(axiom,Collections.emptySet(),bubbleSize);
     }
 
     public static Set<OWLAxiom> computeSingleJustification(OWLSubClassOfAxiom axiom) {
         Set<OWLAxiom> toReturn = ontology.getAxioms();
-//        System.out.println(ontology.getAxioms().size());
+
         for(OWLAxiom a: ontology.getAxioms()){
             owlOntologyManager.applyChange(new RemoveAxiom(ontology, a));
             reasoner.flush();
-//            System.out.println(a);
-//            System.out.println(reasoner.isEntailed(axiom));
             if(reasoner.isEntailed(axiom)){
                 toReturn.remove(a);
             }
             owlOntologyManager.applyChange(new AddAxiom(ontology, a));
-//            reasoner.flush();
         }
-//        System.out.println(toReturn.size());
         if(toReturn.size()<1){
             return Collections.emptySet();
         }
@@ -312,9 +159,6 @@ public class SingleJustGenerator {
         }
 
         HashSet<OWLAxiom> toReturn = new HashSet<>(ontology.getAxioms());
-//        HashSet<OWLAxiom> copy = new HashSet<>(ontology.getAxioms());
-
-
         LinkedList<LinkedList<OWLAxiom>> bubbleList = new LinkedList<LinkedList<OWLAxiom>>();
         LinkedList<OWLAxiom> axioms = new LinkedList<OWLAxiom>(ontology.getAxioms());
 
@@ -374,11 +218,8 @@ public class SingleJustGenerator {
                 }
             }
             ++nrReasonerCalls;
-//            reasoner.flush();
         }
         reasoner.dispose();
-
-//        System.out.println("- Number of reasoner call: "+nrReasonerCalls);
         return toReturn;
     }
 }
