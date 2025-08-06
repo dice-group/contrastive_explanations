@@ -78,48 +78,10 @@ All scripts are located in the `experiments/` folder.
 
 After building, move the JAR into the `experiments/` folder:
 
-#### 2. Download Ontologies
+#### 2. Run the Experiment
 
-Download the ORE 2015 benchmark ontologies:
- [ORE 2015 Ontologies - Zenodo](https://zenodo.org/records/18578)
-
-> **Note:** Do not commit extracted `.owl` files to the Git repository due to size.
-
-#### 3. Update Script Path
-
-Edit `experiments/run-rexperiment-complex.sh` and update the path to your ontology directory.
-
-#### 4. Run the Experiment
-
-{
-  "ontology_file_path": "E:/Workspace_Dice/DataSource/family.owl",
-  "experiments": [
-    {
-      "class_expression": "Sister and (hasSibling some (married some (hasChild some Grandchild)))",
-      "facts": ["F9F143", "F9F148"],
-      "foils": ["F9M161", "F9M147"]
-    },
-    {
-      "class_expression": "hasChild some Male",
-      "facts": ["F10M171"],
-      "foils": ["F4F56"]
-    }
-  ]
-}
-
-
-> This processes Each class expression is processed together with all possible pairs formed from its facts and foils.
-
-#### 5. Generate CSV from Logs
-
-Convert the output logs to CSV format:
-
-```bash
-./run_log_to_csv.sh
-```
-
----
-
+> To run the experiments, you need to provide JSON files that contain a list of class expressions along with their corresponding lists of facts and foils.
+> 
 ## Explanation Components
 
 ### `q₁` - Commonality
@@ -137,16 +99,24 @@ These components define a **contrastive explanation** — clarifying *why* one i
 ## Example Run
 
 ```bash
-java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar \
-    anonymized.contrastive.experiments.ExperimenterWithClassExpressions \
-    examples/university.owl 4 20 ELK
+{
+  "ontology_file_path": "E:/Workspace_Dice/DataSource/family.owl",
+  "experiments": [
+    {
+      "class_expression": "Sister and (hasSibling some (married some (hasChild some Grandchild)))",
+      "facts": ["F9F143", "F9F148"],
+      "foils": ["F9M161", "F9M147"]
+    },
+    {
+      "class_expression": "hasChild some Male",
+      "facts": ["F10M171"],
+      "foils": ["F4F56"]
+    }
+  ]
+}
 ```
 
-- Runs 20 CEPs
-- Class expression size: 4
-- Ontology: `university.owl`
-- Reasoner: ELK
-
+- > This processes Each class expression is processed together with all possible pairs formed from its facts and foils.
 ---
 
 ## Notes & Tips
@@ -155,7 +125,6 @@ java -cp target/contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar 
 - Unsupported constructs (e.g., individual-based TBox axioms, `sameAs`) are filtered.
 - Random seed is fixed (`0`) for reproducibility.
 - Logging is suppressed for clarity — enable SLF4J if needed.
-
 ---
 
 ## Contributions & Contact
