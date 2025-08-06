@@ -91,12 +91,24 @@ Edit `experiments/run-rexperiment-complex.sh` and update the path to your ontolo
 
 #### 4. Run the Experiment
 
-```bash
-cd experiments
-./run-rexperiment-complex.sh
-```
+{
+  "ontology_file_path": "E:/Workspace_Dice/DataSource/family.owl",
+  "experiments": [
+    {
+      "class_expression": "Sister and (hasSibling some (married some (hasChild some Grandchild)))",
+      "facts": ["F9F143", "F9F148"],
+      "foils": ["F9M161", "F9M147"]
+    },
+    {
+      "class_expression": "hasChild some Male",
+      "facts": ["F10M171"],
+      "foils": ["F4F56"]
+    }
+  ]
+}
 
-> This processes each ontology and produces explanation log files.
+
+> This processes Each class expression is processed together with all possible pairs formed from its facts and foils.
 
 #### 5. Generate CSV from Logs
 
