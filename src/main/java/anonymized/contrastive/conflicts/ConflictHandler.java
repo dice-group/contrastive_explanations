@@ -45,11 +45,6 @@ public class ConflictHandler {
         ontology.removeAxioms(removedAxioms);
 
         System.out.println("Removed "+removedAxioms.size()+" TBox axioms to avoid conflicts");
-        /*System.out.println("Those are: ");
-        removedAxioms.stream()
-                .map(OWLAxiom::toString)
-                .forEach(System.out::println);
-        System.out.println();*/
     }
 
     public void restoreOntology(){
@@ -60,11 +55,6 @@ public class ConflictHandler {
     public ContrastiveExplanation addConflict(ContrastiveExplanation explanation) {
 
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-
-        /*System.out.println("We are going to add the conflict for the following explanation:");
-        System.out.println(explanation.toString(renderer));
-        System.out.println();*/
-
         OWLOntologyManager manager = ontology.getOWLOntologyManager();
         OWLOntology toRepair = null;
 
@@ -81,14 +71,6 @@ public class ConflictHandler {
         toRepair.addAxioms(ontology.axioms());
         toRepair.addAxioms(removedAxioms);
         toRepair.addAxioms(difference);
-
-        /*System.out.println("The following may be inconsistent: ");
-        toRepair.axioms()
-                .filter(x -> x.isLogicalAxiom())
-                .map(renderer::render)
-                .forEach(System.out::println);
-        */
-
         OWLReasonerFactory reasonerFactory = new ElkReasonerFactory();
         OWLReasoner reasoner = reasonerFactory.createReasoner(toRepair);
         Set<OWLAxiom> conflict = new HashSet<>();
@@ -97,7 +79,6 @@ public class ConflictHandler {
                     new MyBlackBoxExplanation(toRepair,reasonerFactory,reasoner);
             explanationGenerator.setStaticPart(difference);
             Set<OWLAxiom> justification = explanationGenerator.getExplanation(factory.getOWLThing());
-            //System.out.println("Justification: "+justification.stream().map(renderer::render).collect(Collectors.joining(", ")));
             Optional<OWLAxiom> toFix = justification
                     .stream()
                     .filter(x -> x.isOfType(AxiomType.ABoxAxiomTypes))
@@ -118,9 +99,6 @@ public class ConflictHandler {
                 explanation.getFoilMapping(),
                 conflict);
     }
-
-
-
     /**
      * Check whether the axiom can contribute to a conflict in the ABox, assuming ontology is in EL
      */

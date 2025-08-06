@@ -52,10 +52,6 @@ public class Example {
 
         manager= OWLManager.createOWLOntologyManager();
         dataFactory=manager.getOWLDataFactory();
-
-        //File inputOntologyFile = new File(args[0]);
-
-
         File inputOntologyFile = new File("examples/ontologies/pizza.owl");
 
         OWLOntology ontology=manager.loadOntologyFromOntologyDocument(inputOntologyFile);
@@ -69,9 +65,6 @@ public class Example {
         OWLClass food = dataFactory.getOWLClass(IRI.create("http://www.co-ode.org/ontologies/pizza/pizza.owl#Food"));
         OWLClass pizza = dataFactory.getOWLClass(IRI.create("http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza"));
         OWLClass american = dataFactory.getOWLClass(IRI.create("http://www.co-ode.org/ontologies/pizza/pizza.owl#American"));
-        //OWLSubClassOfAxiom ax = dataFactory.getOWLSubClassOfAxiom(spiceness,hot);
-
-
 
         factory = new Reasoner.ReasonerFactory();
         Configuration configuration=new Configuration();

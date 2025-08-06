@@ -140,7 +140,6 @@ public class ExperimenterWithClassExpressions {
             OWLNamedIndividual fact = Util.randomItem(instances,random);
 
             List<OWLNamedIndividual> others = foilCandidateFinder.foilCandidates(fact)
-                    //ont.individualsInSignature()
                     .filter(x -> !instances.contains(x))
                     .collect(Collectors.toList());
 

@@ -142,10 +142,6 @@ public class ExperimenterWithClasses {
 
         Random random = new Random(0);
 
-        //List<Integer> commonSizes = new LinkedList<>();
-        //List<Integer> differenceSizes = new LinkedList<>();
-        //List<Long> freshIndividuals = new LinkedList<>();
-
         if(candidates.isEmpty()){
             System.out.println("NO CONTRASTIVE EXPLANATION PROBLEMS!");
             System.exit(0);
@@ -169,7 +165,6 @@ public class ExperimenterWithClasses {
                         foilCandidateFinder.foilCandidates(fact)
                                 .filter(foilC::contains),
                         random);
-                //foilC.get(random.nextInt(foilC.size()));
                 ContrastiveExplanationProblem cep = new ContrastiveExplanationProblem(ont, cl, fact, foil);
                 System.out.println("CEP: " + cep.toString(renderer));
                 long startTime = System.currentTimeMillis();

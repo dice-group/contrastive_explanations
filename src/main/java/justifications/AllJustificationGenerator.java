@@ -92,7 +92,6 @@ public class AllJustificationGenerator {
                 continue;
             }
             if(areAxiomsContained(oldPath, path)) {
-//                if(areAxiomsContained(path, oldPath)) {
                 if(oldPath.size() == path.size()){
                     return true;
                 }
@@ -182,8 +181,6 @@ public class AllJustificationGenerator {
 
 
     public void computeUnionOfAllJustifications(OWLSubClassOfAxiom ax, List<OWLAxiom> path, int bubbleSize) throws OWLOntologyCreationException {
-
-//        System.out.println("------ontology size-----"+this.getOntology().getAxiomCount());
         if (isPrixPath(path)) {
             return;
         }
@@ -208,8 +205,6 @@ public class AllJustificationGenerator {
         OWLReasoner reasoner2=this.getReasonerFactory().createReasoner(localityModuleMinusPathAxiomsOntology, configuration);
 
         if(!reasoner2.isEntailed(ax)) {
-//            this.getOntologyManager().removeOntology(localityModuleMinusPathAxiomsOntology);
-//            reasoner2.dispose();
             return;
         }
         reasoner2.dispose();
@@ -222,15 +217,11 @@ public class AllJustificationGenerator {
 
             SingleJustGenerator s = new SingleJustGenerator(localityModuleMinusPathAxiomsOntology,this.getReasonerFactory(),this.getReasoner());
             singleJustification = s.computeSingleJustificationWithCore(ax,this.core,bubbleSize);
-
-           // System.out.println(singleJustification);
             allJustifications.add(singleJustification);
             union_allJustifications.addAll(singleJustification); //add newly computed justification to the union
             this.getOntologyManager().removeOntology(localityModuleMinusPathAxiomsOntology);
             s.dispose();
             if (singleJustification.size() == this.core.size()) {
-                //System.out.println("min.size() == core.size()");
-
                 return;
             }
         }
@@ -238,11 +229,6 @@ public class AllJustificationGenerator {
         for(OWLAxiom a : singleJustification) {
             if(this.core.contains(a)) {
                 continue;
-            }
-//            if(union_allJustifications.contains(a)){
-//                continue;
-//            }
-
             List<OWLAxiom> extendedPath = copyList(path);
             extendedPath.add(a);
             HS.add(extendedPath);
@@ -253,66 +239,8 @@ public class AllJustificationGenerator {
         return;
     }
 
-//    public void computeAllJustificationsByAD(OWLSubClassOfAxiom ax, List<OWLAxiom> path, AtomicDecomposition<OWLAxiom, OWLAxiom> ad) throws OWLOntologyCreationException {
-//
-////        System.out.println("------ontology size-----"+this.getOntology().getAxiomCount());
-//        if (isPrixPath(path)) {
-//            return;
-//        }
-//
-//        Set<OWLAxiom> localityModuleMinusPathAxioms = new HashSet<OWLAxiom>(this.getOntology().getAxioms());
-//        localityModuleMinusPathAxioms.removeAll(path);
-//        OWLOntology localityModuleMinusPathAxiomsOntology = this.getOntologyManager().createOntology(localityModuleMinusPathAxioms);
-//
-//
-//        Configuration configuration=new Configuration();
-//        configuration.throwInconsistentOntologyException=false;
-//        OWLReasoner reasoner2=this.getReasonerFactory().createReasoner(localityModuleMinusPathAxiomsOntology, configuration);
-//
-//        if(!reasoner2.isEntailed(ax)) {
-//            this.getOntologyManager().removeOntology(localityModuleMinusPathAxiomsOntology);
-//            reasoner2.dispose();
-//            return;
-//        }
-//        reasoner2.dispose();
-//
-//        Set<OWLAxiom> singleJustification = null;
-//
-//        singleJustification = canJustificationBeReused(path);
-//
-//        if(singleJustification == null) {
-//            SingleJustGenerator s = new SingleJustGenerator(localityModuleMinusPathAxiomsOntology,this.getReasonerFactory(),this.getReasoner());
-//            singleJustification = s.computeSingleJustificationWithCore(ax,this.core);
-//            allJustifications.add(singleJustification);
-//            s.dispose();
-//            if (singleJustification.size() == this.core.size()) {
-//                //System.out.println("min.size() == core.size()");
-//                this.getOntologyManager().removeOntology(localityModuleMinusPathAxiomsOntology);
-//                return;
-//            }
-//        }
-//
-//        this.getOntologyManager().removeOntology(localityModuleMinusPathAxiomsOntology);
-//
-//        for(OWLAxiom a : singleJustification) {
-//            if(this.core.contains(a)) {
-//                continue;
-//            }
-//
-//            List<OWLAxiom> extendedPath = copyList(path);
-//            extendedPath.add(a);
-//            HS.add(extendedPath);
-//
-//            this.computeAllJustificationsByAd(ax, extendedPath, bubbleSize);
-//        }
-//
-//        return;
-//    }
-
-
     public void computeAllJustifications(OWLSubClassOfAxiom ax, List<OWLAxiom> path, int bubbleSize) throws OWLOntologyCreationException {
 
-//        System.out.println("------ontology size-----"+this.getOntology().getAxiomCount());
         if (isPrixPath(path)) {
             return;
         }
@@ -343,7 +271,6 @@ public class AllJustificationGenerator {
             allJustifications.add(singleJustification);
             s.dispose();
             if (singleJustification.size() == this.core.size()) {
-                //System.out.println("min.size() == core.size()");
                 this.getOntologyManager().removeOntology(localityModuleMinusPathAxiomsOntology);
                 return;
             }
