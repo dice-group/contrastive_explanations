@@ -70,10 +70,6 @@ mvn package
 
 ## Running Experiments
 
-### Step-by-Step Guide
-
-All scripts are located in the `experiments/` folder.
-
 #### 1. Copy the JAR
 
 After building, move the JAR into the `experiments/` folder:
