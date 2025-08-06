@@ -1,0 +1,598 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:family="http://www.benchmark.org/family#">
+    <Ontology/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.benchmark.org/family#hasChild -->
+
+
+    <ObjectProperty rdf:about="http://www.benchmark.org/family#hasChild"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.benchmark.org/family#Daughter -->
+
+
+    <Class rdf:about="http://www.benchmark.org/family#Daughter">
+        <rdfs:subClassOf rdf:resource="http://www.benchmark.org/family#Female"/>
+    </Class>
+    
+
+
+    <!-- http://www.benchmark.org/family#Female -->
+
+
+    <Class rdf:about="http://www.benchmark.org/family#Female"/>
+    
+
+
+    <!-- http://www.benchmark.org/family#Granddaughter -->
+
+
+    <Class rdf:about="http://www.benchmark.org/family#Granddaughter">
+        <rdfs:subClassOf rdf:resource="http://www.benchmark.org/family#Female"/>
+    </Class>
+    
+
+
+    <!-- http://www.benchmark.org/family#Grandmother -->
+
+
+    <Class rdf:about="http://www.benchmark.org/family#Grandmother">
+        <rdfs:subClassOf rdf:resource="http://www.benchmark.org/family#Female"/>
+    </Class>
+    
+
+
+    <!-- http://www.benchmark.org/family#Mother -->
+
+
+    <Class rdf:about="http://www.benchmark.org/family#Mother">
+        <rdfs:subClassOf rdf:resource="http://www.benchmark.org/family#Female"/>
+    </Class>
+    
+
+
+    <!-- http://www.benchmark.org/family#Sister -->
+
+
+    <Class rdf:about="http://www.benchmark.org/family#Sister">
+        <rdfs:subClassOf rdf:resource="http://www.benchmark.org/family#Female"/>
+    </Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- _X0 -->
+
+
+    <NamedIndividual rdf:about="_X0">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X1 -->
+
+
+    <NamedIndividual rdf:about="_X1">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X10 -->
+
+
+    <NamedIndividual rdf:about="_X10">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X11 -->
+
+
+    <NamedIndividual rdf:about="_X11">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X12 -->
+
+
+    <NamedIndividual rdf:about="_X12">
+        <family:hasChild rdf:resource="_X0"/>
+        <family:hasChild rdf:resource="_X1"/>
+        <family:hasChild rdf:resource="_X10"/>
+        <family:hasChild rdf:resource="_X11"/>
+        <family:hasChild rdf:resource="_X13"/>
+        <family:hasChild rdf:resource="_X14"/>
+        <family:hasChild rdf:resource="_X15"/>
+        <family:hasChild rdf:resource="_X16"/>
+        <family:hasChild rdf:resource="_X17"/>
+        <family:hasChild rdf:resource="_X18"/>
+        <family:hasChild rdf:resource="_X2"/>
+        <family:hasChild rdf:resource="_X24"/>
+        <family:hasChild rdf:resource="_X25"/>
+        <family:hasChild rdf:resource="_X26"/>
+        <family:hasChild rdf:resource="_X27"/>
+        <family:hasChild rdf:resource="_X28"/>
+        <family:hasChild rdf:resource="_X29"/>
+        <family:hasChild rdf:resource="_X3"/>
+        <family:hasChild rdf:resource="_X4"/>
+        <family:hasChild rdf:resource="_X5"/>
+        <family:hasChild rdf:resource="_X6"/>
+        <family:hasChild rdf:resource="_X7"/>
+        <family:hasChild rdf:resource="_X8"/>
+        <family:hasChild rdf:resource="_X9"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X13 -->
+
+
+    <NamedIndividual rdf:about="_X13">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X14 -->
+
+
+    <NamedIndividual rdf:about="_X14">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X15 -->
+
+
+    <NamedIndividual rdf:about="_X15">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X16 -->
+
+
+    <NamedIndividual rdf:about="_X16">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X17 -->
+
+
+    <NamedIndividual rdf:about="_X17">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X18 -->
+
+
+    <NamedIndividual rdf:about="_X18">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X19 -->
+
+
+    <NamedIndividual rdf:about="_X19">
+        <family:hasChild rdf:resource="_X0"/>
+        <family:hasChild rdf:resource="_X1"/>
+        <family:hasChild rdf:resource="_X10"/>
+        <family:hasChild rdf:resource="_X11"/>
+        <family:hasChild rdf:resource="_X13"/>
+        <family:hasChild rdf:resource="_X14"/>
+        <family:hasChild rdf:resource="_X15"/>
+        <family:hasChild rdf:resource="_X16"/>
+        <family:hasChild rdf:resource="_X17"/>
+        <family:hasChild rdf:resource="_X18"/>
+        <family:hasChild rdf:resource="_X2"/>
+        <family:hasChild rdf:resource="_X24"/>
+        <family:hasChild rdf:resource="_X25"/>
+        <family:hasChild rdf:resource="_X26"/>
+        <family:hasChild rdf:resource="_X27"/>
+        <family:hasChild rdf:resource="_X28"/>
+        <family:hasChild rdf:resource="_X29"/>
+        <family:hasChild rdf:resource="_X3"/>
+        <family:hasChild rdf:resource="_X4"/>
+        <family:hasChild rdf:resource="_X5"/>
+        <family:hasChild rdf:resource="_X6"/>
+        <family:hasChild rdf:resource="_X7"/>
+        <family:hasChild rdf:resource="_X8"/>
+        <family:hasChild rdf:resource="_X9"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X2 -->
+
+
+    <NamedIndividual rdf:about="_X2">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X20 -->
+
+
+    <NamedIndividual rdf:about="_X20">
+        <family:hasChild rdf:resource="_X0"/>
+        <family:hasChild rdf:resource="_X1"/>
+        <family:hasChild rdf:resource="_X10"/>
+        <family:hasChild rdf:resource="_X11"/>
+        <family:hasChild rdf:resource="_X13"/>
+        <family:hasChild rdf:resource="_X14"/>
+        <family:hasChild rdf:resource="_X15"/>
+        <family:hasChild rdf:resource="_X16"/>
+        <family:hasChild rdf:resource="_X17"/>
+        <family:hasChild rdf:resource="_X18"/>
+        <family:hasChild rdf:resource="_X2"/>
+        <family:hasChild rdf:resource="_X24"/>
+        <family:hasChild rdf:resource="_X25"/>
+        <family:hasChild rdf:resource="_X26"/>
+        <family:hasChild rdf:resource="_X27"/>
+        <family:hasChild rdf:resource="_X28"/>
+        <family:hasChild rdf:resource="_X29"/>
+        <family:hasChild rdf:resource="_X3"/>
+        <family:hasChild rdf:resource="_X4"/>
+        <family:hasChild rdf:resource="_X5"/>
+        <family:hasChild rdf:resource="_X6"/>
+        <family:hasChild rdf:resource="_X7"/>
+        <family:hasChild rdf:resource="_X8"/>
+        <family:hasChild rdf:resource="_X9"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X21 -->
+
+
+    <NamedIndividual rdf:about="_X21">
+        <family:hasChild rdf:resource="_X0"/>
+        <family:hasChild rdf:resource="_X1"/>
+        <family:hasChild rdf:resource="_X10"/>
+        <family:hasChild rdf:resource="_X11"/>
+        <family:hasChild rdf:resource="_X13"/>
+        <family:hasChild rdf:resource="_X14"/>
+        <family:hasChild rdf:resource="_X15"/>
+        <family:hasChild rdf:resource="_X16"/>
+        <family:hasChild rdf:resource="_X17"/>
+        <family:hasChild rdf:resource="_X18"/>
+        <family:hasChild rdf:resource="_X2"/>
+        <family:hasChild rdf:resource="_X24"/>
+        <family:hasChild rdf:resource="_X25"/>
+        <family:hasChild rdf:resource="_X26"/>
+        <family:hasChild rdf:resource="_X27"/>
+        <family:hasChild rdf:resource="_X28"/>
+        <family:hasChild rdf:resource="_X29"/>
+        <family:hasChild rdf:resource="_X3"/>
+        <family:hasChild rdf:resource="_X4"/>
+        <family:hasChild rdf:resource="_X5"/>
+        <family:hasChild rdf:resource="_X6"/>
+        <family:hasChild rdf:resource="_X7"/>
+        <family:hasChild rdf:resource="_X8"/>
+        <family:hasChild rdf:resource="_X9"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X22 -->
+
+
+    <NamedIndividual rdf:about="_X22">
+        <family:hasChild rdf:resource="_X0"/>
+        <family:hasChild rdf:resource="_X1"/>
+        <family:hasChild rdf:resource="_X10"/>
+        <family:hasChild rdf:resource="_X11"/>
+        <family:hasChild rdf:resource="_X13"/>
+        <family:hasChild rdf:resource="_X14"/>
+        <family:hasChild rdf:resource="_X15"/>
+        <family:hasChild rdf:resource="_X16"/>
+        <family:hasChild rdf:resource="_X17"/>
+        <family:hasChild rdf:resource="_X18"/>
+        <family:hasChild rdf:resource="_X2"/>
+        <family:hasChild rdf:resource="_X24"/>
+        <family:hasChild rdf:resource="_X25"/>
+        <family:hasChild rdf:resource="_X26"/>
+        <family:hasChild rdf:resource="_X27"/>
+        <family:hasChild rdf:resource="_X28"/>
+        <family:hasChild rdf:resource="_X29"/>
+        <family:hasChild rdf:resource="_X3"/>
+        <family:hasChild rdf:resource="_X4"/>
+        <family:hasChild rdf:resource="_X5"/>
+        <family:hasChild rdf:resource="_X6"/>
+        <family:hasChild rdf:resource="_X7"/>
+        <family:hasChild rdf:resource="_X8"/>
+        <family:hasChild rdf:resource="_X9"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X23 -->
+
+
+    <NamedIndividual rdf:about="_X23">
+        <family:hasChild rdf:resource="_X0"/>
+        <family:hasChild rdf:resource="_X1"/>
+        <family:hasChild rdf:resource="_X10"/>
+        <family:hasChild rdf:resource="_X11"/>
+        <family:hasChild rdf:resource="_X13"/>
+        <family:hasChild rdf:resource="_X14"/>
+        <family:hasChild rdf:resource="_X15"/>
+        <family:hasChild rdf:resource="_X16"/>
+        <family:hasChild rdf:resource="_X17"/>
+        <family:hasChild rdf:resource="_X18"/>
+        <family:hasChild rdf:resource="_X2"/>
+        <family:hasChild rdf:resource="_X24"/>
+        <family:hasChild rdf:resource="_X25"/>
+        <family:hasChild rdf:resource="_X26"/>
+        <family:hasChild rdf:resource="_X27"/>
+        <family:hasChild rdf:resource="_X28"/>
+        <family:hasChild rdf:resource="_X29"/>
+        <family:hasChild rdf:resource="_X3"/>
+        <family:hasChild rdf:resource="_X4"/>
+        <family:hasChild rdf:resource="_X5"/>
+        <family:hasChild rdf:resource="_X6"/>
+        <family:hasChild rdf:resource="_X7"/>
+        <family:hasChild rdf:resource="_X8"/>
+        <family:hasChild rdf:resource="_X9"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X24 -->
+
+
+    <NamedIndividual rdf:about="_X24">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X25 -->
+
+
+    <NamedIndividual rdf:about="_X25">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X26 -->
+
+
+    <NamedIndividual rdf:about="_X26">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X27 -->
+
+
+    <NamedIndividual rdf:about="_X27">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X28 -->
+
+
+    <NamedIndividual rdf:about="_X28">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X29 -->
+
+
+    <NamedIndividual rdf:about="_X29">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Grandmother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X3 -->
+
+
+    <NamedIndividual rdf:about="_X3">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X4 -->
+
+
+    <NamedIndividual rdf:about="_X4">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X5 -->
+
+
+    <NamedIndividual rdf:about="_X5">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X6 -->
+
+
+    <NamedIndividual rdf:about="_X6">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X7 -->
+
+
+    <NamedIndividual rdf:about="_X7">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X8 -->
+
+
+    <NamedIndividual rdf:about="_X8">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X9 -->
+
+
+    <NamedIndividual rdf:about="_X9">
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Daughter"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Female"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Mother"/>
+        <rdf:type rdf:resource="http://www.benchmark.org/family#Sister"/>
+    </NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 5.1.20.2022-02-19T16:38:31Z) https://github.com/owlcs/owlapi/ -->
+
+

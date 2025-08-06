@@ -97,8 +97,12 @@ public class ExperimenterWithClasses {
 
         Set<OWLAxiom> notABox = new HashSet<>(ont.getAxioms(Imports.INCLUDED));
         notABox.removeAll(ont.getABoxAxioms(Imports.INCLUDED));
+        System.out.println("ABox:   "+ont.getABoxAxioms(Imports.INCLUDED));
+        System.out.println("notABox:   "+notABox);
+
 
         MyBlackBoxExplanation explainer = new MyBlackBoxExplanation(ont, reasonerFactory, reasoner);
+        System.out.println("explainer:   "+explainer);
         explainer.setStaticPart(notABox);
 
         for(OWLClass clazz : ont.classesInSignature().collect(Collectors.toSet()))  {
@@ -117,7 +121,7 @@ public class ExperimenterWithClasses {
                                     factory.getOWLObjectOneOf(ind),
                                     factory.getOWLObjectComplementOf(clazz)
                             ));
-                    explanation.removeAll(notABox);
+                     explanation.removeAll(notABox);
                     if (explanation.size() < 2) {
                         System.out.println("ABox justification too simple: " + clazz + ", " + ind);
                         pos.remove(ind);

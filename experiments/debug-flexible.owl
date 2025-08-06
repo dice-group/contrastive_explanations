@@ -1,0 +1,412 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:ontology="http://ontology.dumontierlab.com/">
+    <Ontology/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://ontology.dumontierlab.com/hasProperPart -->
+
+
+    <ObjectProperty rdf:about="http://ontology.dumontierlab.com/hasProperPart"/>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/isPartOf -->
+
+
+    <ObjectProperty rdf:about="http://ontology.dumontierlab.com/isPartOf"/>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/isProperPartOf -->
+
+
+    <ObjectProperty rdf:about="http://ontology.dumontierlab.com/isProperPartOf"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://ontology.dumontierlab.com/Axis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/Axis"/>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/CategoryAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/CategoryAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/Axis"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontology.dumontierlab.com/hasProperPart"/>
+                <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/CategoryData"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/CategoryData -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/CategoryData">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/Data"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontology.dumontierlab.com/isProperPartOf"/>
+                <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/CategoryAxis"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/CoordinateAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/CoordinateAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/Axis"/>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/Data -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/Data"/>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/PrimaryCategoryAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/PrimaryCategoryAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CategoryAxis"/>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/PrimaryCategoryData -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/PrimaryCategoryData">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CategoryData"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontology.dumontierlab.com/isPartOf"/>
+                <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/PrimaryCategoryAxis"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/SecondaryCategoryAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/SecondaryCategoryAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CategoryAxis"/>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/SecondaryCategoryData -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/SecondaryCategoryData">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CategoryData"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontology.dumontierlab.com/isPartOf"/>
+                <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/SecondaryCategoryAxis"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/ValueAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/ValueAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/Axis"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontology.dumontierlab.com/hasProperPart"/>
+                <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/ValueData"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/ValueData -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/ValueData">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/Data"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ontology.dumontierlab.com/isProperPartOf"/>
+                <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/ValueAxis"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/XAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/XAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CoordinateAxis"/>
+    </Class>
+    
+
+
+    <!-- http://ontology.dumontierlab.com/YAxis -->
+
+
+    <Class rdf:about="http://ontology.dumontierlab.com/YAxis">
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CoordinateAxis"/>
+    </Class>
+    
+
+
+    <!-- http://www.absoluteiri.edu/RELAPPROXC256 -->
+
+
+    <Class rdf:about="http://www.absoluteiri.edu/RELAPPROXC256"/>
+    
+
+
+    <!-- http://www.absoluteiri.edu/RELAPPROXC257 -->
+
+
+    <Class rdf:about="http://www.absoluteiri.edu/RELAPPROXC257"/>
+    
+
+
+    <!-- http://www.absoluteiri.edu/RELAPPROXC261 -->
+
+
+    <Class rdf:about="http://www.absoluteiri.edu/RELAPPROXC261"/>
+    
+
+
+    <!-- http://www.absoluteiri.edu/RELAPPROXC265 -->
+
+
+    <Class rdf:about="http://www.absoluteiri.edu/RELAPPROXC265"/>
+    
+
+
+    <!-- http://www.absoluteiri.edu/RELAPPROXC273 -->
+
+
+    <Class rdf:about="http://www.absoluteiri.edu/RELAPPROXC273"/>
+    
+
+
+    <!-- http://www.absoluteiri.edu/RELAPPROXC295 -->
+
+
+    <Class rdf:about="http://www.absoluteiri.edu/RELAPPROXC295"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- _X0 -->
+
+
+    <NamedIndividual rdf:about="_X0">
+        <rdf:type rdf:resource="http://ontology.dumontierlab.com/PrimaryCategoryData"/>
+        <ontology:isPartOf rdf:resource="_X1"/>
+        <ontology:isPartOf rdf:resource="_X2"/>
+        <ontology:isPartOf rdf:resource="_X3"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X1 -->
+
+
+    <NamedIndividual rdf:about="_X1">
+        <rdf:type rdf:resource="http://ontology.dumontierlab.com/SecondaryCategoryData"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X2 -->
+
+
+    <NamedIndividual rdf:about="_X2">
+        <rdf:type rdf:resource="http://ontology.dumontierlab.com/SecondaryCategoryData"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X3 -->
+
+
+    <NamedIndividual rdf:about="_X3">
+        <rdf:type rdf:resource="http://ontology.dumontierlab.com/SecondaryCategoryData"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X4 -->
+
+
+    <NamedIndividual rdf:about="_X4">
+        <rdf:type rdf:resource="http://ontology.dumontierlab.com/PrimaryCategoryData"/>
+        <ontology:isPartOf rdf:resource="_X1"/>
+        <ontology:isPartOf rdf:resource="_X2"/>
+        <ontology:isPartOf rdf:resource="_X3"/>
+    </NamedIndividual>
+    
+
+
+    <!-- _X5 -->
+
+
+    <NamedIndividual rdf:about="_X5">
+        <rdf:type rdf:resource="http://ontology.dumontierlab.com/PrimaryCategoryData"/>
+        <ontology:isPartOf rdf:resource="_X1"/>
+        <ontology:isPartOf rdf:resource="_X2"/>
+        <ontology:isPartOf rdf:resource="_X3"/>
+    </NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <Class>
+        <intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontology.dumontierlab.com/Axis"/>
+            <rdf:Description rdf:about="http://www.absoluteiri.edu/RELAPPROXC257"/>
+        </intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/ValueAxis"/>
+    </Class>
+    <Class>
+        <intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontology.dumontierlab.com/Axis"/>
+            <rdf:Description rdf:about="http://www.absoluteiri.edu/RELAPPROXC265"/>
+        </intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CategoryAxis"/>
+    </Class>
+    <Class>
+        <intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontology.dumontierlab.com/CategoryData"/>
+            <rdf:Description rdf:about="http://www.absoluteiri.edu/RELAPPROXC261"/>
+        </intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/SecondaryCategoryData"/>
+    </Class>
+    <Class>
+        <intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontology.dumontierlab.com/CategoryData"/>
+            <rdf:Description rdf:about="http://www.absoluteiri.edu/RELAPPROXC295"/>
+        </intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/PrimaryCategoryData"/>
+    </Class>
+    <Class>
+        <intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontology.dumontierlab.com/Data"/>
+            <rdf:Description rdf:about="http://www.absoluteiri.edu/RELAPPROXC256"/>
+        </intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/ValueData"/>
+    </Class>
+    <Class>
+        <intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://ontology.dumontierlab.com/Data"/>
+            <rdf:Description rdf:about="http://www.absoluteiri.edu/RELAPPROXC273"/>
+        </intersectionOf>
+        <rdfs:subClassOf rdf:resource="http://ontology.dumontierlab.com/CategoryData"/>
+    </Class>
+    <Restriction>
+        <onProperty rdf:resource="http://ontology.dumontierlab.com/hasProperPart"/>
+        <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/CategoryData"/>
+        <rdfs:subClassOf rdf:resource="http://www.absoluteiri.edu/RELAPPROXC265"/>
+    </Restriction>
+    <Restriction>
+        <onProperty rdf:resource="http://ontology.dumontierlab.com/hasProperPart"/>
+        <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/ValueData"/>
+        <rdfs:subClassOf rdf:resource="http://www.absoluteiri.edu/RELAPPROXC257"/>
+    </Restriction>
+    <Restriction>
+        <onProperty rdf:resource="http://ontology.dumontierlab.com/isPartOf"/>
+        <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/PrimaryCategoryAxis"/>
+        <rdfs:subClassOf rdf:resource="http://www.absoluteiri.edu/RELAPPROXC295"/>
+    </Restriction>
+    <Restriction>
+        <onProperty rdf:resource="http://ontology.dumontierlab.com/isPartOf"/>
+        <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/SecondaryCategoryAxis"/>
+        <rdfs:subClassOf rdf:resource="http://www.absoluteiri.edu/RELAPPROXC261"/>
+    </Restriction>
+    <Restriction>
+        <onProperty rdf:resource="http://ontology.dumontierlab.com/isProperPartOf"/>
+        <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/CategoryAxis"/>
+        <rdfs:subClassOf rdf:resource="http://www.absoluteiri.edu/RELAPPROXC273"/>
+    </Restriction>
+    <Restriction>
+        <onProperty rdf:resource="http://ontology.dumontierlab.com/isProperPartOf"/>
+        <someValuesFrom rdf:resource="http://ontology.dumontierlab.com/ValueAxis"/>
+        <rdfs:subClassOf rdf:resource="http://www.absoluteiri.edu/RELAPPROXC256"/>
+    </Restriction>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 5.1.20) https://github.com/owlcs/owlapi/ -->
+
+

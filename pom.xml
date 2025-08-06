@@ -9,8 +9,8 @@
     <version>0.3-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <repositories>
@@ -31,17 +31,17 @@
              <version>2.3.3</version>
          </dependency>-->
         <!-- https://mvnrepository.com/artifact/com.clarkparsia.pellet/pellet-owlapi -->
-       <!-- <dependency>
-            <groupId>com.clarkparsia.pellet</groupId>
-            <artifactId>pellet-owlapi</artifactId>
-            <version>2.5.2-dllearner</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.sourceforge.owlapi</groupId>
-                    <artifactId>owlapi-distribution</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
+        <!-- <dependency>
+             <groupId>com.clarkparsia.pellet</groupId>
+             <artifactId>pellet-owlapi</artifactId>
+             <version>2.5.2-dllearner</version>
+             <exclusions>
+                 <exclusion>
+                     <groupId>net.sourceforge.owlapi</groupId>
+                     <artifactId>owlapi-distribution</artifactId>
+                 </exclusion>
+             </exclusions>
+         </dependency>-->
 
 
 
@@ -53,17 +53,25 @@
 
 
         <!-- https://mvnrepository.com/artifact/net.sourceforge.owlapi/owlapi-distribution -->
-       <!-- <dependency>
-            <groupId>net.sourceforge.owlapi</groupId>
-            <artifactId>owlapi-distribution</artifactId>
-            <version>5.5.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.sourceforge.owlapi</groupId>
-                    <artifactId>owlapi-distribution</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
+        <!-- <dependency>
+             <groupId>net.sourceforge.owlapi</groupId>
+             <artifactId>owlapi-distribution</artifactId>
+             <version>5.5.1</version>
+             <exclusions>
+                 <exclusion>
+                     <groupId>net.sourceforge.owlapi</groupId>
+                     <artifactId>owlapi-distribution</artifactId>
+                 </exclusion>
+             </exclusions>
+         </dependency>-->
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version> <!-- or latest version -->
+        </dependency>
+
+
         <dependency>
             <groupId>com.github.galigator.openllet</groupId>
             <artifactId>openllet-explanation</artifactId>
@@ -97,11 +105,11 @@
             <artifactId>org.semanticweb.hermit</artifactId>
             <version>1.4.4.519</version>
             <exclusions>
-            <exclusion>
-                <groupId>net.sourceforge.owlapi</groupId>
-                <artifactId>owlapi-distribution</artifactId>
-            </exclusion>
-        </exclusions>
+                <exclusion>
+                    <groupId>net.sourceforge.owlapi</groupId>
+                    <artifactId>owlapi-distribution</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
@@ -172,10 +180,18 @@
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
 
+        <!--   <dependency>
+               <groupId>de.tu-dresden.inf.lat.evee</groupId>
+               <artifactId>evee-elk-proof-extractor-owlapi4</artifactId>
+               <version>0.3</version>
+               <scope>system</scope>
+               <systemPath>${project.basedir}/evee/evee-elk-proof-extractor/evee-elk-proof-extractor-owlapi4/target/evee-elk-proof-extractor-owlapi4-0.3.jar</systemPath>
+           </dependency>-->
+
         <dependency>
             <groupId>de.tu-dresden.inf.lat.evee</groupId>
             <artifactId>evee-elk-proof-extractor-owlapi4</artifactId>
-            <version>0.3-SNAPSHOT</version>
+            <version>0.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.github.liveontologies</groupId>
@@ -188,27 +204,35 @@
             </exclusions>
         </dependency>
     </dependencies>
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.7.1</version>
-            <configuration>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-            </configuration>
-            <executions>
-                <execution>
-                    <id>assemble-all</id>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>single</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>assemble-all</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

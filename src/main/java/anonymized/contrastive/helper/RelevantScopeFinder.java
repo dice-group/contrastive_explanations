@@ -47,7 +47,6 @@ public class RelevantScopeFinder {
                         .filter(problem.getOntology()::containsAxiom)
                         .collect(Collectors.toSet());
 
-                System.out.println("Selected " + result.size() + " relevant axioms.");
                 if(PRINT_DETAILS) {
                     ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
                     System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
@@ -77,21 +76,8 @@ public class RelevantScopeFinder {
             OWLDataFactory factory = ontology.getOWLOntologyManager().getOWLDataFactory();
             OWLAxiom entailment = factory.getOWLClassAssertionAxiom(problem.getOwlClassExpression(), problem.getFact());
             result = NaiveUnionOfJustifications.unionOfJustifications(module, asUnsat(entailment,factory), fac);
-            /*
-            AllJustificationGenerator gen = new AllJustificationGenerator(module, fac, fac.createReasoner(module));
-            OWLDataFactory factory = problem.getOntology()
-                    .getOWLOntologyManager()
-                    .getOWLDataFactory();
-            OWLSubClassOfAxiom entailment = factory.getOWLSubClassOfAxiom(factory.getOWLObjectOneOf(problem.getFact()), problem.getOwlClassExpression());
-            gen.computeUnionOfAllJustifications(entailment,result.size()/10, true);
-
-            result = gen.union_allJustifications;
-
-            result.retainAll(module.getABoxAxioms(Imports.INCLUDED));
-            */
             System.out.println("Computing union of justifications took "+(System.currentTimeMillis()-start));
 
-            System.out.println("Selected " + result.size() + " relevant axioms.");
             if(PRINT_DETAILS) {
                 ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
                 System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));
@@ -117,7 +103,6 @@ public class RelevantScopeFinder {
 
         Set<OWLAxiom> result = moduleExtractor.extract(signature);
 
-        System.out.println("Chose module of size "+result.size()+".");
         if(PRINT_DETAILS){
             System.out.println("The module contains: ");
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -140,7 +125,6 @@ public class RelevantScopeFinder {
 
         Set<OWLAxiom> result = moduleExtractor.extract(signature);
 
-        System.out.println("Chose module of size "+result.size()+".");
         if(PRINT_DETAILS){
             System.out.println("The module contains: ");
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -175,7 +159,6 @@ public class RelevantScopeFinder {
             result.add(fresh);
         }
 
-        System.out.println("Selected "+result.size()+" relevant individuals.");
         if(PRINT_DETAILS) {
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
             System.out.println(" those are " + result.stream().map(renderer::render).collect(Collectors.joining(", ")));

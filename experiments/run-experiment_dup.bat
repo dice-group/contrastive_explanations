@@ -6,5 +6,5 @@ for /f "delims=" %%i in (el-classification-track-by-size_dup.txt) do (
 
     REM Run Java command with timeout
     REM Timeout 600 seconds (10 minutes)
-    java -cp contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar nl.vu.kai.contrastive.experiments.ExperimenterWithClasses E:\Workspace_Dice\DataSource\Downloads\pool_sample\files2\%%i 1000 > %%i.log
+    java -cp contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar anonymized.contrastive.experiments.ExperimenterWithClasses E:\Workspace_Dice\DataSource\Downloads\pool_sample\files2\%%i 100 > %%i.log
 )
