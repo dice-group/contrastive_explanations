@@ -9,5 +9,4 @@ set INPUT=E:\Workspace_Dice\DataSource\family_json_input.json
 
 echo Running FactFoilFileWriter with input %INPUT%...
 java -cp "%CLASSES%;%JAR%" anonymized.contrastive.experiments.FactFoilFileWriter %INPUT%
-
 pause
