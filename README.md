@@ -36,7 +36,9 @@ You can download an example input JSON file here:
 The JSON file contains the following fields:
 
 * **`ontology_input_file_path`**: Path to the OWL ontology to be loaded.
-* **`output_file_path`**: Base path for saving the results file (text or JSON).
+* **`output_file_path`**: Base path for saving the results file (text or JSON).  
+  - Example text output file: [family_output.txt](https://github.com/dice-group/contrastive_explanations/blob/manual_fact_foil/src/main/resources/family_output.txt)  
+  - Example JSON output file: [family_output.json](https://github.com/dice-group/contrastive_explanations/blob/manual_fact_foil/src/main/resources/family_output.json)
 * **`reasoner`**: Choice of OWL reasoner (`HERMIT` or `ELK`).
 * **`output_format`**: Format of the output file (`text` or `json`).
 * **`experiments`**: Array of experiments, each containing:
@@ -55,7 +57,7 @@ You can run the experiments either via the provided [`.bat`](https://github.com/
 
 ```bash
 java -cp <classes_path>;<jar_path> anonymized.contrastive.experiments.FactFoilFileWriter <input_json_file>
-```
+````
 
 **Example `.bat` file content:**
 
@@ -63,8 +65,8 @@ java -cp <classes_path>;<jar_path> anonymized.contrastive.experiments.FactFoilFi
 
 * The JAR file (`contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar`) contains:
 
-    * All compiled project classes.
-    * All dependency libraries (OWL API, ELK, HermiT, EVEE, SLF4J).
+  * All compiled project classes.
+  * All dependency libraries (OWL API, ELK, HermiT, EVEE, SLF4J).
 * It allows running the experiments standalone without manually adding classpath dependencies.
 
 ---
@@ -95,3 +97,4 @@ We welcome contributions:
 * For academic inquiries or collaborations, contact the project maintainers via GitHub.
 
 ```
+
