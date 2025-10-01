@@ -1,0 +1,125 @@
+[ {
+  "namespace" : "http://www.benchmark.org/family#",
+  "class_expression" : "Sister and (hasSibling some (married some (hasChild some Grandchild)))",
+  "results" : [ {
+    "fact" : "F9F143",
+    "foil" : "F9M161",
+    "common" : [ "ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9M153> <F9F154>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9F154> <F9M155>)", "ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M155>)" ],
+    "different" : [ "ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F143>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F143> <F9M153>)" ],
+    "fact_mapping" : {
+      "_X26" : "F9M155",
+      "_X17" : "F9M153",
+      "_X39" : "F9F143",
+      "_X11" : "F9F154"
+    },
+    "foil_mapping" : {
+      "_X26" : "F9M161",
+      "_X17" : "F9F160",
+      "_X39" : "F9M161",
+      "_X11" : "F9M159"
+    },
+    "conflicts" : [ ],
+    "stats" : {
+      "common" : 3,
+      "different" : 2,
+      "conflicts" : 0,
+      "runtime_ms" : 6887
+    }
+  }, {
+    "fact" : "F9F143",
+    "foil" : "F9M147",
+    "common" : [ "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9F154> <F9M155>)", "ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M155>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9M153> <F9F154>)" ],
+    "different" : [ "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F143> <F9M153>)", "ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F143>)" ],
+    "fact_mapping" : {
+      "_X16" : "F9M153",
+      "_X38" : "F9F143",
+      "_X29" : "F9M155",
+      "_X8" : "F9F154"
+    },
+    "foil_mapping" : {
+      "_X16" : "F9M142",
+      "_X38" : "F9M147",
+      "_X29" : "F9M153",
+      "_X8" : "F9F141"
+    },
+    "conflicts" : [ ],
+    "stats" : {
+      "common" : 3,
+      "different" : 2,
+      "conflicts" : 0,
+      "runtime_ms" : 1636
+    }
+  }, {
+    "fact" : "F9F148",
+    "foil" : "F9M161",
+    "common" : [ "ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M147>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9M146> <F9M147>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9F145> <F9M146>)" ],
+    "different" : [ "ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F148>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F148> <F9F145>)" ],
+    "fact_mapping" : {
+      "_X34" : "F9F145",
+      "_X0" : "F9F148",
+      "_X40" : "F9M147",
+      "_X19" : "F9M146"
+    },
+    "foil_mapping" : {
+      "_X34" : "F9F163",
+      "_X0" : "F9M161",
+      "_X40" : "F9M166",
+      "_X19" : "F9M162"
+    },
+    "conflicts" : [ ],
+    "stats" : {
+      "common" : 3,
+      "different" : 2,
+      "conflicts" : 0,
+      "runtime_ms" : 2081
+    }
+  }, {
+    "fact" : "F9F148",
+    "foil" : "F9M147",
+    "common" : [ "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9M146> <F9M147>)", "ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M147>)", "ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9F145> <F9M146>)" ],
+    "different" : [ "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F148> <F9F145>)", "ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F148>)" ],
+    "fact_mapping" : {
+      "_X17" : "F9M146",
+      "_X2" : "F9F148",
+      "_X41" : "F9M147",
+      "_X31" : "F9F145"
+    },
+    "foil_mapping" : {
+      "_X17" : "F9M142",
+      "_X2" : "F9M147",
+      "_X41" : "F9M153",
+      "_X31" : "F9F141"
+    },
+    "conflicts" : [ ],
+    "stats" : {
+      "common" : 3,
+      "different" : 2,
+      "conflicts" : 0,
+      "runtime_ms" : 1871
+    }
+  } ]
+}, {
+  "namespace" : "http://www.benchmark.org/family#",
+  "class_expression" : "hasChild some Male",
+  "results" : [ {
+    "fact" : "F10M171",
+    "foil" : "F4F56",
+    "common" : [ "ClassAssertion(<http://www.benchmark.org/family#Male> <F10M173>)" ],
+    "different" : [ "ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F10M171> <F10M173>)" ],
+    "fact_mapping" : {
+      "_X2" : "F10M173",
+      "_X7" : "F10M171"
+    },
+    "foil_mapping" : {
+      "_X2" : "F4M54",
+      "_X7" : "F4F56"
+    },
+    "conflicts" : [ ],
+    "stats" : {
+      "common" : 1,
+      "different" : 1,
+      "conflicts" : 0,
+      "runtime_ms" : 418
+    }
+  } ]
+} ]

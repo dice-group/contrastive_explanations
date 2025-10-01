@@ -1,0 +1,143 @@
+NAMESPACE: http://www.benchmark.org/family#
+CLASS EXPRESSION: Sister and (hasSibling some (married some (hasChild some Grandchild)))
+FACT: F9F143
+FOIL: F9M161
+
+COMMON:
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9M153> <F9F154>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9F154> <F9M155>)
+ - ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M155>)
+DIFFERENT:
+ - ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F143>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F143> <F9M153>)
+FACT MAPPING:
+ <_X11> -> F9F154
+ <_X26> -> F9M155
+ <_X17> -> F9M153
+ <_X39> -> F9F143
+FOIL MAPPING:
+ <_X11> -> F9M159
+ <_X26> -> F9M161
+ <_X17> -> F9F160
+ <_X39> -> F9M161
+STATS:
+ Common facts: 3
+ Differences: 2
+ Conflicts: 0
+ Runtime (ms): 2955
+
+====================================================
+
+NAMESPACE: http://www.benchmark.org/family#
+CLASS EXPRESSION: Sister and (hasSibling some (married some (hasChild some Grandchild)))
+FACT: F9F143
+FOIL: F9M147
+
+COMMON:
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9F154> <F9M155>)
+ - ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M155>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9M153> <F9F154>)
+DIFFERENT:
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F143> <F9M153>)
+ - ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F143>)
+FACT MAPPING:
+ <_X8> -> F9F154
+ <_X16> -> F9M153
+ <_X38> -> F9F143
+ <_X29> -> F9M155
+FOIL MAPPING:
+ <_X8> -> F9F141
+ <_X16> -> F9M142
+ <_X38> -> F9M147
+ <_X29> -> F9M153
+STATS:
+ Common facts: 3
+ Differences: 2
+ Conflicts: 0
+ Runtime (ms): 1602
+
+====================================================
+
+NAMESPACE: http://www.benchmark.org/family#
+CLASS EXPRESSION: Sister and (hasSibling some (married some (hasChild some Grandchild)))
+FACT: F9F148
+FOIL: F9M161
+
+COMMON:
+ - ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M147>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9M146> <F9M147>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9F145> <F9M146>)
+DIFFERENT:
+ - ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F148>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F148> <F9F145>)
+FACT MAPPING:
+ <_X34> -> F9F145
+ <_X40> -> F9M147
+ <_X19> -> F9M146
+ <_X0> -> F9F148
+FOIL MAPPING:
+ <_X34> -> F9F163
+ <_X40> -> F9M166
+ <_X19> -> F9M162
+ <_X0> -> F9M161
+STATS:
+ Common facts: 3
+ Differences: 2
+ Conflicts: 0
+ Runtime (ms): 1649
+
+====================================================
+
+NAMESPACE: http://www.benchmark.org/family#
+CLASS EXPRESSION: Sister and (hasSibling some (married some (hasChild some Grandchild)))
+FACT: F9F148
+FOIL: F9M147
+
+COMMON:
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F9M146> <F9M147>)
+ - ClassAssertion(<http://www.benchmark.org/family#Grandson> <F9M147>)
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#married> <F9F145> <F9M146>)
+DIFFERENT:
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasSibling> <F9F148> <F9F145>)
+ - ClassAssertion(<http://www.benchmark.org/family#Sister> <F9F148>)
+FACT MAPPING:
+ <_X41> -> F9M147
+ <_X31> -> F9F145
+ <_X2> -> F9F148
+ <_X17> -> F9M146
+FOIL MAPPING:
+ <_X41> -> F9M153
+ <_X31> -> F9F141
+ <_X2> -> F9M147
+ <_X17> -> F9M142
+STATS:
+ Common facts: 3
+ Differences: 2
+ Conflicts: 0
+ Runtime (ms): 1540
+
+====================================================
+
+NAMESPACE: http://www.benchmark.org/family#
+CLASS EXPRESSION: hasChild some Male
+FACT: F10M171
+FOIL: F4F56
+
+COMMON:
+ - ClassAssertion(<http://www.benchmark.org/family#Father> <F10M173>)
+DIFFERENT:
+ - ObjectPropertyAssertion(<http://www.benchmark.org/family#hasChild> <F10M171> <F10M173>)
+FACT MAPPING:
+ <_X7> -> F10M171
+ <_X2> -> F10M173
+FOIL MAPPING:
+ <_X7> -> F4F56
+ <_X2> -> F4M54
+STATS:
+ Common facts: 1
+ Differences: 1
+ Conflicts: 0
+ Runtime (ms): 461
+
+====================================================
+
