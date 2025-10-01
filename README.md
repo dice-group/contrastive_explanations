@@ -95,6 +95,3 @@ We welcome contributions:
 * Submit pull requests.
 * Open issues for bugs or suggestions.
 * For academic inquiries or collaborations, contact the project maintainers via GitHub.
-
-```
-
