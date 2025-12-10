@@ -206,6 +206,85 @@
     </dependencies>
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.felix</groupId>-->
+<!--                <artifactId>maven-bundle-plugin</artifactId>-->
+<!--                <version>5.1.9</version>-->
+<!--                <extensions>true</extensions>-->
+<!--                <configuration>-->
+<!--                    <instructions>-->
+<!--                        <Bundle-Name>Contrastive Explanations</Bundle-Name>-->
+<!--                        <Bundle-SymbolicName>view.contrastive.plugin;singleton:=true</Bundle-SymbolicName>-->
+<!--                        <Bundle-Version>${project.version}</Bundle-Version>-->
+<!--                        <_noee>true</_noee>-->
+<!--                        <Export-Package>view.*</Export-Package>-->
+
+<!--                        <Import-Package>-->
+<!--                            !java.*,-->
+<!--                            !com.fasterxml.jackson.*,-->
+<!--                            !com.google.gson,-->
+<!--                            !guru.nidi.graphviz.*,-->
+<!--                            org.protege.*;version="[5.0,7)",-->
+
+<!--                            org.semanticweb.owlapi.apibinding;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.model;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.reasoner;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.util;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.io;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.formats;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.expression;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.manchestersyntax.parser;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.manchestersyntax.renderer;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.model.parameters;version="[4.5.0,5.0.0)",-->
+<!--                            org.semanticweb.owlapi.modularity;version="[4.5.0,5.0.0)",-->
+<!--&lt;!&ndash;                            org.semanticweb.owlapi.manchestersyntax.renderer;version="[5.0.0,6.0.0)",&ndash;&gt;-->
+<!--                            uk.ac.manchester.cs.owlapi.modularity;version="[4.5.0,5.0.0)",-->
+<!--                            com.clarkparsia.owlapi.explanation.util;version="[0,6)",-->
+<!--                            de.tu_dresden.inf.lat.evee.proofGenerators;resolution:=optional,-->
+<!--                            de.tu_dresden.inf.lat.evee.proofs.data.exceptions;resolution:=optional,-->
+<!--                            de.tu_dresden.inf.lat.evee.proofs.interfaces;resolution:=optional,-->
+<!--                            org.semanticweb.elk.owlapi;resolution:=optional,-->
+<!--                            org.xml.sax,-->
+<!--                            org.xml.sax.helpers,-->
+<!--                            org.w3c.dom,-->
+<!--                            javax.xml.parsers,-->
+<!--                            javax.xml.transform,-->
+<!--                            javax.xml.transform.dom,-->
+<!--                            javax.xml.transform.stream,-->
+<!--                            *-->
+
+<!--                        </Import-Package>-->
+<!--                    </instructions>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.5.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals><goal>shade</goal></goals>-->
+<!--                        <configuration>-->
+<!--                            <createDependencyReducedPom>false</createDependencyReducedPom>-->
+<!--                            <relocations>-->
+<!--                                <relocation>-->
+<!--                                    <pattern>guru.nidi.graphviz</pattern>-->
+<!--                                    <shadedPattern>view.contrastive.shaded.graphviz</shadedPattern>-->
+<!--                                </relocation>-->
+<!--                                <relocation>-->
+<!--                                    <pattern>com.google.gson</pattern>-->
+<!--                                    <shadedPattern>view.contrastive.shaded.gson</shadedPattern>-->
+<!--                                </relocation>-->
+<!--                                <relocation>-->
+<!--                                    <pattern>com.fasterxml.jackson</pattern>-->
+<!--                                    <shadedPattern>view.contrastive.shaded.jackson</shadedPattern>-->
+<!--                                </relocation>-->
+<!--                            </relocations>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

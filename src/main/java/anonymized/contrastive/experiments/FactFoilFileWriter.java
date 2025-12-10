@@ -42,6 +42,8 @@ public class FactFoilFileWriter {
                 "E:/Workspace_Dice/DataSource/family_output";
         String outputFormat = root.has("output_format") ? root.get("output_format").asText().trim().toLowerCase() : "text";
 
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+
         // Append proper extension
         String outputFile = outputBasePath + (outputFormat.equals("json") ? ".json" : ".txt");
 
@@ -116,8 +118,8 @@ public class FactFoilFileWriter {
                             ceNode.put("fact", factName);
                             ceNode.put("foil", foilName);
 
-                            ceNode.putPOJO("common", substituteMappings(ce.getCommon(), ce.getFactMapping()));
-                            ceNode.putPOJO("different", substituteMappings(ce.getDifferent(), ce.getFactMapping()));
+                            ceNode.putPOJO("common", ce.toString(renderer, "common").split(","));
+                            ceNode.putPOJO("different", ce.toString(renderer, "different").split(","));
 
                             Map<String, String> factMap = ce.getFactMapping().entrySet().stream()
                                     .collect(Collectors.toMap(e -> e.getKey().getIRI().getShortForm(),
@@ -128,7 +130,7 @@ public class FactFoilFileWriter {
 
                             ceNode.putPOJO("fact_mapping", factMap);
                             ceNode.putPOJO("foil_mapping", foilMap);
-                            ceNode.putPOJO("conflicts", ce.getConflict());
+                            ceNode.putPOJO("conflicts", ce.toString(renderer, "conflict").split(","));
 
                             ObjectNode stats = mapper.createObjectNode();
                             stats.put("common", ce.getCommon().size());

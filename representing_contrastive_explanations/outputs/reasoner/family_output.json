@@ -1,0 +1,27 @@
+[ {
+  "namespace" : "http://www.benchmark.org/family#",
+  "class_expression" : "Parent and (hasChild some (hasParent some Parent))",
+  "results" : [ {
+    "fact" : "F3F46",
+    "foil" : "F7F118",
+    "common" : [ "_X16 Type Father", " _X2 hasParent _X16" ],
+    "different" : [ "_X7 Type Grandmother", " _X7 hasChild _X2" ],
+    "fact_mapping" : {
+      "_X16" : "F3M45",
+      "_X2" : "F3M47",
+      "_X7" : "F3F46"
+    },
+    "foil_mapping" : {
+      "_X16" : "F7M115",
+      "_X2" : "F7F118",
+      "_X7" : "F7F118"
+    },
+    "conflicts" : [ "" ],
+    "stats" : {
+      "common" : 2,
+      "different" : 2,
+      "conflicts" : 0,
+      "runtime_ms" : 335
+    }
+  } ]
+} ]

@@ -54,6 +54,27 @@ public class ContrastiveExplanation {
                 "Conflicts: " + conflict;
     }
 
+    public String toString(ManchesterOWLSyntaxOWLObjectRendererImpl renderer, String axiomType) {
+        if(axiomType.equals("common")) {
+            return common.stream()
+                    .map(renderer::render)
+                    .collect(Collectors.joining(", "));
+        }
+        else if(axiomType.equals("different")) {
+            return different.stream()
+                    .map(renderer::render)
+                    .collect(Collectors.joining(", "));
+        }
+        else if(axiomType.equals("conflict")) {
+            return conflict.stream()
+                    .map(renderer::render)
+                    .collect(Collectors.joining(", "));
+        }
+        else {
+            throw new IllegalArgumentException("Unknown axiom type: " + axiomType);
+        }
+    }
+
     public String toString(ManchesterOWLSyntaxOWLObjectRendererImpl renderer) {
         return "Common: " + common.stream()
                 .map(renderer::render)
