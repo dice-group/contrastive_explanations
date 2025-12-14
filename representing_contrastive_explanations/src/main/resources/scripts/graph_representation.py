@@ -9,7 +9,7 @@ import graphviz
 from graphviz import Digraph
 
 def install_requirements():
-    venv_dir = "/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/scripts/venv"
+    venv_dir = "scripts/venv"
         # os.path.join(os.path.dirname(__file__), "venv"))
     python_exe = os.path.join(venv_dir, "bin", "python")
 
@@ -20,7 +20,7 @@ def install_requirements():
     # 2. Install requirements using the venv’s python
     subprocess.run(
         [python_exe, "-m", "pip", "install", "-r",
-         "/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/requirements.txt",
+         "requirements.txt",
          "-q", "--disable-pip-version-check", "--no-input"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True
     )
@@ -157,19 +157,19 @@ def build_and_save_graph(block_idx, class_expr, result, out_dir):
     print(str(dot), flush=True)
 
 def main():
-    install_requirements()
+    # install_requirements()
     parser = argparse.ArgumentParser("Graph Representation of Fact vs Foil (JSON input)")
     parser.add_argument(
         "--input-file",
         type=str,
         # required=True,
-        default="/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/reasoner/family_output.json",
+        # default="/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/reasoner/family_output.json",
         help="Path to the JSON file containing blocks with class_expression and results."
     )
     parser.add_argument(
         "--out-dir",
         type=str,
-        default="/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/explanation/graph",
+        # default="/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/explanation/graph",
         help="Directory to write PNG files into."
     )
     args = parser.parse_args()

@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 public class GraphvizRender {
     public static Path toPng(String dot) throws Throwable {
-        Path outputFile = Path.of("/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/explanation/graph/graphs.png");
+        Path outputFile = JsonCreator.PluginFiles.outputsDir().resolve("graphs.png");
         try (Writer w = Files.newBufferedWriter(outputFile.resolveSibling("graph.dot"))) {
             w.write(dot);
         }

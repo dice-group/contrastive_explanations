@@ -96,7 +96,7 @@ public class ContrastiveView extends AbstractOWLViewComponent {
                 OWLOntology ont = mm.getActiveOntology(); // the in-memory ontology user opened
 
                 // Save to a temp OWL file
-                File owlTmp = Files.createTempFile("cx-ont-", ".owl").toFile();
+                File owlTmp = JsonCreator.PluginFiles.inputsDir().resolve("family.owl").toFile();
                 mm.getOWLOntologyManager().saveOntology(
                         ont, new RDFXMLDocumentFormat(), IRI.create(owlTmp));
 
@@ -106,7 +106,7 @@ public class ContrastiveView extends AbstractOWLViewComponent {
                 String query = queryArea.getText().trim();
                 String dot = "";
                 try {
-                    JsonCreator.createInputJsonFile(owlTmp, fact, foil, query);
+                    JsonCreator.createInputJsonFile(fact, foil, query);
                     ProcessRunner.runReasoner();
                     dot = ProcessRunner.runGraphviz();
                     pngOut = GraphvizRender.toPng(dot);

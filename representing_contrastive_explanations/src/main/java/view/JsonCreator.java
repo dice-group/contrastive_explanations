@@ -3,9 +3,11 @@ package view;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,37 +32,63 @@ public class JsonCreator {
         String output_format;
         List<Experiment> experiments;
 
-        InputConfig(String ontology_input_file_path, List<Experiment> experiments) {
+        InputConfig(String ontology_input_file_path, List<Experiment> experiments) throws IOException {
             this.ontology_input_file_path = ontology_input_file_path;
-            this.output_file_path = "/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/reasoner/family_output";
+            this.output_file_path = PluginFiles.outputsDir().resolve("family_output").toString();
             this.reasoner = "HERMIT";
             this.output_format = "json";
             this.experiments = experiments;
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        ProcessRunner.runGraphviz();
+    public static void main(String[] args) throws Throwable {
+        GraphvizRender.toPng(ProcessRunner.runGraphviz());
     }
 
-    public static void createInputJsonFile(File owlFile, String fact, String foil, String query) throws IOException {
+    public static void createInputJsonFile(String fact, String foil, String query) throws IOException {
         Experiment exp = new Experiment(
                 query,
                 Collections.singletonList(fact),
                 Collections.singletonList(foil)
         );
         InputConfig config = new InputConfig(
-                owlFile.getPath(),
+                PluginFiles.inputsDir().resolve("family.owl").toString(),
                 Collections.singletonList(exp)
         );
         // Serialize to JSON
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonString = gson.toJson(config);
-        try (FileWriter writer = new FileWriter("/Users/ashikmr/Desktop/contrastive_explanations/representing_contrastive_explanations/outputs/reasoner/family_json_input.json")) {
-            writer.write(jsonString);
-        } catch (IOException e) {
-            throw e;
+        Path jsonPath = PluginFiles.inputsDir().resolve("family_json_input.json");
+        Files.writeString(jsonPath, jsonString, StandardCharsets.UTF_8);
+    }
+
+    public static class PluginFiles {
+        private static final String APP_DIR = ".protege/contrastive-explanations";
+
+        public static Path baseDir() throws IOException {
+            Path dir = Paths.get(System.getProperty("user.home"), APP_DIR);
+            Files.createDirectories(dir);
+            return dir;
+        }
+
+        public static Path inputsDir() throws IOException {
+            Path dir = baseDir().resolve("inputs");
+            Files.createDirectories(dir);
+            return dir;
+        }
+
+        public static Path binsDir() throws IOException {
+            Path dir = baseDir().resolve("bin");
+            Files.createDirectories(dir);
+            return dir;
+        }
+
+        public static Path outputsDir() throws IOException {
+            Path dir = baseDir().resolve("outputs");
+            Files.createDirectories(dir);
+            return dir;
         }
     }
+
 }
 
