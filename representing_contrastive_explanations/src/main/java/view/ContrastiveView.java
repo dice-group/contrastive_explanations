@@ -13,9 +13,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+
+import static view.Validation.validateFactFoil;
 
 public class ContrastiveView extends AbstractOWLViewComponent {
 
@@ -93,17 +94,24 @@ public class ContrastiveView extends AbstractOWLViewComponent {
             @Override protected Void doInBackground() throws Exception {
                 //Grab the active ontology from Protégé
                 OWLModelManager mm = getOWLModelManager();
-                OWLOntology ont = mm.getActiveOntology(); // the in-memory ontology user opened
+                OWLOntology activeOntology = mm.getActiveOntology(); // the in-memory ontology user opened
 
                 // Save to a temp OWL file
                 File owlTmp = JsonCreator.PluginFiles.inputsDir().resolve("family.owl").toFile();
                 mm.getOWLOntologyManager().saveOntology(
-                        ont, new RDFXMLDocumentFormat(), IRI.create(owlTmp));
+                        activeOntology, new RDFXMLDocumentFormat(), IRI.create(owlTmp));
 
                 //Collect inputs
                 String fact = factArea.getText().trim();
                 String foil = foilArea.getText().trim();
                 String query = queryArea.getText().trim();
+
+                try {
+                    validateFactFoil(fact, foil, query, activeOntology);
+                }catch (IllegalArgumentException e){
+                    throw new Exception("Validation error: " + e.getMessage());
+                }
+
                 String dot = "";
                 try {
                     JsonCreator.createInputJsonFile(fact, foil, query);

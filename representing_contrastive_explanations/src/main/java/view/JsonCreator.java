@@ -2,7 +2,6 @@ package view;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -41,10 +40,6 @@ public class JsonCreator {
         }
     }
 
-    public static void main(String[] args) throws Throwable {
-        GraphvizRender.toPng(ProcessRunner.runGraphviz());
-    }
-
     public static void createInputJsonFile(String fact, String foil, String query) throws IOException {
         Experiment exp = new Experiment(
                 query,
@@ -79,6 +74,12 @@ public class JsonCreator {
 
         public static Path binsDir() throws IOException {
             Path dir = baseDir().resolve("bin");
+            Files.createDirectories(dir);
+            return dir;
+        }
+
+        public static Path graphvizDir() throws IOException {
+            Path dir = baseDir().resolve("graphviz-bundle");
             Files.createDirectories(dir);
             return dir;
         }
