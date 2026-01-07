@@ -34,7 +34,7 @@ public class PathConstants {
 
     public static final String INPUT_OWL_FILE = "input_ontology.owl";
 
-    public static final String RESOURCE_JAR = "contrastive-explanations-runner.jar";
+    public static final String RESOURCE_JAR = "contrastive-explanations-reasoner.jar";
 
     public static final String OUTPUT_DIR = "outputs";
 
