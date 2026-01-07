@@ -33,14 +33,14 @@ public class JsonWriter {
         String output_file_path;
         String reasoner;
         String output_format;
-        List<UserInput> userInputs;
+        List<UserInput> experiments;
 
-        InputConfig(String ontology_input_file_path, List<UserInput> userInputs) throws IOException {
+        InputConfig(String ontology_input_file_path, List<UserInput> experiments) throws IOException {
             this.ontology_input_file_path = ontology_input_file_path;
             this.output_file_path = CommonUtil.createDirectory(OUTPUT_DIR).resolve(REASONER_OUTPUT_JSON).toString();
             this.reasoner = HERMIT_REASONER;
             this.output_format = JSON_OUTPUT_FORMAT;
-            this.userInputs = userInputs;
+            this.experiments = experiments;
         }
     }
 

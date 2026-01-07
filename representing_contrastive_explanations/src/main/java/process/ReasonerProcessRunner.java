@@ -21,7 +21,10 @@ public class ReasonerProcessRunner {
         try {
             ProcessBuilder pb = getProcessBuilder(Path.of(this.inputFilePath));
             Process process = pb.start();
-            process.waitFor();
+            int exit = process.waitFor();
+            if (exit != 0) {
+                throw new RuntimeException(RUNTIME_ERROR_MESSAGE_4 + exit);
+            }
         } catch (Exception e) {
             throw new RuntimeException(RUNTIME_ERROR_MESSAGE_4, e);
         }
