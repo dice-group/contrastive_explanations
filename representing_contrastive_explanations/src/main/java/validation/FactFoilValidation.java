@@ -1,32 +1,34 @@
-package view;
+package validation;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.util.*;
 
-public class Validation {
+import static validation.constants.ValidationConstants.*;
+
+public class FactFoilValidation {
 
     public static void validateFactFoil(String fact, String foil, String query, OWLOntology owlOntology) throws IllegalArgumentException {
         if (fact == null || fact.trim().isEmpty()) {
-            throw new IllegalArgumentException("Fact cannot be null or empty.");
+            throw new IllegalArgumentException(FACT_CANNOT_BE_NULL_OR_EMPTY);
         }
         if (foil == null || foil.trim().isEmpty()) {
-            throw new IllegalArgumentException("Foil cannot be null or empty.");
+            throw new IllegalArgumentException(FOIL_CANNOT_BE_NULL_OR_EMPTY);
         }
         if (query == null || query.trim().isEmpty()) {
-            throw new IllegalArgumentException("Query cannot be null or empty.");
+            throw new IllegalArgumentException(QUERY_CANNOT_BE_NULL_OR_EMPTY);
         }
         if (fact.equals(foil)) {
-            throw new IllegalArgumentException("Fact and foil must be different.");
+            throw new IllegalArgumentException(FACT_FOIL_MUST_BE_DIFFERENT);
         }
         Boolean factExists =
                 resolveEntity(fact, owlOntology);
         if (!factExists) {
-            throw new IllegalArgumentException("Fact not found in ontology: " + fact);
+            throw new IllegalArgumentException(FACT_NOT_FOUND_IN_ONTOLOGY + fact);
         }
         Boolean foilExists =
                 resolveEntity(foil, owlOntology);
         if (!foilExists) {
-            throw new IllegalArgumentException("Foil not found in ontology: " + foil);
+            throw new IllegalArgumentException(FOIL_NOT_FOUND_IN_ONTOLOGY + foil);
         }
     }
 

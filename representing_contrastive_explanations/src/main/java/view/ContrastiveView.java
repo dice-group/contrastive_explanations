@@ -1,5 +1,11 @@
 package view;
 
+import graphviz.GraphvizService;
+import process.ReasonerProcessRunner;
+import process.PythonProcessRunner;
+import utils.CommonUtil;
+import io.ResourceExtractor;
+import io.JsonWriter;
 import guru.nidi.graphviz.engine.*;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
@@ -16,7 +22,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static view.Validation.validateFactFoil;
+import static constants.ErrorMessageConstants.RUNTIME_ERROR_MESSAGE_3;
+import static constants.PathConstants.*;
+import static io.ResourceExtractor.extractGraphvizBundle;
+import static validation.FactFoilValidation.validateFactFoil;
 
 public class ContrastiveView extends AbstractOWLViewComponent {
 
@@ -27,9 +36,9 @@ public class ContrastiveView extends AbstractOWLViewComponent {
     private JLabel imageLabel;
 
     @Override
-    protected void initialiseOWLView() {
+    protected void initialiseOWLView() throws Exception {
         initGraphviz();
-        imageLabel = new JLabel("No image yet", SwingConstants.CENTER); // <-- initialized here
+        imageLabel = new JLabel("No image yet", SwingConstants.CENTER);
         JScrollPane imageScroll = new JScrollPane(imageLabel);
         add(imageScroll, BorderLayout.CENTER);
 
@@ -82,22 +91,25 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         runBtn.addActionListener(e -> runExplanationAsync());
     }
 
-    private void initGraphviz() {
-        String dotPath = "/opt/homebrew/bin/dot";
+    private void initGraphviz() throws Exception {
+        Path gvRoot = extractGraphvizBundle();
+        String dotPath = gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY).toString();
         Graphviz.useEngine(new GraphvizCmdLineEngine(dotPath));
         System.setProperty("java.awt.headless", "true");
     }
 
     private void runExplanationAsync() {
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
-             Path pngOut;
-            @Override protected Void doInBackground() throws Exception {
+            Path pngOut;
+
+            @Override
+            protected Void doInBackground() throws Exception {
                 //Grab the active ontology from Protégé
                 OWLModelManager mm = getOWLModelManager();
                 OWLOntology activeOntology = mm.getActiveOntology(); // the in-memory ontology user opened
 
                 // Save to a temp OWL file
-                File owlTmp = JsonCreator.PluginFiles.inputsDir().resolve("family.owl").toFile();
+                File owlTmp = CommonUtil.createDirectory(INPUT_DIR).resolve(INPUT_OWL_FILE).toFile();
                 mm.getOWLOntologyManager().saveOntology(
                         activeOntology, new RDFXMLDocumentFormat(), IRI.create(owlTmp));
 
@@ -108,26 +120,34 @@ public class ContrastiveView extends AbstractOWLViewComponent {
 
                 try {
                     validateFactFoil(fact, foil, query, activeOntology);
-                }catch (IllegalArgumentException e){
+                } catch (IllegalArgumentException e) {
                     throw new Exception("Validation error: " + e.getMessage());
                 }
 
                 String dot = "";
                 try {
-                    JsonCreator.createInputJsonFile(fact, foil, query);
-                    ProcessRunner.runReasoner();
-                    dot = ProcessRunner.runGraphviz();
-                    pngOut = GraphvizRender.toPng(dot);
+                    JsonWriter.createInputJsonFile(fact, foil, query);
+                    ResourceExtractor.extractJar();
+                    String jsonInputFilePath = String.valueOf(CommonUtil.createDirectory(INPUT_DIR).resolve(REASONER_INPUT_JSON));
+                    ReasonerProcessRunner processRunner = new ReasonerProcessRunner(jsonInputFilePath);
+                    processRunner.runReasoner();
+
+                    PythonProcessRunner pythonProcess = new PythonProcessRunner();
+                    Path venvDir = pythonProcess.createVenvAndInstallRequirements();
+                    Path gvRoot = extractGraphvizBundle();
+
+                    GraphvizService graphvizService = new GraphvizService(venvDir, gvRoot);
+                    dot = graphvizService.graphvizRunner();
+                    pngOut = graphvizService.convertDotToPng(dot);
                     return null;
-                } catch (Exception e) {
-                    throw new Exception("Failed to create dot image file: "
-                            + Arrays.toString(e.getStackTrace()) + e.getCause() +  dot +   pngOut);
                 } catch (Throwable e) {
-                    throw new RuntimeException("Failed to create dot image file: " +e
-                            + Arrays.toString(e.getStackTrace()) + e.getCause() +  dot +   pngOut);
+                    throw new RuntimeException(RUNTIME_ERROR_MESSAGE_3 + e
+                            + Arrays.toString(e.getStackTrace()) + e.getCause() + dot + pngOut);
                 }
             }
-            @Override protected void done() {
+
+            @Override
+            protected void done() {
                 runBtn.setEnabled(true);
                 try {
                     get(); // rethrow exceptions
@@ -146,6 +166,7 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         };
         worker.execute();
     }
+
     private void showImage(Path pngPath) throws IOException {
         BufferedImage img = ImageIO.read(pngPath.toFile());
         imageLabel.setIcon(new ImageIcon(img));
@@ -153,6 +174,7 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         imageLabel.revalidate();
         imageLabel.repaint();
     }
+
     @Override
     protected void disposeOWLView() { /* no-op */ }
 }

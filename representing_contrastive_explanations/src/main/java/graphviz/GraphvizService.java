@@ -1,24 +1,43 @@
-package view;
+package graphviz;
 
-import java.io.*;
+import process.PythonProcessRunner;
+import utils.CommonUtil;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import static view.Util.extractGraphvizBundle;
 
+import static constants.ErrorMessageConstants.*;
+import static constants.EnvConstants.*;
+import static constants.EnvConstants.PATH;
+import static constants.PathConstants.*;
+import static io.ResourceExtractor.extractGraphvizBundle;
+import static utils.CommonUtil.getTempFile;
 
-public class GraphvizRender {
+public class GraphvizService {
 
-    public static Path toPng(String dot) throws Throwable {
-        Path pngFile = JsonCreator.PluginFiles.outputsDir().resolve("graphs.png");
-        try (Writer w = Files.newBufferedWriter(pngFile.resolveSibling("graph.dot"))) {
+    private final Path venvDir;
+    private final Path gvRoot;
+
+    public GraphvizService(final Path venvDir, final Path gvRoot) {
+        this.venvDir = venvDir;
+        this.gvRoot = gvRoot;
+    }
+
+    public Path convertDotToPng(String dot) throws Throwable {
+        Path pngFile = CommonUtil.createDirectory(OUTPUT_DIR).resolve(GRAPHS_PNG_FILE);
+        try (Writer w = Files.newBufferedWriter(pngFile.resolveSibling(GRAPH_DOT_FILE))) {
             w.write(dot);
+        } catch (IOException e) {
+            throw new RuntimeException(RUNTIME_ERROR_MESSAGE_2, e);
         }
+        Path dotBinary = this.gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY);
 
-        Path gvRoot = extractGraphvizBundle();
-        Path dotBinary = gvRoot.resolve("bin/dot");
-
-        Path dotFile = JsonCreator.PluginFiles.outputsDir().resolve("graph.dot");
+        Path dotFile = CommonUtil.createDirectory(OUTPUT_DIR).resolve(GRAPH_DOT_FILE);
         ProcessBuilder pb = new ProcessBuilder(
                 dotBinary.toAbsolutePath().toString(),
                 "-Tpng",
@@ -28,26 +47,49 @@ public class GraphvizRender {
         );
 
         pb.redirectErrorStream(true);
-
         Map<String, String> env = pb.environment();
-        env.put("DYLD_LIBRARY_PATH", gvRoot.resolve("lib").toString());
-        env.put("GVBINDIR", gvRoot.resolve("lib/graphviz").toString());
-        env.put("GVPLUGIN_PATH", gvRoot.resolve("lib/graphviz").toString());
-        env.put("PATH", gvRoot.resolve("bin") + ":" + env.getOrDefault("PATH", ""));
+        env.put(DYLD_LIBRARY_PATH, this.gvRoot.resolve(LIB_DIR).toString());
+        env.put(GVBINDIR, this.gvRoot.resolve(GRAPHVIZ_LIB_DIR).toString());
+        env.put(GVPLUGIN_PATH, this.gvRoot.resolve(GRAPHVIZ_LIB_DIR).toString());
+        env.put(PATH, this.gvRoot.resolve(BIN_DIR) + ":" + env.getOrDefault(PATH, ""));
         Process process = pb.start();
-
-        try (BufferedReader r = new BufferedReader(
-                new InputStreamReader(process.getInputStream()))) {
-            r.lines().forEach(System.out::println);
-        }
         int exit = process.waitFor();
         if (exit != 0) {
-            throw new RuntimeException("dot failed with exit code " + exit);
+            throw new RuntimeException(RUNTIME_ERROR_MESSAGE_1 + exit);
         }
         return pngFile;
     }
 
-    public static void main (String[] args) throws Throwable {
+    public String graphvizRunner() {
+        try {
+            Path pythonExe = this.venvDir.resolve(BIN_DIR).resolve(PYTHON);
+            Path pythonScriptPath = getTempFile(SCRIPT + "/" + GRAPH_REPRESENTATION_CLASS);
+            Path inputFile = CommonUtil.createDirectory(OUTPUT_DIR).resolve(REASONER_OUTPUT_JSON + ".json");
+            ProcessBuilder runScript = new ProcessBuilder(
+                    pythonExe.toString(),
+                    pythonScriptPath.toString(),
+                    "--input-file", inputFile.toString()
+            );
+            runScript.redirectErrorStream(true);
+            Process p2 = runScript.start();
+            StringBuilder output = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p2.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            int exitCode = p2.waitFor();
+            if (exitCode != 0) throw new RuntimeException(RUNTIME_ERROR_MESSAGE_7);
+            return output.toString().trim();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args) throws Throwable {
         String dot =
                 "digraph {\n" +
                         "\tgraph [bgcolor=lightyellow fontcolor=black fontsize=20 label=\"Query: married some (married some (hasSibling some Parent)) | fact=F10F179 | foil=F9F169\" rankdir=LR splines=true]\n" +
@@ -87,8 +129,12 @@ public class GraphvizRender {
                         "\n" +
                         "\n" +
                         "}\n";
-        toPng(dot);
+        PythonProcessRunner pythonProcess = new PythonProcessRunner();
+        Path venvDir = pythonProcess.createVenvAndInstallRequirements();
+        Path gvRoot = extractGraphvizBundle();
+
+        GraphvizService graphvizService = new GraphvizService(venvDir, gvRoot);
+        graphvizService.convertDotToPng(dot);
     }
+
 }
-
-
