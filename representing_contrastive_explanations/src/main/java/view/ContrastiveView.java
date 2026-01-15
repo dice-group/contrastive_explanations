@@ -27,6 +27,14 @@ import static constants.PathConstants.*;
 import static io.ResourceExtractor.extractGraphvizBundle;
 import static validation.FactFoilValidation.validateFactFoil;
 
+/**
+ * UI view component for generating contrastive explanations.
+ *
+ * <p>This class builds a simple form for user inputs (fact, foil, query),
+ * runs reasoning and post-processing as external processes (reasoner JAR,
+ * Python venv and requirements, Graphviz), and displays the generated graph PNG.
+ * </p>
+ */
 public class ContrastiveView extends AbstractOWLViewComponent {
 
     private JTextArea factArea, foilArea, queryArea;
@@ -35,15 +43,25 @@ public class ContrastiveView extends AbstractOWLViewComponent {
     private JLabel graphLabel; // shows PNG from dot
     private JLabel imageLabel;
 
+    /**
+     * Initialize the view components and layout.
+     *
+     * <p>Sets up:
+     * - Graphviz engine initialization,
+     * - form with inputs and button.
+     * </p>
+     */
     @Override
     protected void initialiseOWLView() throws Exception {
+        // Initialize Graphviz engine by using the bundled Graphviz distribution
         initGraphviz();
+        // Central image area (separate from split pane) - initial placeholder
         imageLabel = new JLabel("No image yet", SwingConstants.CENTER);
         JScrollPane imageScroll = new JScrollPane(imageLabel);
         add(imageScroll, BorderLayout.CENTER);
 
         setLayout(new BorderLayout());
-        // Inputs
+        // Build the input form (Fact / Foil / Query + run button)
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(4, 4, 4, 4);
@@ -76,8 +94,6 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         form.add(runBtn, c);
 
         add(form, BorderLayout.NORTH);
-
-        // Outputs
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         nlOutput = new JTextArea(8, 80);
         nlOutput.setEditable(false);
@@ -87,10 +103,14 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         split.setBottomComponent(new JScrollPane(graphLabel));
         split.setResizeWeight(0.5);
         add(split, BorderLayout.CENTER);
-
         runBtn.addActionListener(e -> runExplanationAsync());
     }
 
+    /**
+     * Initialize Graphviz engine using the bundled Graphviz distribution.
+     *
+     * Extracts the Graphviz bundle.
+     */
     private void initGraphviz() throws Exception {
         Path gvRoot = extractGraphvizBundle();
         String dotPath = gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY).toString();
@@ -98,26 +118,36 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         System.setProperty("java.awt.headless", "true");
     }
 
+    /**
+     * Run the full explanation generation pipeline.
+     *
+     * <p>Pipeline steps (in order):
+     * 1. Save the active OWL ontology to a temp file,
+     * 2. Validate user inputs (fact/foil/query) against the ontology,
+     * 3. Create reasoner input JSON and run the external reasoner JAR,
+     * 4. Create Python venv and install requirements, run Python post-processing,
+     * 5. Use Graphviz service to obtain DOT and convert it to a PNG,
+     * 6. Update the UI with the resulting image or show errors.</p>
+     * <p>
+     */
     private void runExplanationAsync() {
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             Path pngOut;
 
             @Override
             protected Void doInBackground() throws Exception {
-                //Grab the active ontology from Protégé
+                // Grab the active ontology from the Protege model manager
                 OWLModelManager mm = getOWLModelManager();
                 OWLOntology activeOntology = mm.getActiveOntology(); // the in-memory ontology user opened
-
                 // Save to a temp OWL file
                 File owlTmp = CommonUtil.createDirectory(INPUT_DIR).resolve(INPUT_OWL_FILE).toFile();
                 mm.getOWLOntologyManager().saveOntology(
                         activeOntology, new RDFXMLDocumentFormat(), IRI.create(owlTmp));
-
-                //Collect inputs
+                // Collect user inputs
                 String fact = factArea.getText().trim();
                 String foil = foilArea.getText().trim();
                 String query = queryArea.getText().trim();
-
+                // Validate inputs and ensure entities exist in the ontology
                 try {
                     validateFactFoil(fact, foil, query, activeOntology);
                 } catch (IllegalArgumentException e) {
@@ -126,16 +156,21 @@ public class ContrastiveView extends AbstractOWLViewComponent {
 
                 String dot = "";
                 try {
+                    // 1) Create reasoner input JSON and extract the embedded reasoner JAR
                     JsonWriter.createInputJsonFile(fact, foil, query);
                     ResourceExtractor.extractJar();
+
+                    // 2) Run the reasoner external JAR using the generated JSON as input
                     String jsonInputFilePath = String.valueOf(CommonUtil.createDirectory(INPUT_DIR).resolve(REASONER_INPUT_JSON));
                     ReasonerProcessRunner processRunner = new ReasonerProcessRunner(jsonInputFilePath);
                     processRunner.runReasoner();
 
+                    // 3) Prepare Python environment
                     PythonProcessRunner pythonProcess = new PythonProcessRunner();
                     Path venvDir = pythonProcess.createVenvAndInstallRequirements();
-                    Path gvRoot = extractGraphvizBundle();
 
+                    // 4) Use Graphviz service to produce DOT and convert to PNG
+                    Path gvRoot = extractGraphvizBundle();
                     GraphvizService graphvizService = new GraphvizService(venvDir, gvRoot);
                     dot = graphvizService.graphvizRunner();
                     pngOut = graphvizService.convertDotToPng(dot);
@@ -152,7 +187,6 @@ public class ContrastiveView extends AbstractOWLViewComponent {
                 try {
                     get(); // rethrow exceptions
                     if (pngOut != null) {
-//                        graphLabel.setIcon(new ImageIcon(pngOut.toString()));
                         BufferedImage img = ImageIO.read(pngOut.toFile());
                         graphLabel.setIcon(new ImageIcon(img));
                         graphLabel.setText(null);
@@ -167,6 +201,12 @@ public class ContrastiveView extends AbstractOWLViewComponent {
         worker.execute();
     }
 
+    /**
+     * Convenience method to show an image in the center image label.
+     *
+     * @param pngPath path to the PNG file to display
+     * @throws IOException if reading the image fails
+     */
     private void showImage(Path pngPath) throws IOException {
         BufferedImage img = ImageIO.read(pngPath.toFile());
         imageLabel.setIcon(new ImageIcon(img));

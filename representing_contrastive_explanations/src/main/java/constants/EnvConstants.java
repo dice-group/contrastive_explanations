@@ -1,5 +1,12 @@
 package constants;
 
+
+/**
+ * Collection of environment-related constants used across the application.
+ *
+ * <p>This class centralizes names of environment variables, common string values (like output
+ * formats) and identifiers (like the reasoner name and fully-qualified main class).</p>
+ */
 public class EnvConstants {
 
     public static final String DYLD_LIBRARY_PATH = "DYLD_LIBRARY_PATH";

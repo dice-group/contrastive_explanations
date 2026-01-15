@@ -1,5 +1,9 @@
 package validation.constants;
 
+/**
+ * Centralized validation message constants used across the application.
+ *
+ */
 public class ValidationConstants {
 
     public static final String FACT_CANNOT_BE_NULL_OR_EMPTY = "Fact cannot be null or empty.";

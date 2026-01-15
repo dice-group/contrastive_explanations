@@ -1,5 +1,9 @@
 package constants;
 
+/**
+ * Centralized filesystem and resource path/name constants used across the application.
+ **/
+
 public class PathConstants {
 
     public static final String BIN_DIR = "bin";

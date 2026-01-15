@@ -1,5 +1,9 @@
 package constants;
 
+/**
+ * Centralized error message constants used across the application.
+ */
+
 public class ErrorMessageConstants {
 
     public static final String RUNTIME_ERROR_MESSAGE_1 = "dot failed with exit code ";
