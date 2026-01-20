@@ -3,7 +3,9 @@ package process;
 import utils.CommonUtil;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 import static constants.ErrorMessageConstants.*;
 import static constants.EnvConstants.*;
@@ -25,15 +27,22 @@ public class ReasonerProcessRunner {
      * Launch the reasoner as a separate JVM process.
      */
     public void runReasoner() {
+        String output = "";
+        int exit = -1;
         try {
             ProcessBuilder pb = getProcessBuilder(Path.of(this.inputFilePath));
             Process process = pb.start();
-            int exit = process.waitFor();
+            
+            try (var reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                output = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            }
+             exit = process.waitFor();
             if (exit != 0) {
-                throw new RuntimeException(RUNTIME_ERROR_MESSAGE_4 + exit);
+                throw new RuntimeException(RUNTIME_ERROR_MESSAGE_4 + " exit=" + exit + "\n" + output);
             }
         } catch (Exception e) {
-            throw new RuntimeException(RUNTIME_ERROR_MESSAGE_4, e);
+            throw new RuntimeException(RUNTIME_ERROR_MESSAGE_4 + " exit=" + exit + "\n" + output);
         }
     }
 

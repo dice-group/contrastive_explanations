@@ -8,6 +8,7 @@ import static constants.ErrorMessageConstants.RUNTIME_ERROR_MESSAGE_5;
 import static constants.ErrorMessageConstants.RUNTIME_ERROR_MESSAGE_6;
 import static constants.PathConstants.*;
 import static utils.CommonUtil.getTempFile;
+import static utils.CommonUtil.isMacOS;
 
 /**
  * Helper to create a Python virtual environment and install Python dependencies.
@@ -26,10 +27,18 @@ public class PythonProcessRunner {
      */
     public Path createVenvAndInstallRequirements() throws IOException, InterruptedException {
         // Create a unique temporary directory to host the virtual environment
+        ProcessBuilder pb;
         Path venvDir = Files.createTempDirectory("contrastive_venv_");
-        ProcessBuilder pb = new ProcessBuilder(
-                "python3", "-m", "venv", venvDir.toString()
-        );
+        if(isMacOS()){
+             pb = new ProcessBuilder(
+                    "python3", "-m", "venv", venvDir.toString()
+            );
+        }
+        else {
+             pb = new ProcessBuilder(
+                    "python", "-m", "venv", venvDir.toString()
+            );
+        }
         pb.inheritIO();
         Process p = pb.start();
         int exit = p.waitFor();
@@ -54,7 +63,10 @@ public class PythonProcessRunner {
      */
     private void installRequirements(Path venvDir, Path requirementsFile)
             throws IOException, InterruptedException {
-        Path pythonExe = venvDir.resolve(BIN_DIR).resolve(PYTHON);
+        Path pythonExe = venvDir.resolve("Scripts").resolve("python.exe");;
+        if(isMacOS()){
+            pythonExe = venvDir.resolve("bin").resolve("python");
+        }
         // Build the command: <venv>/bin/python -m pip install -r <requirementsFile>
         ProcessBuilder pb = new ProcessBuilder(
                 pythonExe.toString(),

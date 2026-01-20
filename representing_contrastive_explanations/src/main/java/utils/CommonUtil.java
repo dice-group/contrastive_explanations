@@ -63,4 +63,8 @@ public class CommonUtil {
             return tempFile;
         }
     }
+
+    public static Boolean isMacOS() {
+        return System.getProperty("os.name").toLowerCase().contains("mac");
+    }
 }

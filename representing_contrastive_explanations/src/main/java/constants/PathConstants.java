@@ -20,6 +20,10 @@ public class PathConstants {
 
     public static final String MACOS_AARCH64_DIR = "macos-aarch64";
 
+    public static final String WINDOWS = "windows";
+
+    public static final String DOT_BINARY_WINDOWS = "dot.exe";
+
     public static final String DOT_BINARY = "dot";
 
     public static final String GRAPH_DOT_FILE = "graph.dot";
@@ -42,7 +46,10 @@ public class PathConstants {
 
     public static final String OUTPUT_DIR = "outputs";
 
-    public static final String GRAPHVIZ_LIB_FILE = "graphvizLib.txt";
+    public static final String GRAPHVIZ_LIB_FILE_MAC = "graphvizLibMac.txt";
+
+    public static final String GRAPHVIZ_LIB_FILE_WINDOWS = "graphvizLibWindows.txt";
+
 
     public static final String REQUIREMENTS_TXT = "requirements.txt";
 

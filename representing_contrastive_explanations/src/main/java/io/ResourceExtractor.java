@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static constants.ErrorMessageConstants.IO_EXCEPTION_MESSAGE_1;
 import static constants.ErrorMessageConstants.IO_EXCEPTION_MESSAGE_2;
 import static constants.PathConstants.*;
+import static utils.CommonUtil.isMacOS;
 
 /**
  * Utility responsible for extracting bundled resources (Graphviz runtime and reasoner JAR)
@@ -31,15 +32,18 @@ public class ResourceExtractor {
      */
     public static Path extractGraphvizBundle() throws Exception {
         // Build the expected bundle root under the project's bin
+        String os = WINDOWS;
+        String dotBinary = DOT_BINARY_WINDOWS;
+        if (isMacOS()) {
+            os = MACOS_AARCH64_DIR;
+            dotBinary = DOT_BINARY;
+        }
         Path gvRoot = CommonUtil.createDirectory(BIN_DIR)
                 .resolve(GRAPHVIZ_DEPENDENCIES)
-                .resolve(MACOS_AARCH64_DIR);
-        if (Files.exists(gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY))) {
-            return gvRoot;
-        }
+                .resolve(os);
         // Extract all listed resources into the target root
-        extractResourceDirectory(gvRoot);
-        Path dot = gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY);
+        extractResourceDirectory(gvRoot, os);
+        Path dot = gvRoot.resolve(BIN_DIR).resolve(dotBinary);
         try {
             Files.setPosixFilePermissions(
                     dot,
@@ -58,11 +62,15 @@ public class ResourceExtractor {
      * @param targetRoot destination root where resources will be written
      * @throws Exception on I/O failures or missing resources
      */
-    private static void extractResourceDirectory(Path targetRoot) throws Exception {
+    private static void extractResourceDirectory(Path targetRoot, String OS) throws Exception {
         List<String> files;
         // Read the resource list file from the classpath
+        String resourceFile = GRAPHVIZ_LIB_FILE_MAC;
+        if(OS.equals(WINDOWS)){
+            resourceFile = GRAPHVIZ_LIB_FILE_WINDOWS;
+        }
         try (InputStream list = ResourceExtractor.class.getClassLoader()
-                .getResourceAsStream(GRAPHVIZ_LIB_FILE)) {
+                .getResourceAsStream(resourceFile)) {
             assert list != null;
             files = new BufferedReader(new InputStreamReader(list))
                     .lines()
@@ -74,7 +82,8 @@ public class ResourceExtractor {
         }
         for (String inputPath : files) {
             Path outputPath = targetRoot.resolve(inputPath);
-            outputPath = Path.of(outputPath.toString().replace(GRAPHVIZ_BUNDLE_DIR + "/" + MACOS_AARCH64_DIR + "/", ""));
+            Path prefix = Path.of(GRAPHVIZ_BUNDLE_DIR, OS);
+            outputPath = Path.of(outputPath.toString().replace(prefix.toString(), ""));
             // Ensure parent directories exist before copying the file
             Files.createDirectories(outputPath.getParent());
             try (InputStream in = ResourceExtractor.class.getClassLoader().getResourceAsStream(inputPath)) {
@@ -107,3 +116,5 @@ public class ResourceExtractor {
     }
 
 }
+
+

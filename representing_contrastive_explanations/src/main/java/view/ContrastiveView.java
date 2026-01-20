@@ -25,6 +25,7 @@ import java.util.Arrays;
 import static constants.ErrorMessageConstants.RUNTIME_ERROR_MESSAGE_3;
 import static constants.PathConstants.*;
 import static io.ResourceExtractor.extractGraphvizBundle;
+import static utils.CommonUtil.isMacOS;
 import static validation.FactFoilValidation.validateFactFoil;
 
 /**
@@ -112,8 +113,12 @@ public class ContrastiveView extends AbstractOWLViewComponent {
      * Extracts the Graphviz bundle.
      */
     private void initGraphviz() throws Exception {
+        String dotBinary = DOT_BINARY_WINDOWS;
+        if (isMacOS()) {
+            dotBinary = DOT_BINARY;
+        }
         Path gvRoot = extractGraphvizBundle();
-        String dotPath = gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY).toString();
+        String dotPath = gvRoot.resolve(BIN_DIR).resolve(dotBinary).toString();
         Graphviz.useEngine(new GraphvizCmdLineEngine(dotPath));
         System.setProperty("java.awt.headless", "true");
     }
@@ -156,7 +161,7 @@ public class ContrastiveView extends AbstractOWLViewComponent {
 
                 String dot = "";
                 try {
-                    // 1) Create reasoner input JSON and extract the embedded reasoner JAR
+//                     1) Create reasoner input JSON and extract the embedded reasoner JAR
                     JsonWriter.createInputJsonFile(fact, foil, query);
                     ResourceExtractor.extractJar();
 

@@ -1,5 +1,7 @@
 package graphviz;
 
+import process.PythonProcessRunner;
+import process.ReasonerProcessRunner;
 import utils.CommonUtil;
 
 import java.io.BufferedReader;
@@ -14,7 +16,10 @@ import static constants.ErrorMessageConstants.*;
 import static constants.EnvConstants.*;
 import static constants.EnvConstants.PATH;
 import static constants.PathConstants.*;
+import static io.JsonWriter.createInputJsonFile;
+import static io.ResourceExtractor.extractGraphvizBundle;
 import static utils.CommonUtil.getTempFile;
+import static utils.CommonUtil.isMacOS;
 
 /**
  * Service responsible for invoking Graphviz and a helper Python script to produce
@@ -51,7 +56,11 @@ public class GraphvizService {
             throw new RuntimeException(RUNTIME_ERROR_MESSAGE_2, e);
         }
         // Locate the dot binary inside the Graphviz bundle
-        Path dotBinary = this.gvRoot.resolve(BIN_DIR).resolve(DOT_BINARY);
+        String dotBinaryName = "dot.exe";
+        if(isMacOS()){
+            dotBinaryName = "dot";
+        }
+        Path dotBinary = this.gvRoot.resolve(BIN_DIR).resolve(dotBinaryName);
         Path dotFile = CommonUtil.createDirectory(OUTPUT_DIR).resolve(GRAPH_DOT_FILE);
 
         // Build the process to run: dot -Tpng input.dot -o output.png
@@ -66,9 +75,15 @@ public class GraphvizService {
         pb.redirectErrorStream(true);
         // Configure environment required by Graphviz
         Map<String, String> env = pb.environment();
-        env.put(DYLD_LIBRARY_PATH, this.gvRoot.resolve(LIB_DIR).toString());
-        env.put(GVBINDIR, this.gvRoot.resolve(GRAPHVIZ_LIB_DIR).toString());
-        env.put(GVPLUGIN_PATH, this.gvRoot.resolve(GRAPHVIZ_LIB_DIR).toString());
+        if(isMacOS()){
+            env.put(DYLD_LIBRARY_PATH, this.gvRoot.resolve(LIB_DIR).toString());
+            env.put(GVBINDIR, this.gvRoot.resolve(GRAPHVIZ_LIB_DIR).toString());
+            env.put(GVPLUGIN_PATH, this.gvRoot.resolve(GRAPHVIZ_LIB_DIR).toString());
+        }else {
+            env.put(DYLD_LIBRARY_PATH, this.gvRoot.resolve(BIN_DIR).toString());
+            env.put(GVBINDIR, this.gvRoot.resolve(BIN_DIR).toString());
+            env.put(GVPLUGIN_PATH, this.gvRoot.resolve(BIN_DIR).toString());
+        }
         env.put(PATH, this.gvRoot.resolve(BIN_DIR) + ":" + env.getOrDefault(PATH, ""));
         Process process = pb.start();
         int exit = process.waitFor();
@@ -87,7 +102,10 @@ public class GraphvizService {
     public String graphvizRunner() {
         try {
             // Resolve Python executable inside the virtual environment
-            Path pythonExe = this.venvDir.resolve(BIN_DIR).resolve(PYTHON);
+            Path pythonExe = this.venvDir.resolve("Scripts").resolve("python.exe");;
+            if(isMacOS()){
+                pythonExe = this.venvDir.resolve(BIN_DIR).resolve(PYTHON);
+            }
             Path pythonScriptPath = getTempFile(SCRIPT + "/" + GRAPH_REPRESENTATION_CLASS);
             Path inputFile = CommonUtil.createDirectory(OUTPUT_DIR).resolve(REASONER_OUTPUT_JSON + ".json");
 
@@ -114,5 +132,12 @@ public class GraphvizService {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void main(String[] args) throws Throwable {
+        // createInputJsonFile("abc", "def", "ghi");
+        String jsonInputFilePath = String.valueOf(CommonUtil.createDirectory(INPUT_DIR).resolve(REASONER_INPUT_JSON));
+        ReasonerProcessRunner processRunner = new ReasonerProcessRunner(jsonInputFilePath);
+        processRunner.runReasoner();
     }
 }
