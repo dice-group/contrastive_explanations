@@ -8,8 +8,6 @@ public class PathConstants {
 
     public static final String BIN_DIR = "bin";
 
-    public static final String PYTHON = "python";
-
     public static final String LIB_DIR = "lib";
 
     public static final String GRAPHVIZ_LIB_DIR = "lib/graphviz";
@@ -36,10 +34,6 @@ public class PathConstants {
 
     public static final String REASONER_OUTPUT_JSON = "reasoner_output";
 
-    public static final String SCRIPT = "scripts";
-
-    public static final String GRAPH_REPRESENTATION_CLASS = "graph_representation.py";
-
     public static final String INPUT_OWL_FILE = "input_ontology.owl";
 
     public static final String RESOURCE_JAR = "contrastive-explanations-reasoner.jar";
@@ -49,8 +43,4 @@ public class PathConstants {
     public static final String GRAPHVIZ_LIB_FILE_MAC = "graphvizLibMac.txt";
 
     public static final String GRAPHVIZ_LIB_FILE_WINDOWS = "graphvizLibWindows.txt";
-
-
-    public static final String REQUIREMENTS_TXT = "requirements.txt";
-
 }

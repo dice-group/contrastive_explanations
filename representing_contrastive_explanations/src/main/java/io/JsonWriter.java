@@ -71,7 +71,7 @@ public class JsonWriter {
      * @param query the class expression / query string entered by the user in the UI
      * @throws IOException if writing the JSON file fails
      */
-    public static void createInputJsonFile(String fact, String foil, String query) throws IOException {
+    public static String createInputJsonFile(String fact, String foil, String query) throws IOException {
         UserInput exp = new UserInput(
                 query,
                 Collections.singletonList(fact),
@@ -88,6 +88,7 @@ public class JsonWriter {
         // Ensure the inputs directory exists and write the JSON string to reasoner_input.json
         Path jsonPath = CommonUtil.createDirectory(INPUT_DIR).resolve(REASONER_INPUT_JSON);
         Files.writeString(jsonPath, jsonString, StandardCharsets.UTF_8);
+        return jsonPath.toString();
     }
 
 }

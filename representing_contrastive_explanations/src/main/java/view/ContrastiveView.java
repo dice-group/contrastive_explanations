@@ -2,7 +2,6 @@ package view;
 
 import graphviz.GraphvizService;
 import process.ReasonerProcessRunner;
-import process.PythonProcessRunner;
 import utils.CommonUtil;
 import io.ResourceExtractor;
 import io.JsonWriter;
@@ -161,23 +160,20 @@ public class ContrastiveView extends AbstractOWLViewComponent {
 
                 String dot = "";
                 try {
-//                     1) Create reasoner input JSON and extract the embedded reasoner JAR
-                    JsonWriter.createInputJsonFile(fact, foil, query);
+                    // 1) Create reasoner input JSON and extract the embedded reasoner JAR
+                    String jsonInputFilePath = JsonWriter.createInputJsonFile(fact, foil, query);
                     ResourceExtractor.extractJar();
 
                     // 2) Run the reasoner external JAR using the generated JSON as input
-                    String jsonInputFilePath = String.valueOf(CommonUtil.createDirectory(INPUT_DIR).resolve(REASONER_INPUT_JSON));
                     ReasonerProcessRunner processRunner = new ReasonerProcessRunner(jsonInputFilePath);
                     processRunner.runReasoner();
 
-                    // 3) Prepare Python environment
-                    PythonProcessRunner pythonProcess = new PythonProcessRunner();
-                    Path venvDir = pythonProcess.createVenvAndInstallRequirements();
+                    // 3) extract graphviz bundle
+                    Path gvRoot = extractGraphvizBundle();
 
                     // 4) Use Graphviz service to produce DOT and convert to PNG
-                    Path gvRoot = extractGraphvizBundle();
-                    GraphvizService graphvizService = new GraphvizService(venvDir, gvRoot);
-                    dot = graphvizService.graphvizRunner();
+                    GraphvizService graphvizService = new GraphvizService(gvRoot);
+                    dot = graphvizService.getDotFromJson();
                     pngOut = graphvizService.convertDotToPng(dot);
                     return null;
                 } catch (Throwable e) {
