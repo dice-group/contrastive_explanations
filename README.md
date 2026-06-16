@@ -62,3 +62,9 @@ The generated explanation highlights:
 * Which missing relationship prevent the **Foil** from entailing the same **Query**.
 
 This enables users to understand not only *why* a query holds, but also *why an alternative does not*.
+
+## Example
+In the below example, the fact individual **F2F17**, entails the given query **Daugher and (hasParent some (married some person))**.  The foil individual **F6M100**, does not entail the query, as the relationship from the foil node to the daughter node is missing in the ontology. The missing relationship of the foil entity is highlighted with the red dotted line. 
+
+<img width="514" height="416" alt="image" src="https://github.com/user-attachments/assets/8422bd32-9f57-4e33-acc5-3f525e2134df" />
+
