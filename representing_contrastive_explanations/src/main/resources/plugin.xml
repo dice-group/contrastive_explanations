@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.0"?>
+<plugin>
+    <extension
+            id="contrastive.view"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Contrastive Explanations"/>
+        <class value="view.ContrastiveView"/>
+        <category value="@org.protege.ontologycategory"/>
+    </extension>
+    <extension
+            id="contrastive.prefs"
+            point="org.protege.editor.core.application.preferencespanel">
+        <label value="Contrastive Explanations"/>
+        <class value="view.ContrastivePreferencesPanel"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
+</plugin>

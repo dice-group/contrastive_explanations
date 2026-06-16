@@ -1,97 +1,70 @@
-# Contrastive Explanations for ABox Entailments
+# Contrastive Explanations Protégé Plugin
 
-## Project Overview
+This document describes how to install and use the **Contrastive Explanations** plugin for Protégé.
 
-This project implements a reasoning system for computing **contrastive ABox explanations** over OWL ontologies, inspired by the methodology presented in the research paper:
+## Installation
 
-> *“Can You Tell the Difference? Contrastive Explanations for ABox Entailments” (KR 2025)*
+The plugin is distributed through a custom Protégé plugin repository.
 
-It aims to answer questions like:
+By default, Protégé is configured to use the official plugin repository, which contains the standard Protégé plugins. To install the Contrastive Explanations plugin, first change the plugin repository URL to the custom repository.
 
-> **Why is individual `a` an instance of concept `C`, but individual `b` is not?**
+### Step 1: Configure the Plugin Repository
 
----
+1. Open **Protégé Settings**.
+2. Select the **Plugins** tab.
+3. Replace the default plugin repository URL with:
 
-## What This Code Does
+```text
+https://ashik-18.github.io/contrastive-explanations-protege-plugin/plugins.repository
+```
 
-- Generates random, complex OWL class expressions over a given ontology.
-- Identifies **fact** individuals (satisfy the expression) and **foil** individuals (do not).
-- Constructs **Contrastive Explanation Problems (CEP)** by pairing a fact, a foil, and a target class.
-- Computes contrastive explanations:
-  - `q₁` (commonality): shared assertions between fact and foil.
-  - `q₂` (difference): what fact has that foil lacks.
-  - **Conflict set**: axioms preventing foil from satisfying the class.
-- Reports statistics on explanation size, conflict size, runtime, and synthetic individuals introduced.
+![Plugin Repository Settings](https://github.com/user-attachments/assets/5a28a814-734a-41f3-81f6-fca65a3159a2)
 
----
+### Step 2: Install the Plugin
 
-## Input JSON Format
+1. Navigate to **File → Check for Plugins**.
+2. Select  **Contrastive Explanations** plugin and click **Install**.
+3. Wait for the installation to complete.
+4. Restart Protégé when prompted.
 
-You can download an example input JSON file here:  
-[family_json_input.json](https://github.com/dice-group/contrastive_explanations/blob/manual_fact_foil/experiments/family_json_input.json)
-
-
-### Field Explanations
-
-The JSON file contains the following fields:
-
-* **`ontology_input_file_path`**: Path to the OWL ontology to be loaded.
-* **`output_file_path`**: Base path for saving the results file (text or JSON).  
-  - Example text output file: [family_output.txt](https://github.com/dice-group/contrastive_explanations/blob/manual_fact_foil/src/main/resources/family_output.txt)  
-  - Example JSON output file: [family_output.json](https://github.com/dice-group/contrastive_explanations/blob/manual_fact_foil/src/main/resources/family_output.json)
-* **`reasoner`**: Choice of OWL reasoner (`HERMIT` or `ELK`).
-* **`output_format`**: Format of the output file (`text` or `json`).
-* **`experiments`**: Array of experiments, each containing:
-
-    * `class_expression`: Manchester OWL syntax expression to evaluate.
-    * `facts`: List of individuals that satisfy the class expression.
-    * `foils`: List of individuals that do **not** satisfy the class expression.
+After restarting, the plugin will be available for use.
 
 ---
 
-## Running the Experiment
+## Using the Plugin
 
-You can run the experiments either via the provided [`.bat`](https://github.com/dice-group/contrastive_explanations/blob/manual_fact_foil/experiments/FactFoilFileWriter.bat) scripts or directly from the command line.
+1. Open the ontology you would like to analyze in Protégé.
+2. Open the plugin view via:
 
-### Command Line Example
+```text
+Window → Views → Ontology Views → Contrastive Explanations
+```
 
-```bash
-java -cp <classes_path>;<jar_path> anonymized.contrastive.experiments.FactFoilFileWriter <input_json_file>
-````
+![Opening the Plugin View](https://github.com/user-attachments/assets/62097f41-337e-4687-97d6-28b4ede3142e)
 
-**Example `.bat` file content:**
+### Generating Explanations
 
-### JAR File Explanation
+The plugin view allows you to enter:
 
-* The JAR file (`contrastive-explanations-0.3-SNAPSHOT-jar-with-dependencies.jar`) contains:
+* **Fact** – the individual who entails the query.
+* **Foil** – an alternative individual who does not entail the query.
+* **Query** – the entailment to be explained.
 
-  * All compiled project classes.
-  * All dependency libraries (OWL API, ELK, HermiT, EVEE, SLF4J).
-* It allows running the experiments standalone without manually adding classpath dependencies.
+After entering a valid Fact–Foil–Query triple:
 
----
+1. Click **Generate Explanations**.
+2. The plugin will compute a contrastive explanation.
+3. Within a few seconds, an image will appear below the plugin view.
 
-## Explanation Components
+The generated explanation highlights:
 
-* **`q₁` - Commonality**: ABox assertions shared between fact and foil individuals.
-* **`q₂` - Difference**: Assertions that hold for the fact but not for the foil.
-* **Conflict set**: Axioms preventing the foil from satisfying the class.
+* Why the selected **Fact** entails the specified **Query**.
+* Which missing relationship prevent the **Foil** from entailing the same **Query**.
 
----
+This enables users to understand not only *why* a query holds, but also *why an alternative does not*.
 
-## Notes & Tips
+## Example
+In the below example, the fact individual **F2F17**, entails the given query **Daugher and (hasParent some (married some person))**.  The foil individual **F6M100**, does not entail the query, as the relationship from the foil node to the daughter node is missing in the ontology. The missing relationship of the foil entity is highlighted with the red dotted line. 
 
-* Ontologies with >10,000 axioms are skipped for performance reasons.
-* Unsupported constructs (e.g., individual-based TBox axioms, `sameAs`) are filtered.
-* Random seed is fixed (`0`) for reproducibility.
-* Logging is suppressed by default — enable SLF4J if needed.
+<img width="514" height="416" alt="image" src="https://github.com/user-attachments/assets/8422bd32-9f57-4e33-acc5-3f525e2134df" />
 
----
-
-## Contributions & Contact
-
-We welcome contributions:
-
-* Submit pull requests.
-* Open issues for bugs or suggestions.
-* For academic inquiries or collaborations, contact the project maintainers via GitHub.
